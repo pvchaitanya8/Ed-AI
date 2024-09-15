@@ -16,3 +16,4 @@ vosk
 sounddevice
 numpy
 opencv-python-headless
+streamlit-webrtc

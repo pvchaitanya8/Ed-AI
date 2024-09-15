@@ -3,6 +3,7 @@ from streamlit_option_menu import option_menu
 from UI_Components.profile_pic import get_base64_image
 from Pages.Learn_page import Learn_page
 from Pages.Practice_page import Practice_Page
+from Pages.Mock_Interview import Mock_Interview
 
 def navbar():
     logo_url = r"Static_Files\NavBar\Ed AI logo.png"
@@ -79,8 +80,7 @@ def navbar():
         Practice_Page()
 
     elif selected == "Mock Interview":
-        st.title("Mock Interview")
-        st.write("This is the content of Mock Interview.")
+        Mock_Interview()
 
     elif selected == "Chat":
         st.title("Chat")
@@ -88,4 +88,3 @@ def navbar():
         
     if search_query:
         st.write(f"Search results for: {search_query}")
-        # Add your search handling logic here

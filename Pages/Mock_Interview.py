@@ -44,5 +44,3 @@ def Mock_Interview():
             st.write("Resume uploaded successfully!")
         else:
             st.write("No resume uploaded.")
-
-Mock_Interview()
