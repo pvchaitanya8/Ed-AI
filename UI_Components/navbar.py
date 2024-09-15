@@ -4,6 +4,7 @@ from UI_Components.profile_pic import get_base64_image
 from Pages.Learn_page import Learn_page
 from Pages.Practice_page import Practice_Page
 from Pages.Mock_Interview import Mock_Interview
+from Pages.Chat import chat
 
 def navbar():
     logo_url = r"Static_Files\NavBar\Ed AI logo.png"
@@ -83,8 +84,7 @@ def navbar():
         Mock_Interview()
 
     elif selected == "Chat":
-        st.title("Chat")
-        st.write("This is the content of Chat.")
+        chat()
         
     if search_query:
         st.write(f"Search results for: {search_query}")

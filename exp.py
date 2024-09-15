@@ -1,48 +1,85 @@
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
+import random
+import time
+
+def generate_response_socratic():
+    """Generate a random response with a slight delay to simulate typing."""
+    responses = [
+        "socratic | Hello there! How can I assist you today?",
+        "socratic | Hi, human! Is there anything I can help you with?",
+        "socratic | Do you need help?",
+    ]
+    response = random.choice(responses)
+    return response
+
+def generate_response_non_socratic():
+    """Generate a random response with a slight delay to simulate typing."""
+    responses = [
+        "Hello there! How can I assist you today?",
+        "Hi, human! Is there anything I can help you with?",
+        "Do you need help?",
+    ]
+    response = random.choice(responses)
+    return response
+
+def chat():
+    toggle_socratic = st.toggle("Socratic Mode", value=True)
+
+    st.markdown("""
+        <style>
+        .assistant-message {
+            text-align: left !important;
+            background-color: #00276b;
+            color: white;
+            padding: 12px;
+            border-radius: 20px;
+            margin: 5px 0;
+            width: fit-content;
+            max-width: 80%;
+        }
+        .user-message {
+            text-align: right !important;
+            background-color: #333333;
+            color: white;
+            padding: 12px;
+            border-radius: 20px;
+            margin: 5px 0;
+            width: fit-content;
+            max-width: 80%;
+            margin-left: auto !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
 
-def VideoTransformer(self, frame):
-    return frame
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
 
-def Mock_Interview():
-    col1, col2 = st.columns([5, 4])
-    with col1:
-        hardness = st.selectbox("Select the hardness level:", ["😉 Easy", "👍 Medium", "💪 Hard"])
-        
-        comments = st.text_area("Anything you'd like to say? (Optional)")
-        
-    with col2:
-        topics = st.multiselect(
-            "Select the topics you are interested in:", 
-            ["Trees", "Graphs", "Arrays", "Linked Lists", "Stacks", "Queue"]
-        )
-            
-        st.markdown("""
-            <style>
-            .reduced-line-gap {
-                margin-bottom: -20px;  /* Adjust this value to reduce or increase the gap */
-            }
-            </style>
-            """, unsafe_allow_html=True)
-
-        st.write('<div class="reduced-line-gap">select Video and Mic:</div>', unsafe_allow_html=True)
-        webrtc_streamer(key="example", video_transformer_factory=VideoTransformer)
-
-    uploaded_file = st.file_uploader("Upload your resume", type="pdf")
-        
-
-    st.markdown("---")
-
-    if st.button("Let's Start the Interview"):
-        # Print out the inputs
-        st.write("Hardness:", hardness)
-        st.write("Topics selected:", ", ".join(topics) if topics else "None")
-        st.write("Additional comments:", comments if comments else "None")
-
-        if uploaded_file is not None:
-            st.write("Resume uploaded successfully!")
+    for message in st.session_state.messages:
+        if message["role"] == "assistant":
+            st.markdown(f'<div class="assistant-message">{message["content"]}</div>', unsafe_allow_html=True)
         else:
-            st.write("No resume uploaded.")
+            st.markdown(f'<div class="user-message">{message["content"]}</div>', unsafe_allow_html=True)
 
-Mock_Interview()
+
+    prompt = st.chat_input("What’s on your mind?")
+    if prompt:
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        st.markdown(f'<div class="user-message">{prompt}</div>', unsafe_allow_html=True)
+
+        if toggle_socratic:
+            response_text = generate_response_socratic()
+        else:
+            response_text = generate_response_non_socratic()
+
+        response_container = st.empty()
+
+        partial_response = ""
+        for word in response_text.split():
+            partial_response += word + " "
+            response_container.markdown(f'<div class="assistant-message">{partial_response}</div>', unsafe_allow_html=True)
+            time.sleep(0.1)
+
+        st.session_state.messages.append({"role": "assistant", "content": response_text})
+        response_container.markdown(f'<div class="assistant-message">{response_text}</div>', unsafe_allow_html=True)
+chat()

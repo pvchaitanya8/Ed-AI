@@ -1,5 +1,7 @@
 streamlit
 streamlit-option-menu
+streamlit-chat
+streamlit-webrtc
 langchain
 langchain_community
 langchain-google-genai
@@ -16,4 +18,3 @@ vosk
 sounddevice
 numpy
 opencv-python-headless
-streamlit-webrtc
