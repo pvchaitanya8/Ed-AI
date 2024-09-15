@@ -2,6 +2,7 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 from UI_Components.profile_pic import get_base64_image
 from Pages.Learn_page import Learn_page
+from Pages.Practice_page import Practice_Page
 
 def navbar():
     logo_url = r"Static_Files\NavBar\Ed AI logo.png"
@@ -75,8 +76,7 @@ def navbar():
         Learn_page()
 
     elif selected == "Practice":
-        st.title("Practice")
-        st.write("This is the content of Practice.")
+        Practice_Page()
 
     elif selected == "Mock Interview":
         st.title("Mock Interview")
