@@ -2,8 +2,10 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 from UI_Components.profile_pic import get_base64_image
 from Pages.Learn_page import Learn_page
-from Pages.Practice_page import Practice_Page
+from Pages.Practice_MCQ_page import Practice_MCQ_page
+from Pages.Practice_Coding_page import Practice_Coding_page
 from Pages.Mock_Interview import Mock_Interview
+from Pages.Mock_Assessment import Mock_Assessment
 from Pages.Chat import chat
 import base64
 
@@ -103,10 +105,39 @@ def navbar():
         Learn_page()
 
     elif selected == "Practice":
-        Practice_Page()
+        selected_round = st.selectbox(
+            "",
+            [
+                "📄 MCQs Practice",
+                "🧑‍💻 Coding Practice",
+            ]
+        )
+        if selected_round == "📄 MCQs Practice":
+            Practice_MCQ_page()
+        elif selected_round == "🧑‍💻 Coding Practice":
+            Practice_Coding_page()
+        
+
 
     elif selected == "Mock Interview":
-        Mock_Interview()
+        selected_round = st.selectbox(
+            "Select Interview Round",
+            [
+                "📃 MCQ Assessment Round",
+                "📃 Coding Assessment Round",
+                "🧑‍💻 Technical Interview Round",
+                "🧑‍💻 HR Interview Round"
+            ]
+        )
+        if selected_round == "📃 MCQ Assessment Round":
+            Mock_Assessment()
+        elif selected_round == "📃 Coding Assessment Round":
+            Mock_Assessment()
+        elif selected_round == "🧑‍💻 Technical Interview Round":
+            Mock_Interview()
+        elif selected_round == "🧑‍💻 HR Interview Round":
+            Mock_Interview()
+        
 
     elif selected == "Chat":
         chat()
