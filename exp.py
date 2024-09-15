@@ -1,85 +1,62 @@
 import streamlit as st
-import random
-import time
+import pandas as pd
 
-def generate_response_socratic():
-    """Generate a random response with a slight delay to simulate typing."""
-    responses = [
-        "socratic | Hello there! How can I assist you today?",
-        "socratic | Hi, human! Is there anything I can help you with?",
-        "socratic | Do you need help?",
-    ]
-    response = random.choice(responses)
-    return response
+data = {
+    "S no.": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"],
+    "Title": [
+        "Find the Longest Substring Containing",
+        "Two Sum",
+        "Add Two Numbers",
+        "Longest Substring Without Repeating",
+        "Median of Two Sorted Arrays",
+        "Longest Palindromic Substring",
+        "Zigzag Conversion",
+        "Reverse Integer",
+        "String to Integer (atoi)",
+        "Palindrome Number",
+        "Regular Expression Matching",
+        "Container With Most Water",
+        "Integer to Roman",
+        "Roman to Integer",
+        "Longest Common Prefix"
+    ],
+    "Difficulty": ["Medium", "Easy", "Medium", "Medium", "Hard", "Medium", "Medium", "Medium", "Medium", "Easy", "Hard", "Medium", "Medium", "Easy", "Easy"]
+}
 
-def generate_response_non_socratic():
-    """Generate a random response with a slight delay to simulate typing."""
-    responses = [
-        "Hello there! How can I assist you today?",
-        "Hi, human! Is there anything I can help you with?",
-        "Do you need help?",
-    ]
-    response = random.choice(responses)
-    return response
+df = pd.DataFrame(data)
 
-def chat():
-    toggle_socratic = st.toggle("Socratic Mode", value=True)
+def difficulty_bg_color(difficulty):
+    if difficulty == "Easy":
+        return 'background-color: rgba(0, 255, 0, 0.5); color: white; font-weight: bold; border-radius: 30px; padding: 5px;'
+    elif difficulty == "Medium":
+        return 'background-color: rgba(249, 105, 14, 0.75); color: white; font-weight: bold; border-radius: 30px; padding: 5px;'
+    elif difficulty == "Hard":
+        return 'background-color: rgba(255, 0, 0, 0.5); color: white; font-weight: bold; border-radius: 30px; padding: 5px;'
+    return ''
 
-    st.markdown("""
-        <style>
-        .assistant-message {
-            text-align: left !important;
-            background-color: #00276b;
-            color: white;
-            padding: 12px;
-            border-radius: 20px;
-            margin: 5px 0;
-            width: fit-content;
-            max-width: 80%;
-        }
-        .user-message {
-            text-align: right !important;
-            background-color: #333333;
-            color: white;
-            padding: 12px;
-            border-radius: 20px;
-            margin: 5px 0;
-            width: fit-content;
-            max-width: 80%;
-            margin-left: auto !important;
-        }
-        </style>
-    """, unsafe_allow_html=True)
+st.markdown("""<hr style="border: 2px solid grey; border-radius: 5px;">""", unsafe_allow_html=True)
 
+col1, col2, col3, col4 = st.columns([1, 4, 2, 2])
+with col1:
+    st.subheader("S no.")
+with col2:
+    st.subheader("Title")
+with col3:
+    st.subheader("Difficulty")
+with col4:
+    st.subheader("Select")
+st.markdown("""<hr style="border: 2px solid grey; border-radius: 5px;">""", unsafe_allow_html=True)
 
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
+for i, row in df.iterrows():
+    col1, col2, col3, col4 = st.columns([1, 4, 2, 2])
+    with col1:
+        st.write(row["S no."])
+    with col2:
+        st.write(row["Title"])
+    with col3:
+        st.markdown(f'<div style="{difficulty_bg_color(row["Difficulty"])} text-align: center;">{row["Difficulty"]}</div>', unsafe_allow_html=True)
+    with col4:
+        if st.button("Solve 💻", key=f"button_{i}"):
+            st.write(f"You clicked on problem: {row['Title']}")
 
-    for message in st.session_state.messages:
-        if message["role"] == "assistant":
-            st.markdown(f'<div class="assistant-message">{message["content"]}</div>', unsafe_allow_html=True)
-        else:
-            st.markdown(f'<div class="user-message">{message["content"]}</div>', unsafe_allow_html=True)
-
-
-    prompt = st.chat_input("What’s on your mind?")
-    if prompt:
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        st.markdown(f'<div class="user-message">{prompt}</div>', unsafe_allow_html=True)
-
-        if toggle_socratic:
-            response_text = generate_response_socratic()
-        else:
-            response_text = generate_response_non_socratic()
-
-        response_container = st.empty()
-
-        partial_response = ""
-        for word in response_text.split():
-            partial_response += word + " "
-            response_container.markdown(f'<div class="assistant-message">{partial_response}</div>', unsafe_allow_html=True)
-            time.sleep(0.1)
-
-        st.session_state.messages.append({"role": "assistant", "content": response_text})
-        response_container.markdown(f'<div class="assistant-message">{response_text}</div>', unsafe_allow_html=True)
-chat()
+    st.divider()

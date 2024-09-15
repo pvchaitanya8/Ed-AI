@@ -13,7 +13,7 @@ def get_mime_type(filename):
     mime_type, _ = mimetypes.guess_type(filename)
     return mime_type or 'application/octet-stream'
 
-def Practice_Page():
+def Practice_MCQ_page():
     # Define the directory_Featured containing the images
     directory_Featured = r"Static_Files\Practice_Page\Featured"
     directory_All_Courses = r"Static_Files\Practice_Page\All_Courses"
