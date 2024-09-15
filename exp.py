@@ -1,263 +1,85 @@
-import os
 import streamlit as st
-import base64
-import mimetypes
+import random
+import time
 
-# Helper function to load and encode images in base64
-def load_image_as_base64(image_path):
-    with open(image_path, "rb") as img_file:
-        return base64.b64encode(img_file.read()).decode('utf-8')
+def generate_response_socratic():
+    """Generate a random response with a slight delay to simulate typing."""
+    responses = [
+        "socratic | Hello there! How can I assist you today?",
+        "socratic | Hi, human! Is there anything I can help you with?",
+        "socratic | Do you need help?",
+    ]
+    response = random.choice(responses)
+    return response
 
-# Helper function to get the MIME type based on the file extension
-def get_mime_type(filename):
-    mime_type, _ = mimetypes.guess_type(filename)
-    return mime_type or 'application/octet-stream'
+def generate_response_non_socratic():
+    """Generate a random response with a slight delay to simulate typing."""
+    responses = [
+        "Hello there! How can I assist you today?",
+        "Hi, human! Is there anything I can help you with?",
+        "Do you need help?",
+    ]
+    response = random.choice(responses)
+    return response
 
-def Learn_page():
-    # Define the directory_Featured containing the images
-    directory_Featured = r"Static_Files\LearnPage\Featured"
-    directory_All_Courses = r"Static_Files\LearnPage\All Courses"
+def chat():
+    toggle_socratic = st.toggle("Socratic Mode", value=True)
 
-    if os.path.exists(directory_Featured):
-        # Image dimensions and margin
-        image_width = 550
-        image_height = 350
-        margin_right = 3  # Gap between images
-
-        # Prepare image tags and calculate total width
-        image_tags = ""
-        filenames = sorted(os.listdir(directory_Featured))
-        N = 0  # Number of images
-        for i, filename in enumerate(filenames):
-            file_path = os.path.join(directory_Featured, filename)
-            if os.path.isfile(file_path):
-                N += 1
-                encoded_image = load_image_as_base64(file_path)
-                mime_type = get_mime_type(filename)
-                # Remove margin-right for the last image in the sequence
-                margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
-                image_tags += f'<img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="{margin_style}">'
-
-        # Calculate total width of one set of images (including margins)
-        total_width = N * image_width + (N - 1) * margin_right
-
-        # Duplicate images for seamless scrolling
-        full_image_tags = image_tags + image_tags
-
-        # Insert CSS with dynamic total_width
-        st.markdown(f"""
+    st.markdown("""
         <style>
-        .scroll-container {{
-            overflow: hidden;
-            position: relative;
-            width: 100%;
-        }}
-
-        .scroll-content {{
-            display: flex;
-            width: {2 * total_width}px; /* Double the total width */
-            animation: scroll 30s linear infinite; /* Adjust duration as needed */
-            transition: transform 0.5s ease;
-        }}
-
-        .scroll-content img {{
-            width: {image_width}px;
-            height: {image_height}px;
-            object-fit: cover;
-            border-radius: 3px;
-            flex-shrink: 0; /* Prevent images from shrinking */
-            transition: transform 0.3s ease;
-        }}
-
-        .scroll-container:hover .scroll-content {{
-            animation-play-state: paused; /* Pause animation on hover */
-        }}
-
-        .scroll-content img:hover {{
-            transform: scale(0.9); /* Magnify the image on hover */
-            z-index: 10; /* Bring the hovered image to the front */
-        }}
-
-        @keyframes scroll {{
-            0% {{
-                transform: translateX(0);
-            }}
-            100% {{
-                transform: translateX(-{total_width}px);
-            }}
-        }}
+        .assistant-message {
+            text-align: left !important;
+            background-color: #00276b;
+            color: white;
+            padding: 12px;
+            border-radius: 20px;
+            margin: 5px 0;
+            width: fit-content;
+            max-width: 80%;
+        }
+        .user-message {
+            text-align: right !important;
+            background-color: #333333;
+            color: white;
+            padding: 12px;
+            border-radius: 20px;
+            margin: 5px 0;
+            width: fit-content;
+            max-width: 80%;
+            margin-left: auto !important;
+        }
         </style>
-        """, unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
-        # Create the scrolling container
-        st.markdown(f"""
-        <div class="scroll-container">
-            <div class="scroll-content">
-                {full_image_tags}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    else:
-        st.error(f"Directory not found: {directory_Featured}")
 
-    # "Recommendation" Section
-    st.title("Recommendation")
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
 
-    # Image gallery for all courses (Static image gallery)
-    if os.path.exists(directory_Featured):
-        # Image dimensions and margin
-        image_width = 480 
-        image_height = 230
-        margin_right = 10  # Gap between images
+    for message in st.session_state.messages:
+        if message["role"] == "assistant":
+            st.markdown(f'<div class="assistant-message">{message["content"]}</div>', unsafe_allow_html=True)
+        else:
+            st.markdown(f'<div class="user-message">{message["content"]}</div>', unsafe_allow_html=True)
 
-        # Prepare image tags
-        image_tags = ""
-        filenames = sorted(os.listdir(directory_Featured))
-        for i, filename in enumerate(filenames):
-            file_path = os.path.join(directory_Featured, filename)
-            if os.path.isfile(file_path):
-                encoded_image = load_image_as_base64(file_path)
-                mime_type = get_mime_type(filename)
-                # Remove margin-right for the last image in the sequence
-                margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
-                image_tags += f'<img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;">'
 
-        # Insert CSS for the scrollable container with a dark-themed scrollbar
-        st.markdown(f"""
-        <style>
-        .scroll-container-static {{
-            overflow-x: auto;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }}
+    prompt = st.chat_input("What’s on your mind?")
+    if prompt:
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        st.markdown(f'<div class="user-message">{prompt}</div>', unsafe_allow_html=True)
 
-        .scroll-content-static img {{
-            display: inline-block;
-            width: {image_width}px;
-            height: {image_height}px;
-            object-fit: cover;
-            border-radius: 30px;
-            margin-right: {margin_right}px;
-            vertical-align: middle;
-        }}
+        if toggle_socratic:
+            response_text = generate_response_socratic()
+        else:
+            response_text = generate_response_non_socratic()
 
-        /* Dark themed scrollbar with rounded corners */
-        .scroll-container-static::-webkit-scrollbar {{
-            height: 8px;
-        }}
+        response_container = st.empty()
 
-        .scroll-container-static::-webkit-scrollbar-track {{
-            background: #333;  /* Dark background for the track */
-            border-radius: 20px; /* This does not affect the visual on some browsers */
-        }}
+        partial_response = ""
+        for word in response_text.split():
+            partial_response += word + " "
+            response_container.markdown(f'<div class="assistant-message">{partial_response}</div>', unsafe_allow_html=True)
+            time.sleep(0.1)
 
-        .scroll-container-static::-webkit-scrollbar-thumb {{
-            background: #555;  /* Darker thumb */
-            border-radius: 10px;
-            border: 2px solid #333; /* Add a border to the thumb to visually create the effect of rounded corners */
-        }}
-
-        .scroll-container-static::-webkit-scrollbar-thumb:hover {{
-            background: #888;  /* Slightly lighter on hover */
-        }}
-
-        .scroll-container-static {{
-            scrollbar-width: thin;  /* Firefox */
-            scrollbar-color: #555 #333;  /* Darker colors for Firefox */
-            border-radius: 10px; /* This will only affect the container, not the scrollbar itself */
-        }}
-        </style>
-        """, unsafe_allow_html=True)
-
-        # Create the scrollable container
-        st.markdown(f"""
-        <div class="scroll-container-static">
-            {image_tags}
-        </div>
-        """, unsafe_allow_html=True)
-    else:
-        st.error(f"Directory not found: {directory_Featured}")
-
-    # "All Courses" Section
-    st.title("All Courses")
-
-    # Image gallery for all courses (Static image gallery)
-    if os.path.exists(directory_All_Courses):
-        # Image dimensions and margin
-        image_width = 480 
-        image_height = 230
-        margin_right = 10  # Gap between images
-
-        # Prepare image tags
-        image_tags = ""
-        filenames = sorted(os.listdir(directory_All_Courses))
-        for i, filename in enumerate(filenames):
-            file_path = os.path.join(directory_All_Courses, filename)
-            if os.path.isfile(file_path):
-                encoded_image = load_image_as_base64(file_path)
-                mime_type = get_mime_type(filename)
-                # Remove margin-right for the last image in the sequence
-                margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
-                image_tags += f'<img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;">'
-
-        # Insert CSS for the scrollable container with a dark-themed scrollbar
-        st.markdown(f"""
-        <style>
-        .scroll-container-static {{
-            overflow-x: auto;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }}
-
-        .scroll-content-static img {{
-            display: inline-block;
-            width: {image_width}px;
-            height: {image_height}px;
-            object-fit: cover;
-            border-radius: 30px;
-            margin-right: {margin_right}px;
-            vertical-align: middle;
-        }}
-
-        /* Dark themed scrollbar with rounded corners */
-        .scroll-container-static::-webkit-scrollbar {{
-            height: 8px;
-        }}
-
-        .scroll-container-static::-webkit-scrollbar-track {{
-            background: #333;  /* Dark background for the track */
-            border-radius: 20px; /* This does not affect the visual on some browsers */
-        }}
-
-        .scroll-container-static::-webkit-scrollbar-thumb {{
-            background: #555;  /* Darker thumb */
-            border-radius: 10px;
-            border: 2px solid #333; /* Add a border to the thumb to visually create the effect of rounded corners */
-        }}
-
-        .scroll-container-static::-webkit-scrollbar-thumb:hover {{
-            background: #888;  /* Slightly lighter on hover */
-        }}
-
-        .scroll-container-static {{
-            scrollbar-width: thin;  /* Firefox */
-            scrollbar-color: #555 #333;  /* Darker colors for Firefox */
-            border-radius: 10px; /* This will only affect the container, not the scrollbar itself */
-        }}
-        </style>
-        """, unsafe_allow_html=True)
-
-        # Create the scrollable container
-        st.markdown(f"""
-        <div class="scroll-container-static">
-            {image_tags}
-        </div>
-        """, unsafe_allow_html=True)
-    else:
-        st.error(f"Directory not found: {directory_All_Courses}")
-
-Learn_page()
+        st.session_state.messages.append({"role": "assistant", "content": response_text})
+        response_container.markdown(f'<div class="assistant-message">{response_text}</div>', unsafe_allow_html=True)
+chat()
