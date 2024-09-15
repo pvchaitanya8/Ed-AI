@@ -15,8 +15,8 @@ def get_mime_type(filename):
 
 def Learn_page():
     # Define the directory_Featured containing the images
-    directory_Featured = r"Static_Files\LearnPage\Featured"
-    directory_All_Courses = r"Static_Files\LearnPage\All Courses"
+    directory_Featured = r"Static_Files\Learn_Page\Featured"
+    directory_All_Courses = r"Static_Files\Learn_Page\All_Courses"
 
     if os.path.exists(directory_Featured):
         # Image dimensions and margin
@@ -104,7 +104,7 @@ def Learn_page():
     st.title("Recommendation")
 
     # Image gallery for all courses (Static image gallery)
-    if os.path.exists(directory_Featured):
+    if os.path.exists(directory_All_Courses):
         # Image dimensions and margin
         image_width = 480 
         image_height = 230
@@ -112,9 +112,9 @@ def Learn_page():
 
         # Prepare image tags
         image_tags = ""
-        filenames = sorted(os.listdir(directory_Featured))
+        filenames = sorted(os.listdir(directory_All_Courses))
         for i, filename in enumerate(filenames):
-            file_path = os.path.join(directory_Featured, filename)
+            file_path = os.path.join(directory_All_Courses, filename)
             if os.path.isfile(file_path):
                 encoded_image = load_image_as_base64(file_path)
                 mime_type = get_mime_type(filename)
@@ -178,7 +178,7 @@ def Learn_page():
         </div>
         """, unsafe_allow_html=True)
     else:
-        st.error(f"Directory not found: {directory_Featured}")
+        st.error(f"Directory not found: {directory_All_Courses}")
 
     # "All Courses" Section
     st.title("All Courses")
