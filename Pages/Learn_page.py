@@ -66,7 +66,7 @@ def Learn_page():
             object-fit: cover;
             border-radius: 3px;
             flex-shrink: 0; /* Prevent images from shrinking */
-            transition: transform 0.3s ease;
+            transition: transform 0.4s ease, border-radius 1s ease;
         }}
 
         .scroll-container:hover .scroll-content {{
@@ -75,7 +75,7 @@ def Learn_page():
 
         .scroll-content img:hover {{
             transform: scale(0.9); /* Magnify the image on hover */
-            z-index: 10; /* Bring the hovered image to the front */
+            border-radius: 11px;
         }}
 
         @keyframes scroll {{
@@ -122,7 +122,7 @@ def Learn_page():
                 margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
                 image_tags += f'<img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;">'
 
-        # Insert CSS for the scrollable container with a dark-themed scrollbar
+        # Insert CSS for the scrollable container with hover effects
         st.markdown(f"""
         <style>
         .scroll-container-static {{
@@ -141,6 +141,12 @@ def Learn_page():
             border-radius: 30px;
             margin-right: {margin_right}px;
             vertical-align: middle;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 1s ease; /* Smooth transition for hover effects */
+        }}
+
+        .scroll-content-static img:hover {{
+            transform: scale(0.95); /* Slightly increase the size on hover */
+            box-shadow: 0px 4px 15px rgba(227, 194, 250, 0.8); /* Add shadow on hover */
         }}
 
         /* Dark themed scrollbar with rounded corners */
@@ -174,7 +180,9 @@ def Learn_page():
         # Create the scrollable container
         st.markdown(f"""
         <div class="scroll-container-static">
-            {image_tags}
+            <div class="scroll-content-static">
+                {image_tags}
+            </div>
         </div>
         """, unsafe_allow_html=True)
     else:
@@ -202,7 +210,7 @@ def Learn_page():
                 margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
                 image_tags += f'<img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;">'
 
-        # Insert CSS for the scrollable container with a dark-themed scrollbar
+        # Insert CSS for the scrollable container with hover effects
         st.markdown(f"""
         <style>
         .scroll-container-static {{
@@ -221,6 +229,12 @@ def Learn_page():
             border-radius: 30px;
             margin-right: {margin_right}px;
             vertical-align: middle;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 1s ease; /* Smooth transition for hover effects */
+        }}
+
+        .scroll-content-static img:hover {{
+            transform: scale(0.95); /* Slightly increase the size on hover */
+            box-shadow: 0px 4px 15px rgba(227, 194, 250, 0.8); /* Add shadow on hover */
         }}
 
         /* Dark themed scrollbar with rounded corners */
@@ -254,7 +268,9 @@ def Learn_page():
         # Create the scrollable container
         st.markdown(f"""
         <div class="scroll-container-static">
-            {image_tags}
+            <div class="scroll-content-static">
+                {image_tags}
+            </div>
         </div>
         """, unsafe_allow_html=True)
     else:

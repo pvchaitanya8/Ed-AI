@@ -39,8 +39,7 @@ def navbar():
             </style>
             """, unsafe_allow_html=True)
 
-        st.markdown(f'<a href="{link_url}" target="_blank"><img src="{encoded_image}" style="max-width: 110%; height: auto; display: block; transform: translateY(-10px);" width="100"></a>', unsafe_allow_html=True)
-
+        st.markdown(f'<a href="{link_url}" target="_blank"><img src="{encoded_image}" style="max-width: 90%; height: auto; display: block; transform: translateY(-10px);" width="100"></a>', unsafe_allow_html=True)
 
     with col2:
         selected = option_menu(
@@ -116,8 +115,6 @@ def navbar():
             Practice_MCQ_page()
         elif selected_round == "🧑‍💻 Coding Practice":
             Practice_Coding_page()
-        
-
 
     elif selected == "Mock Interview":
         selected_round = st.selectbox(
