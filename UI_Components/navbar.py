@@ -39,8 +39,7 @@ def navbar():
             </style>
             """, unsafe_allow_html=True)
 
-        st.markdown(f'<a href="{link_url}" target="_blank"><img src="{encoded_image}" style="max-width: 110%; height: auto; display: block; transform: translateY(-10px);" width="100"></a>', unsafe_allow_html=True)
-
+        st.markdown(f'<a href="{link_url}" target="_blank"><img src="{encoded_image}" style="max-width: 90%; height: auto; display: block; transform: translateY(-10px);" width="100"></a>', unsafe_allow_html=True)
 
     with col2:
         selected = option_menu(
@@ -85,9 +84,9 @@ def navbar():
             height: 4px;
             border-radius: 15px;
             margin: 0px 0;
-            background: linear-gradient(90deg, #f9bec7, #f72585, #b5179e, #7209b7, #560bad, #480ca8, #3a0ca3, #3f37c9, #4361ee, #4895ef, #4cc9f0, #b8b8ff);
+            background: linear-gradient(90deg, #f9bec7, #ffafcc, #f72585, #b5179e, #7209b7, #560bad, #480ca8, #3a0ca3, #3f37c9, #4361ee, #4895ef, #4cc9f0, #caf0f8);
             background-size: 200% 200%;
-            animation: gradientFlow 6s ease infinite;
+            animation: gradientFlow 5s ease infinite;
         }
         
         @keyframes gradientFlow {
@@ -116,8 +115,6 @@ def navbar():
             Practice_MCQ_page()
         elif selected_round == "🧑‍💻 Coding Practice":
             Practice_Coding_page()
-        
-
 
     elif selected == "Mock Interview":
         selected_round = st.selectbox(
