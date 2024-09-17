@@ -84,9 +84,9 @@ def navbar():
             height: 4px;
             border-radius: 15px;
             margin: 0px 0;
-            background: linear-gradient(90deg, #f9bec7, #f72585, #b5179e, #7209b7, #560bad, #480ca8, #3a0ca3, #3f37c9, #4361ee, #4895ef, #4cc9f0, #b8b8ff);
+            background: linear-gradient(90deg, #f9bec7, #ffafcc, #f72585, #b5179e, #7209b7, #560bad, #480ca8, #3a0ca3, #3f37c9, #4361ee, #4895ef, #4cc9f0, #caf0f8);
             background-size: 200% 200%;
-            animation: gradientFlow 6s ease infinite;
+            animation: gradientFlow 5s ease infinite;
         }
         
         @keyframes gradientFlow {

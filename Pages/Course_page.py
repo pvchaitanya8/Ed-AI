@@ -110,5 +110,3 @@ def course_page():
     # Next Button at the bottom of the page
     if st.button('Next'):
         st.write("You clicked Next!")
-
-course_page()
