@@ -171,4 +171,3 @@ def Assignment_MCQ(test_file):
         time.sleep(1)
         st.rerun()
         
-Assignment_MCQ(r"EXP\test1_data.json")
