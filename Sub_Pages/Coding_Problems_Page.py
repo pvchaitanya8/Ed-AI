@@ -180,5 +180,3 @@ def Coding_Problems_page(markdown_file):
             st.text(output)
         else:
             st.warning("Please write some code before running it.")
-
-Coding_Problems_page(r"EXP\problem.md")
