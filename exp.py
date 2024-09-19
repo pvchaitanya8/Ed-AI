@@ -1,166 +1,254 @@
 import streamlit as st
 import streamlit.components.v1 as components
+from UI_Components.Chat_Mock_interview import chat
 
-# Title
+def Mock_Interview():
+    # Sidebar for Chat
+    st.markdown(
+        """
+        <style>
+        .mentor-title {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #FFF5EE, #F3CFC6, #f9bec7, #ffafcc, #f72585, #b5179e, #7209b7, #560bad, #480ca8, #3a0ca3, #3f37c9, #4361ee, #4895ef, #4cc9f0, #caf0f8, #FFF5EE, #FFF5EE);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            background-size: 200% 200%;
+            animation: gradientFlow 5s ease infinite;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
 
-# HTML, CSS, and JavaScript code for live video, audio input, device selection, and live subtitles
-html_code = """
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Mock Interview</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #242424;
-        margin: 0;
-        padding: 0;
-      }
-      #container {
-        display: flex;
-        justify-content: space-between;
-        padding: 20px;
-      }
-      #videoColumn, #transcriptionColumn {
-        flex: 1;
-        margin: 0 20px;
-      }
-      #videoColumn {
-        text-align: center;
-      }
-      select {
-        margin-bottom: 10px;
-        padding: 10px;
-        font-size: 16px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-      }
-      video {
-        width: 100%;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      }
-      #transcription {
-        background-color: black;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-        font-size: 18px;
-        color: #9a8dfc;
-        height: 300px;
-        overflow-y: auto;
-      }
-      #subtitles {
-        background-color: #7367cf;
-        color: #beb5ff;
-        font-size: 15px;
-        padding: 10px;
-        text-align: center;
-        margin-top: 20px;
-        border-radius: 1px;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="subtitles"></div>
-    <div id="container">
-      <!-- Left column: Video feed and device selection -->
-      <div id="videoColumn">
-        <div id="transcription">Transcription history will appear here...</div>
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        </style>
+        <h1 class="mentor-title">✨ Mock Interview</h1>
+        """,
+        unsafe_allow_html=True
+    )
+    st.markdown(
+        """
+        <style>
+        .gradient-divider-sidebar {
+            height: 5px;
+            border-radius: 15px;
+            background: linear-gradient(to right, #212529, #343a40, #212529);
+            margin: 0px 0;
+            border: none;
+        }
+        </style>
+        <div class="gradient-divider-sidebar"></div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+    with st.sidebar:
+        chat()  # Display the chat function in the sidebar
+
+    # HTML, CSS, and JavaScript code for live video, audio input, device selection, and live subtitles
+    html_code = """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AI Mock Interview</title>
+        <style>
+        /* General Dark Theme Styling */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #181818;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height:100vh;
+            overflow: hidden;
+        }
+
+        /* Centered container for video and controls */
+        #container {
+            text-align: center;
+            width: 80%;
+            max-width: 800px;
+            padding: 10px;
+        }
+
+        /* Style for select dropdowns */
+        select {
+            margin-bottom: 15px;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 25px;
+            background-color: #282828;
+            color: #e0e0e0;
+            border: 1px solid #444;
+            outline: none;
+            width: 80%;
+        }
+
+        /* Video container styling */
+        #videoContainer {
+            width: 100%;
+            max-width: 640px;
+            height: 360px;
+            margin: 0 auto;
+            background-color: #202020;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            position: relative;
+        }
+        #selectContainer {
+            display: flex;
+            justify-content: center; /* Center horizontally within the container */
+            gap: 30px; /* Space between select elements */
+            margin-top: 20px; /* Space from other elements */
+        }
+        select {
+            padding: 12px;
+            font-size: 12px;
+            border-radius: 25px;
+            background-color: #282828;
+            color: #e0e0e0;
+            border: 1px solid #444;
+            outline: none;
+            width: 300px;
+        }
+        /* Video styling */
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensure video covers the container */
+            border-radius: 12px;
+        }
+
+        /* Subtitles section styling */
+        #subtitles {
+            background-color: #401f82;
+            color: #b3a7ff;
+            font-size: 16px;
+            padding: 12px;
+            text-align: center;
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            box-sizing: border-box;
+        }
+
+        /* Status message styling */
+        #status {
+            font-size: 14px;
+            color: #ff6666;
+            margin-top: 10px;
+        }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+        <div id="subtitles">Your transcription will appear here...</div>
+        <br>
+        <div id="videoContainer">
+            <video id="video" autoplay muted></video>
+        </div>
+        <br>
+        <div id="selectContainer">
+            <select id="audioSource"></select>
+            <select id="videoSource"></select>
+        </div>
         <p id="status"></p>
-        <select id="audioSource"></select>
-        <select id="videoSource"></select>
-      </div>
+        </div>
 
-      <!-- Right column: Transcription history -->
-      <div id="transcriptionColumn">
-        <video id="video" autoplay muted></video>
-      </div>
-    </div>
+        <script>
+        const video = document.getElementById('video');
+        const audioSelect = document.getElementById('audioSource');
+        const videoSelect = document.getElementById('videoSource');
+        const subtitles = document.getElementById('subtitles');
+        const status = document.getElementById('status');
 
-    <script>
-      const video = document.getElementById('video');
-      const audioSelect = document.getElementById('audioSource');
-      const videoSelect = document.getElementById('videoSource');
-      const transcriptionDiv = document.getElementById('transcription');
-      const subtitles = document.getElementById('subtitles');
-      const status = document.getElementById('status');
+        if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+            status.textContent = 'Web Speech API is not supported in this browser. Try using Chrome.';
+        }
 
-      if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
-        status.textContent = 'Web Speech API is not supported in this browser. Try using Chrome.';
-      }
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'en-US';
+        recognition.continuous = true;
+        recognition.interimResults = true;
 
-      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-      recognition.lang = 'en-US';
-      recognition.continuous = true;
-      recognition.interimResults = true;
+        navigator.mediaDevices.enumerateDevices()
+            .then(deviceInfos => {
+            deviceInfos.forEach(deviceInfo => {
+                const option = document.createElement('option');
+                option.value = deviceInfo.deviceId;
+                if (deviceInfo.kind === 'audioinput') {
+                option.text = deviceInfo.label || `Microphone ${audioSelect.length + 1}`;
+                audioSelect.appendChild(option);
+                } else if (deviceInfo.kind === 'videoinput') {
+                option.text = deviceInfo.label || `Camera ${videoSelect.length + 1}`;
+                videoSelect.appendChild(option);
+                }
+            });
+            })
+            .catch(error => {
+            console.error('Error listing devices:', error);
+            status.textContent = 'Error accessing devices.';
+            });
 
-      navigator.mediaDevices.enumerateDevices()
-        .then(deviceInfos => {
-          deviceInfos.forEach(deviceInfo => {
-            const option = document.createElement('option');
-            option.value = deviceInfo.deviceId;
-            if (deviceInfo.kind === 'audioinput') {
-              option.text = deviceInfo.label || `Microphone ${audioSelect.length + 1}`;
-              audioSelect.appendChild(option);
-            } else if (deviceInfo.kind === 'videoinput') {
-              option.text = deviceInfo.label || `Camera ${videoSelect.length + 1}`;
-              videoSelect.appendChild(option);
+        function getStream() {
+            if (window.stream) {
+            window.stream.getTracks().forEach(track => track.stop());
             }
-          });
-        })
-        .catch(error => {
-          console.error('Error listing devices:', error);
-          status.textContent = 'Error accessing devices.';
-        });
-
-      function getStream() {
-        if (window.stream) {
-          window.stream.getTracks().forEach(track => track.stop());
+            const audioSource = audioSelect.value;
+            const videoSource = videoSelect.value;
+            const constraints = {
+            audio: { deviceId: audioSource ? { exact: audioSource } : undefined },
+            video: { deviceId: videoSource ? { exact: videoSource } : undefined }
+            };
+            navigator.mediaDevices.getUserMedia(constraints)
+            .then(stream => {
+                window.stream = stream;
+                video.srcObject = stream;
+            })
+            .catch(error => {
+                console.error('Error accessing media devices:', error);
+                status.textContent = 'Error accessing media devices. Please allow camera and microphone access.';
+            });
         }
-        const audioSource = audioSelect.value;
-        const videoSource = videoSelect.value;
-        const constraints = {
-          audio: { deviceId: audioSource ? { exact: audioSource } : undefined },
-          video: { deviceId: videoSource ? { exact: videoSource } : undefined }
+
+        audioSelect.onchange = getStream;
+        videoSelect.onchange = getStream;
+
+        getStream();
+
+        recognition.onresult = event => {
+            let transcriptText = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+            transcriptText += event.results[i][0].transcript + ' ';
+            }
+            subtitles.textContent = transcriptText;
         };
-        navigator.mediaDevices.getUserMedia(constraints)
-          .then(stream => {
-            window.stream = stream;
-            video.srcObject = stream;
-          })
-          .catch(error => {
-            console.error('Error accessing media devices:', error);
-            status.textContent = 'Error accessing media devices. Please allow camera and microphone access.';
-          });
-      }
 
-      audioSelect.onchange = getStream;
-      videoSelect.onchange = getStream;
+        recognition.onerror = event => {
+            console.error('Speech Recognition error:', event.error);
+            status.textContent = 'Speech recognition error: ' + event.error;
+        };
 
-      getStream();
+        recognition.start();
+        </script>
+    </body>
+    </html>
 
-      recognition.onresult = event => {
-        let transcriptText = '';
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          transcriptText += event.results[i][0].transcript + ' ';
-        }
-        transcriptionDiv.textContent = transcriptText;
-        subtitles.textContent = event.results[event.resultIndex][0].transcript;
-      };
+    """
 
-      recognition.onerror = event => {
-        console.error('Speech Recognition error:', event.error);
-        status.textContent = 'Speech recognition error: ' + event.error;
-      };
+    components.html(html_code, height=600)
 
-      recognition.start();
-    </script>
-  </body>
-</html>
-"""
-
-# Render the HTML, JavaScript, and CSS using Streamlit components
-components.html(html_code, height=600)
+Mock_Interview()
