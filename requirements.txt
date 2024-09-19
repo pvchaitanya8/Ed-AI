@@ -19,3 +19,4 @@ vosk
 sounddevice
 numpy
 opencv-python-headless
+mediapipe
