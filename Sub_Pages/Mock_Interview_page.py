@@ -250,5 +250,3 @@ def Mock_Interview():
     """
 
     components.html(html_code, height=600)
-
-Mock_Interview()
