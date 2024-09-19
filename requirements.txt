@@ -20,3 +20,6 @@ sounddevice
 numpy
 opencv-python-headless
 mediapipe
+python-dotenv
+google-auth-oauthlib 
+google-auth-transport-requests
