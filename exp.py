@@ -1,77 +1,128 @@
+import os
 import streamlit as st
+from dotenv import load_dotenv
+from google_auth_oauthlib.flow import Flow
+import google.auth.transport.requests
+from Pages.Learn_page import Learn_page
+from UI_Components.Ed_AI_tittle import Ed_AI_tittle
 
-# Custom CSS for animation
-css = """
-<style>
-@keyframes fadeIn {
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
+load_dotenv()
+client_secrets_file = 'Login_Secret.json'
 
-@keyframes gradientFlow {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
-}
+def login():
+    flow = Flow.from_client_secrets_file(
+        client_secrets_file,
+        scopes=["openid", "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"],
+        redirect_uri="http://localhost:8501"
+    )
 
-@keyframes rotate3D {
-  0% { transform: rotateX(0) rotateY(0); }
-  100% { transform: rotateX(360deg) rotateY(360deg); }
-}
+    # Dark mode styling
+    st.markdown("""
+        <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        .stButton button {
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #141414;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .stButton button:hover {
+            background-color: #050505;
+            transform: scale(1.05);
+        }
+        .stTextInput input {
+            background-color: #141414;
+            color: #e0e0e0;
+            border: 1px solid #555;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        .stTextInput input:focus {
+            border-color: #777;
+        }
+        .stMarkdown {
+            text-align: center;
+        }
+        .login-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
 
-.fancy-text {
-  font-size: 72px;
-  font-weight: bold;
-  color: transparent;
-  background: linear-gradient(90deg, #FFF5EE, #F3CFC6, #f9bec7, #ffafcc, #f72585, #b5179e, #7209b7, #560bad, #480ca8, #3a0ca3, #3f37c9, #4361ee, #4895ef, #4cc9f0, #caf0f8, #FFF5EE, #FFF5EE, #caf0f8, #4cc9f0, #4895ef, #4361ee, #3f37c9, #3a0ca3, #480ca8, #560bad, #7209b7, #b5179e, #f72585, #ffafcc, #f9bec7, #F3CFC6, #FFF5EE);
-  background-clip: text;
-  -webkit-background-clip: text;
-  animation: fadeIn 2s ease-out, gradientFlow 5s linear infinite;
-  background-size: 400% 400%;
-  text-shadow: none; /* Remove text shadow for flat appearance */
-  position: relative;
-  z-index: 1;
-}
+        </style>
+    """, unsafe_allow_html=True)
 
-.ring-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 300px;
-  height: 300px;
-  transform-style: preserve-3d;
-  animation: rotate3D 10s linear infinite;
-  z-index: 0;
-  margin-left: -150px; /* Center the container horizontally */
-  margin-top: -150px; /* Center the container vertically */
-}
+    if 'login_status' not in st.session_state:
+      st.session_state['login_status'] = False
 
-.ring {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  border-radius: 50%;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
-  transform-origin: center;
-}
+    if not st.session_state['login_status']:
+        col1, col2 = st.columns([3, 2])
+        with col1:
+          Ed_AI_tittle()
+        with col2:
+            auth_url, _ = flow.authorization_url()
 
-.ring:nth-child(1) { transform: rotateX(0deg) translateZ(150px); }
-.ring:nth-child(2) { transform: rotateX(120deg) translateZ(150px); }
-.ring:nth-child(3) { transform: rotateX(240deg) translateZ(150px); }
-</style>
-"""
+            st.markdown("<div class='login-container'>", unsafe_allow_html=True)
 
-# Inject CSS
-st.markdown(css, unsafe_allow_html=True)
+            username = st.text_input("Username")
+            password = st.text_input("Password", type="password")
 
-# Display the text with a 3D rotating ring
-st.markdown("""
-<div style="position: relative; width: 100%; height: 100vh; display: flex; align-items: center; justify-content: center;">
-    <div class="ring-container">
-        <div class="ring"></div>
-        <div class="ring"></div>
-        <div class="ring"></div>
-    </div>
-    <div class="fancy-text">✨ Ed AI</div>
-</div>
-""", unsafe_allow_html=True)
+            if st.button("Login", use_container_width=True):
+                if username == "1" and password == "1":
+                    st.success("Login successful!")
+                    st.session_state['login_status'] = True
+                    st.rerun()
+                else:
+                    st.error("Incorrect username or password.")
+
+            st.markdown("</div>", unsafe_allow_html=True)
+            st.markdown(f'''
+                <div class="button-container">
+                    <a href="{auth_url}" style="
+                        display: inline-block;
+                        background-color: red;
+                        color: white;
+                        border: none;
+                        padding: 10px 20px;
+                        text-align: center;
+                        text-decoration: none;
+                        font-size: 16px;
+                        cursor: pointer;
+                        border-radius: 50px;
+                        width: 100%; /* Adjust to full width of the column */
+                        max-width: 100%; /* Ensure it doesn't overflow */
+                        box-sizing: border-box; /* Include padding in width calculation */
+                    ">Continue with Google</a>
+                    <br><br>
+                </div>
+            ''', unsafe_allow_html=True)
+
+            
+            query_params = st.query_params
+            if 'code' in query_params:
+                code = query_params['code']
+                try:
+                    flow.fetch_token(code=code)
+                    credentials = flow.credentials
+                    request = google.auth.transport.requests.Request()
+                    id_info = credentials.id_token
+
+                    if id_info:
+                        st.session_state['login_status'] = True
+                        st.rerun()
+                except Exception as e:
+                    st.error(f"Error during login: {e}")
+                    st.write("Ensure that the redirect URI matches the one configured in Google Cloud Console and that the authorization code is valid.")
+
+            if st.button("Don't Have Account, Create New Account?", key='create_account', use_container_width=True, help='Click to create a new account'):
+                st.write("Dummy function executed!")
+    else:
+        Learn_page()
+
+login()

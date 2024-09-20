@@ -1,9 +1,10 @@
-import streamlit as st
 import os
+import streamlit as st
 from dotenv import load_dotenv
 from google_auth_oauthlib.flow import Flow
 import google.auth.transport.requests
 from Pages.Learn_page import Learn_page
+from UI_Components.Ed_AI_tittle import Ed_AI_tittle
 
 load_dotenv()
 client_secrets_file = 'Login_Secret.json'
@@ -58,63 +59,68 @@ def login():
     """, unsafe_allow_html=True)
 
     if 'login_status' not in st.session_state:
-        st.session_state['login_status'] = False
-        Login_Status = False
+      st.session_state['login_status'] = False
 
     if not st.session_state['login_status']:
-        auth_url, _ = flow.authorization_url()
+        col1, col2 = st.columns([3, 2])
+        with col1:
+          Ed_AI_tittle()
+        with col2:
+            auth_url, _ = flow.authorization_url()
 
-        st.markdown("<div class='login-container'>", unsafe_allow_html=True)
+            st.markdown("<div class='login-container'>", unsafe_allow_html=True)
 
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
+            username = st.text_input("Username")
+            password = st.text_input("Password", type="password")
 
-        if st.button("Login", use_container_width=True):
-            if username == "1" and password == "1":
-                st.success("Login successful!")
-                st.session_state['login_status'] = True
-                st.rerun()
-            else:
-                st.error("Incorrect username or password.")
-
-        st.markdown("</div>", unsafe_allow_html=True)
-
-        st.markdown(f'''
-            <div class="button-container">
-                <a href="{auth_url}" style="
-                    display: inline-block;
-                    background-color: red;
-                    color: white;
-                    border: none;
-                    padding: 10px 20px;
-                    text-align: center;
-                    text-decoration: none;
-                    font-size: 16px;
-                    cursor: pointer;
-                    border-radius: 50px;
-                    width: 700px;
-                ">Login with Google</a>
-                <br><br>
-            </div>
-        ''', unsafe_allow_html=True)
-        
-        query_params = st.query_params
-        if 'code' in query_params:
-            code = query_params['code']
-            try:
-                flow.fetch_token(code=code)
-                credentials = flow.credentials
-                request = google.auth.transport.requests.Request()
-                id_info = credentials.id_token
-
-                if id_info:
+            if st.button("Login", use_container_width=True):
+                if username == "1" and password == "1":
+                    st.success("Login successful!")
                     st.session_state['login_status'] = True
                     st.rerun()
-            except Exception as e:
-                st.error(f"Error during login: {e}")
-                st.write("Ensure that the redirect URI matches the one configured in Google Cloud Console and that the authorization code is valid.")
+                else:
+                    st.error("Incorrect username or password.")
 
-        if st.button("Don't Have Account, Create New Account?", key='create_account', use_container_width=True, help='Click to create a new account'):
-            st.write("Dummy function executed!")
+            st.markdown("</div>", unsafe_allow_html=True)
+            st.markdown(f'''
+                <div class="button-container">
+                    <a href="{auth_url}" style="
+                        display: inline-block;
+                        background-color: red;
+                        color: white;
+                        border: none;
+                        padding: 10px 20px;
+                        text-align: center;
+                        text-decoration: none;
+                        font-size: 16px;
+                        cursor: pointer;
+                        border-radius: 50px;
+                        width: 100%; /* Adjust to full width of the column */
+                        max-width: 100%; /* Ensure it doesn't overflow */
+                        box-sizing: border-box; /* Include padding in width calculation */
+                    ">Continue with Google</a>
+                    <br><br>
+                </div>
+            ''', unsafe_allow_html=True)
+
+            
+            query_params = st.query_params
+            if 'code' in query_params:
+                code = query_params['code']
+                try:
+                    flow.fetch_token(code=code)
+                    credentials = flow.credentials
+                    request = google.auth.transport.requests.Request()
+                    id_info = credentials.id_token
+
+                    if id_info:
+                        st.session_state['login_status'] = True
+                        st.rerun()
+                except Exception as e:
+                    st.error(f"Error during login: {e}")
+                    st.write("Ensure that the redirect URI matches the one configured in Google Cloud Console and that the authorization code is valid.")
+
+            if st.button("Don't Have Account, Create New Account?", key='create_account', use_container_width=True, help='Click to create a new account'):
+                st.write("Dummy function executed!")
     else:
         Learn_page()
