@@ -7,6 +7,7 @@ from Pages.Practice_Coding_page import Practice_Coding_page
 from Pages.Mock_Interview import Mock_Interview
 from Pages.Mock_Assessment import Mock_Assessment
 from Pages.Chat import chat
+from UI_Components.Ed_AI_tittle import Ed_AI_logo
 import base64
 
 def load_image_as_base64(image_path):
@@ -23,23 +24,24 @@ def navbar():
     col1, col2, col3, col4 = st.columns([0.7, 7, 3, 0.6])
 
     with col1:
-        st.markdown("""
-            <style>
-            .container {
-                display: flex;
-                justify-content: center;  # Center the content horizontally
-                align-items: center;  # Center the content vertically
-            }
-            a img {
-                max-width: 100%;  # Ensure image does not overflow its container
-                height: auto;  # Maintain aspect ratio
-                display: block;  # Remove any extra space below the image
-                transform: translateY(-40px);  # Move image upwards by 10px
-            }
-            </style>
-            """, unsafe_allow_html=True)
+        Ed_AI_logo()
+        # st.markdown("""
+        #     <style>
+        #     .container {
+        #         display: flex;
+        #         justify-content: center;  # Center the content horizontally
+        #         align-items: center;  # Center the content vertically
+        #     }
+        #     a img {
+        #         max-width: 100%;  # Ensure image does not overflow its container
+        #         height: auto;  # Maintain aspect ratio
+        #         display: block;  # Remove any extra space below the image
+        #         transform: translateY(-40px);  # Move image upwards by 10px
+        #     }
+        #     </style>
+        #     """, unsafe_allow_html=True)
 
-        st.markdown(f'<a href="{link_url}" target="_blank"><img src="{encoded_image}" style="max-width: 90%; height: auto; display: block; transform: translateY(-10px);" width="100"></a>', unsafe_allow_html=True)
+        # st.markdown(f'<a href="{link_url}" target="_blank"><img src="{encoded_image}" style="max-width: 90%; height: auto; display: block; transform: translateY(-10px);" width="100"></a>', unsafe_allow_html=True)
 
     with col2:
         selected = option_menu(

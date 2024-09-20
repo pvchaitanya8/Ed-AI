@@ -1,7 +1,6 @@
 import streamlit as st
 from UI_Components.Chat_Course import chat
 def course_page():
-    # Sidebar for Chat
     st.sidebar.markdown(
         """
         <style>
@@ -47,10 +46,8 @@ def course_page():
 
 
     with st.sidebar:
-        chat()  # Display the chat function in the sidebar
+        chat()
 
-    # Title and Subheading on Main Page
-    # Custom CSS to center the title
     st.markdown(
         """
         <style>
@@ -62,7 +59,6 @@ def course_page():
         unsafe_allow_html=True
     )
 
-    # Apply the CSS class to the title
     st.markdown('<h1 class="centered-title">Heading</h1>', unsafe_allow_html=True)
 
     st.markdown(
@@ -81,8 +77,7 @@ def course_page():
         unsafe_allow_html=True
     )
 
-    # Load and Display Markdown Content on Main Page
-    markdown_file = r"EXP\Material.md"  # Use raw string to avoid path issues
+    markdown_file = r"EXP\Material.md"
 
     try:
         with open(markdown_file, "r") as file:
@@ -107,6 +102,5 @@ def course_page():
         unsafe_allow_html=True
     )
 
-    # Next Button at the bottom of the page
     if st.button('Next'):
         st.write("You clicked Next!")

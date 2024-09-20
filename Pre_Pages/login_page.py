@@ -16,7 +16,6 @@ def login():
         redirect_uri="http://localhost:8501"
     )
 
-    # Dark mode styling
     st.markdown("""
         <style>
         body {

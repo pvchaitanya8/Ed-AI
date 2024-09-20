@@ -4,7 +4,6 @@ import io
 import contextlib
 
 def Coding_Problems_page(markdown_file):
-    # Header Section
     st.markdown(
         """
         <style>
@@ -23,14 +22,11 @@ def Coding_Problems_page(markdown_file):
         unsafe_allow_html=True,
     )
 
-    # Define columns for question and code editor
     col_question1, col_question2 = st.columns([5, 5])
 
     with col_question1:
-        # Add theme selection
         theme_choice = st.selectbox("Reading Theme", ["Dark", "Light"], help="Adjust the reading mode according to your comfort.")
 
-        # Define CSS for both themes
         if theme_choice == "Light":
             container_css = """
             <style>
@@ -80,13 +76,10 @@ def Coding_Problems_page(markdown_file):
             </style>
             """
 
-        # Apply the selected theme
         st.markdown(container_css, unsafe_allow_html=True)
 
-        # Divider
         st.markdown('<div class="gradient-divider"></div>', unsafe_allow_html=True)
 
-        # Load and Display Markdown Content in Scrollable Container
         try:
             with open(markdown_file, "r") as file:
                 markdown_content = file.read()
@@ -123,7 +116,6 @@ def Coding_Problems_page(markdown_file):
             "python"
         ]
 
-        # Editor customization options
         col_editor1, col_editor2, col_editor3 = st.columns([3, 2, 5])
         with col_editor1:
             user_theme = st.selectbox("Compiler Theme", themes_options)
@@ -140,7 +132,6 @@ def Coding_Problems_page(markdown_file):
                 key="font_size_slider"
             )
 
-        # Code editor
         code = st_ace(
             placeholder="Write your Python code here...",
             language=user_language,
@@ -150,7 +141,6 @@ def Coding_Problems_page(markdown_file):
             show_gutter=True, 
             keybinding="vscode", )
 
-    # Function to execute Python code
     def execute_code(code):
         output_buffer = io.StringIO()
         error_buffer = io.StringIO()
@@ -172,7 +162,6 @@ def Coding_Problems_page(markdown_file):
         except Exception as e:
             return f"An error occurred: {e}"
 
-    # Run code button
     if st.button("Run Code"):
         if code:
             st.subheader("Output:")
