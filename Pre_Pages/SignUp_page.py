@@ -1,10 +1,8 @@
-import os
 import streamlit as st
 from dotenv import load_dotenv
 from google_auth_oauthlib.flow import Flow
 import google.auth.transport.requests
 from UI_Components.Ed_AI_tittle import Ed_AI_tittle
-from Pre_Pages.logIn_page import login 
 
 load_dotenv()
 client_secrets_file = 'Login_Secret.json'
@@ -16,7 +14,6 @@ def SignUp():
         redirect_uri="http://localhost:8501"
     )
 
-    # Dark mode styling
     st.markdown("""
         <style>
         body {

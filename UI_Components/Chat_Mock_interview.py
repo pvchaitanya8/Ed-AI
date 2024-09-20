@@ -23,7 +23,6 @@ def chat():
     for message in st.session_state.messages:
         st.markdown(f'<div class="user-message">{message["content"]}</div>', unsafe_allow_html=True)
 
-    # Disable the chat input field
     prompt = st.chat_input("Please Text here...", disabled=False)
     if prompt:
         st.session_state.messages.append({"role": "user", "content": prompt})

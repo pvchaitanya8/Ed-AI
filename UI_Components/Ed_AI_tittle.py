@@ -1,7 +1,6 @@
 import streamlit as st
 
 def Ed_AI_tittle():
-  # Custom CSS for animation
   css = """
   <style>
   @keyframes fadeIn {
@@ -62,10 +61,8 @@ def Ed_AI_tittle():
   </style>
   """
 
-  # Inject CSS
   st.markdown(css, unsafe_allow_html=True)
 
-  # Display the text with a 3D rotating ring
   st.markdown("""
   <div style="position: relative; width: 100%; height: 60vh; display: flex; align-items: center; justify-content: center;">
       <div class="ring-container">

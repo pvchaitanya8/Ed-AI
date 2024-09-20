@@ -3,7 +3,6 @@ import streamlit.components.v1 as components
 from UI_Components.Chat_Mock_interview import chat
 
 def Mock_Interview():
-    # Sidebar for Chat
     st.markdown(
         """
         <style>
@@ -49,9 +48,8 @@ def Mock_Interview():
 
 
     with st.sidebar:
-        chat()  # Display the chat function in the sidebar
+        chat()
 
-    # HTML, CSS, and JavaScript code for live video, audio input, device selection, and live subtitles
     html_code = """
     <!DOCTYPE html>
     <html lang="en">
@@ -246,7 +244,6 @@ def Mock_Interview():
         </script>
     </body>
     </html>
-
     """
 
     components.html(html_code, height=600)

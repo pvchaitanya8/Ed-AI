@@ -1,6 +1,6 @@
-import streamlit as st
-import random
 import time
+import random
+import streamlit as st
 
 def generate_response_socratic():
     """Generate a random response with a slight delay to simulate typing."""
