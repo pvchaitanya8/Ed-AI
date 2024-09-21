@@ -64,21 +64,52 @@ def navbar():
             unsafe_allow_html=True
         )
 
-
     with col4:
+        User_Display_Name = "Chaitanya"
         profile_pic_base64 = get_base64_image(profile_pic_url)
+
         st.markdown(
             f"""
             <style>
-            .circle-img {{
-                display: block;
+            .container {{
+                position: relative;
+                width: 50px; 
                 margin-left: auto;
                 margin-right: auto;
+                transition: opacity 0.3s ease-in-out;
+            }}
+
+            .circle-img {{
+                display: block;
                 border-radius: 50%;
-                width: 50px;  /* Adjust the width as needed */
+                width: 100%;
+            }}
+
+            .hover-text {{
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, 90%);
+                color: #9e9fa3;
+                font-size: 18px;
+                text-align: center;
+                opacity: 0;
+                transition: opacity 0.3s ease-in-out;
+            }}
+
+            .container:hover {{
+                opacity: 0.8; 
+            }}
+
+            .container:hover .hover-text {{
+                opacity: 1;
             }}
             </style>
-            <img src="data:image/png;base64,{profile_pic_base64}" class="circle-img">
+
+            <div class="container">
+                <img src="data:image/png;base64,{profile_pic_base64}" class="circle-img">
+                <div class="hover-text">{User_Display_Name}</div>
+            </div>
             """,
             unsafe_allow_html=True
         )
@@ -142,7 +173,6 @@ def navbar():
             Mock_Interview()
         elif selected_round == "🧑‍💻 HR Interview Round":
             Mock_Interview()
-        
 
     elif selected == "Chat":
         chat()
