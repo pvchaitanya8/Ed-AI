@@ -1,14 +1,13 @@
+import base64
 import streamlit as st
-from streamlit_option_menu import option_menu
-from UI_Components.profile_pic import get_base64_image
+from Pages.Chat import chat
 from Pages.Learn_page import Learn_page
-from Pages.Practice_MCQ_page import Practice_MCQ_page
-from Pages.Practice_Coding_page import Practice_Coding_page
+from streamlit_option_menu import option_menu
 from Pages.Mock_Interview import Mock_Interview
 from Pages.Mock_Assessment import Mock_Assessment
-from Pages.Chat import chat
-from UI_Components.Ed_AI_tittle import Ed_AI_logo
-import base64
+from Pages.Practice_MCQ_page import Practice_MCQ_page
+from UI_Components.profile_pic import get_base64_image
+from Pages.Practice_Coding_page import Practice_Coding_page
 
 def load_image_as_base64(image_path):
     with open(image_path, "rb") as img_file:
@@ -24,24 +23,23 @@ def navbar():
     col1, col2, col3, col4 = st.columns([0.7, 7, 3, 0.6])
 
     with col1:
-        Ed_AI_logo()
-        # st.markdown("""
-        #     <style>
-        #     .container {
-        #         display: flex;
-        #         justify-content: center;  # Center the content horizontally
-        #         align-items: center;  # Center the content vertically
-        #     }
-        #     a img {
-        #         max-width: 100%;  # Ensure image does not overflow its container
-        #         height: auto;  # Maintain aspect ratio
-        #         display: block;  # Remove any extra space below the image
-        #         transform: translateY(-40px);  # Move image upwards by 10px
-        #     }
-        #     </style>
-        #     """, unsafe_allow_html=True)
+        st.markdown("""
+            <style>
+            .container {
+                display: flex;
+                justify-content: center;  # Center the content horizontally
+                align-items: center;  # Center the content vertically
+            }
+            a img {
+                max-width: 100%;  # Ensure image does not overflow its container
+                height: auto;  # Maintain aspect ratio
+                display: block;  # Remove any extra space below the image
+                transform: translateY(-40px);  # Move image upwards by 10px
+            }
+            </style>
+            """, unsafe_allow_html=True)
 
-        # st.markdown(f'<a href="{link_url}" target="_blank"><img src="{encoded_image}" style="max-width: 90%; height: auto; display: block; transform: translateY(-10px);" width="100"></a>', unsafe_allow_html=True)
+        st.markdown(f'<a href="{link_url}" target="_blank"><img src="{encoded_image}" style="max-width: 90%; height: auto; display: block; transform: translateY(-10px);" width="100"></a>', unsafe_allow_html=True)
 
     with col2:
         selected = option_menu(
@@ -54,12 +52,18 @@ def navbar():
         )
         
     with col3:
-        search_query = st.text_input("", placeholder="🔎 Search...")
-        st.markdown("""<style>
-            div[data-testid="stTextInput"] label {
-                display: none;
-            }""", unsafe_allow_html=True
+        search_query = st.text_input("Search", placeholder="🔎 Search...", label_visibility="collapsed")
+        st.markdown(
+            """
+            <style>
+                div[data-testid="stTextInput"] label {
+                    display: none;
+                }
+            </style>
+            """,
+            unsafe_allow_html=True
         )
+
 
     with col4:
         profile_pic_base64 = get_base64_image(profile_pic_url)
@@ -107,12 +111,14 @@ def navbar():
 
     elif selected == "Practice":
         selected_round = st.selectbox(
-            "",
+            "Select practice type",
             [
                 "📄 MCQs Practice",
                 "🧑‍💻 Coding Practice",
-            ]
+            ],
+            label_visibility="collapsed"
         )
+
         if selected_round == "📄 MCQs Practice":
             Practice_MCQ_page()
         elif selected_round == "🧑‍💻 Coding Practice":
