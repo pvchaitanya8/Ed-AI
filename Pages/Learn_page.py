@@ -1,7 +1,9 @@
 import os
+import streamlit as st
 import base64
 import mimetypes
-import streamlit as st
+from urllib.parse import urlencode
+from Sub_Pages.Mock_Interview_page import Mock_Interview
 
 def load_image_as_base64(image_path):
     with open(image_path, "rb") as img_file:
@@ -11,18 +13,28 @@ def get_mime_type(filename):
     mime_type, _ = mimetypes.guess_type(filename)
     return mime_type or 'application/octet-stream'
 
+def show_details(selected_image):
+    st.write(f"You clicked on {selected_image}")
+    return
+
 def Learn_page():
     directory_Featured = r"Static_Files\Learn_Page\Featured"
     directory_All_Courses = r"Static_Files\Learn_Page\All_Courses"
 
+    query_params = st.query_params
+    if "selected_image" in query_params:
+        selected_image = query_params["selected_image"][0]
+        show_details(selected_image)
+        return  
+
     if os.path.exists(directory_Featured):
         image_width = 550
         image_height = 350
-        margin_right = 3  
+        margin_right = 3
 
         image_tags = ""
         filenames = sorted(os.listdir(directory_Featured))
-        N = 0  
+        N = 0
         for i, filename in enumerate(filenames):
             file_path = os.path.join(directory_Featured, filename)
             if os.path.isfile(file_path):
@@ -30,7 +42,9 @@ def Learn_page():
                 encoded_image = load_image_as_base64(file_path)
                 mime_type = get_mime_type(filename)
                 margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
-                image_tags += f'<img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="{margin_style}">'
+                
+                image_url = f"?{urlencode({'selected_image': filename})}"
+                image_tags += f'<a href="{image_url}"><img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="{margin_style} cursor: pointer;"></a>'
 
         total_width = N * image_width + (N - 1) * margin_right
 
@@ -57,7 +71,7 @@ def Learn_page():
             object-fit: cover;
             border-radius: 3px;
             flex-shrink: 0; /* Prevent images from shrinking */
-            transition: transform 0.4s ease, border-radius 1s ease;
+            transition: transform 0.3s ease;
         }}
 
         .scroll-container:hover .scroll-content {{
@@ -66,7 +80,7 @@ def Learn_page():
 
         .scroll-content img:hover {{
             transform: scale(0.9); /* Magnify the image on hover */
-            border-radius: 11px;
+            z-index: 10; /* Bring the hovered image to the front */
         }}
 
         @keyframes scroll {{
@@ -90,12 +104,12 @@ def Learn_page():
     else:
         st.error(f"Directory not found: {directory_Featured}")
 
-    st.title("Recommendation")
+    st.title("Recommendations")
 
     if os.path.exists(directory_All_Courses):
         image_width = 480 
         image_height = 230
-        margin_right = 10  
+        margin_right = 10
 
         image_tags = ""
         filenames = sorted(os.listdir(directory_All_Courses))
@@ -105,7 +119,9 @@ def Learn_page():
                 encoded_image = load_image_as_base64(file_path)
                 mime_type = get_mime_type(filename)
                 margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
-                image_tags += f'<img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;">'
+                
+                image_url = f"?{urlencode({'selected_image': filename})}"
+                image_tags += f'<a href="{image_url}"><img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;"></a>'
 
         st.markdown(f"""
         <style>
@@ -125,12 +141,6 @@ def Learn_page():
             border-radius: 30px;
             margin-right: {margin_right}px;
             vertical-align: middle;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 1s ease; /* Smooth transition for hover effects */
-        }}
-
-        .scroll-content-static img:hover {{
-            transform: scale(0.95); /* Slightly increase the size on hover */
-            box-shadow: 0px 4px 15px rgba(227, 194, 250, 0.8); /* Add shadow on hover */
         }}
 
         /* Dark themed scrollbar with rounded corners */
@@ -163,9 +173,7 @@ def Learn_page():
 
         st.markdown(f"""
         <div class="scroll-container-static">
-            <div class="scroll-content-static">
-                {image_tags}
-            </div>
+            {image_tags}
         </div>
         """, unsafe_allow_html=True)
     else:
@@ -176,8 +184,7 @@ def Learn_page():
     if os.path.exists(directory_All_Courses):
         image_width = 480 
         image_height = 230
-        margin_right = 10  
-
+        margin_right = 10 
 
         image_tags = ""
         filenames = sorted(os.listdir(directory_All_Courses))
@@ -187,7 +194,9 @@ def Learn_page():
                 encoded_image = load_image_as_base64(file_path)
                 mime_type = get_mime_type(filename)
                 margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
-                image_tags += f'<img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;">'
+                
+                image_url = f"?{urlencode({'selected_image': filename})}"
+                image_tags += f'<a href="{image_url}"><img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;"></a>'
 
         st.markdown(f"""
         <style>
@@ -207,12 +216,6 @@ def Learn_page():
             border-radius: 30px;
             margin-right: {margin_right}px;
             vertical-align: middle;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 1s ease; /* Smooth transition for hover effects */
-        }}
-
-        .scroll-content-static img:hover {{
-            transform: scale(0.95); /* Slightly increase the size on hover */
-            box-shadow: 0px 4px 15px rgba(227, 194, 250, 0.8); /* Add shadow on hover */
         }}
 
         /* Dark themed scrollbar with rounded corners */
@@ -245,9 +248,7 @@ def Learn_page():
 
         st.markdown(f"""
         <div class="scroll-container-static">
-            <div class="scroll-content-static">
-                {image_tags}
-            </div>
+            {image_tags}
         </div>
         """, unsafe_allow_html=True)
     else:

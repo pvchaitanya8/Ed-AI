@@ -4,64 +4,52 @@ import base64
 import mimetypes
 from urllib.parse import urlencode
 
-# Helper function to load and encode images in base64
 def load_image_as_base64(image_path):
     with open(image_path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode('utf-8')
 
-# Helper function to get the MIME type based on the file extension
 def get_mime_type(filename):
     mime_type, _ = mimetypes.guess_type(filename)
     return mime_type or 'application/octet-stream'
 
-# Helper function which will show the details after images are clicked.
 def show_details(selected_image):
     st.write(f"You clicked on {selected_image}")
     st.write("This is a fresh empty page for now.")
-    return  # Exit the function early to render this new page
+    return
 
 def Learn_page():
-    # Define the directory_Featured containing the images
     directory_Featured = r"Static_Files\Learn_Page\Featured"
     directory_All_Courses = r"Static_Files\Learn_Page\All_Courses"
 
-    # Check if there's a query parameter for the clicked image
     query_params = st.query_params
     if "selected_image" in query_params:
         selected_image = query_params["selected_image"][0]
         show_details(selected_image)
-        return  # Exit the function early to render this new page
+        return  
 
     if os.path.exists(directory_Featured):
-        # Image dimensions and margin
         image_width = 550
         image_height = 350
-        margin_right = 3  # Gap between images
+        margin_right = 3
 
-        # Prepare image tags and calculate total width
         image_tags = ""
         filenames = sorted(os.listdir(directory_Featured))
-        N = 0  # Number of images
+        N = 0
         for i, filename in enumerate(filenames):
             file_path = os.path.join(directory_Featured, filename)
             if os.path.isfile(file_path):
                 N += 1
                 encoded_image = load_image_as_base64(file_path)
                 mime_type = get_mime_type(filename)
-                # Remove margin-right for the last image in the sequence
                 margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
                 
-                # Use query parameters to simulate clicking on the image
                 image_url = f"?{urlencode({'selected_image': filename})}"
                 image_tags += f'<a href="{image_url}"><img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="{margin_style} cursor: pointer;"></a>'
 
-        # Calculate total width of one set of images (including margins)
         total_width = N * image_width + (N - 1) * margin_right
 
-        # Duplicate images for seamless scrolling
         full_image_tags = image_tags + image_tags
 
-        # Insert CSS with dynamic total_width
         st.markdown(f"""
         <style>
         .scroll-container {{
@@ -106,7 +94,6 @@ def Learn_page():
         </style>
         """, unsafe_allow_html=True)
 
-        # Create the scrolling container
         st.markdown(f"""
         <div class="scroll-container">
             <div class="scroll-content">
@@ -117,17 +104,13 @@ def Learn_page():
     else:
         st.error(f"Directory not found: {directory_Featured}")
 
-    # "Recommendations" Section
     st.title("Recommendations")
 
-    # Image gallery for all courses (Static image gallery)
     if os.path.exists(directory_All_Courses):
-        # Image dimensions and margin
         image_width = 480 
         image_height = 230
-        margin_right = 10  # Gap between images
+        margin_right = 10
 
-        # Prepare image tags
         image_tags = ""
         filenames = sorted(os.listdir(directory_All_Courses))
         for i, filename in enumerate(filenames):
@@ -135,14 +118,11 @@ def Learn_page():
             if os.path.isfile(file_path):
                 encoded_image = load_image_as_base64(file_path)
                 mime_type = get_mime_type(filename)
-                # Remove margin-right for the last image in the sequence
                 margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
                 
-                # Make each image clickable
                 image_url = f"?{urlencode({'selected_image': filename})}"
                 image_tags += f'<a href="{image_url}"><img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;"></a>'
 
-        # Insert CSS for the scrollable container with a dark-themed scrollbar
         st.markdown(f"""
         <style>
         .scroll-container-static {{
@@ -191,7 +171,6 @@ def Learn_page():
         </style>
         """, unsafe_allow_html=True)
 
-        # Create the scrollable container
         st.markdown(f"""
         <div class="scroll-container-static">
             {image_tags}
@@ -200,17 +179,13 @@ def Learn_page():
     else:
         st.error(f"Directory not found: {directory_All_Courses}")
 
-    # "All Courses" Section
     st.title("All Courses")
 
-    # Image gallery for all courses (Static image gallery)
     if os.path.exists(directory_All_Courses):
-        # Image dimensions and margin
         image_width = 480 
         image_height = 230
-        margin_right = 10  # Gap between images
+        margin_right = 10 
 
-        # Prepare image tags
         image_tags = ""
         filenames = sorted(os.listdir(directory_All_Courses))
         for i, filename in enumerate(filenames):
@@ -218,14 +193,11 @@ def Learn_page():
             if os.path.isfile(file_path):
                 encoded_image = load_image_as_base64(file_path)
                 mime_type = get_mime_type(filename)
-                # Remove margin-right for the last image in the sequence
                 margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
                 
-                # Make each image clickable
                 image_url = f"?{urlencode({'selected_image': filename})}"
                 image_tags += f'<a href="{image_url}"><img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;"></a>'
 
-        # Insert CSS for the scrollable container with a dark-themed scrollbar
         st.markdown(f"""
         <style>
         .scroll-container-static {{
@@ -274,7 +246,6 @@ def Learn_page():
         </style>
         """, unsafe_allow_html=True)
 
-        # Create the scrollable container
         st.markdown(f"""
         <div class="scroll-container-static">
             {image_tags}
