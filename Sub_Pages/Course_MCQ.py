@@ -19,9 +19,6 @@ def Course_MCQ(test_file):
             st.session_state['current_question_idx'] = current_question_idx - 1
         else:
             st.session_state['current_question_idx'] = direction
-        st.rerun()
-
-    st.markdown("<h2 style='text-align: center;'>MCQS</h2>", unsafe_allow_html=True)
 
     st.markdown(
         """
@@ -97,7 +94,3 @@ def Course_MCQ(test_file):
         if current_question_idx < len(questions) - 1:
             st.button("Next", on_click=navigate, args=("next",), use_container_width=True)
     
-    if not (current_question_idx < len(questions) - 1):
-        if st.button("Continue to next Chapter...", use_container_width=True):
-            st.success("Heading to next...")
-            return

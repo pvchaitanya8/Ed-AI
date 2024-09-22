@@ -1,7 +1,8 @@
 import streamlit as st
 from UI_Components.Chat_Course import chat
+from Sub_Pages.Course_MCQ import Course_MCQ
 
-def course_page(markdown_file, title):
+def display_content(Course_list, MCQ_list, current_index, Tittle):
     st.sidebar.markdown(
         """
         <style>
@@ -29,6 +30,7 @@ def course_page(markdown_file, title):
         """,
         unsafe_allow_html=True
     )
+    
     st.sidebar.markdown(
         """
         <style>
@@ -48,6 +50,7 @@ def course_page(markdown_file, title):
     with st.sidebar:
         chat()
 
+
     st.markdown(
         """
         <style>
@@ -59,56 +62,55 @@ def course_page(markdown_file, title):
         unsafe_allow_html=True
     )
 
-    st.markdown(f'<h1 class="centered-title">{title}</h1>', unsafe_allow_html=True)
+    # Alternate display between course and MCQ
+    if current_index % 2 == 0:  # Even index for Course
+        course_file = Course_list[current_index // 2]
+        st.markdown(f'<h1 class="centered-title">{Tittle}</h1>', unsafe_allow_html=True)
+        st.markdown(
+            """
+            <style>
+            .gradient-divider-sidebar {
+                height: 5px;
+                border-radius: 15px;
+                background: linear-gradient(to right, #212529, #343a40, #212529);
+                margin: 30px 0;
+                border: none;
+            }
+            </style>
+            <div class="gradient-divider-sidebar"></div>
+            """,
+            unsafe_allow_html=True
+        )
+        try:
+            with open(course_file, "r") as file:
+                markdown_content = file.read()
+            st.markdown(markdown_content)
+        except FileNotFoundError:
+            st.error(f"File not found: {course_file}")
+    else:  # Odd index for MCQ
+        mcq_file = MCQ_list[current_index // 2]
+        st.markdown(f'<h1 class="centered-title">MCQ {current_index // 2 + 1}</h1>', unsafe_allow_html=True)
+        Course_MCQ(mcq_file)  # Call the function to display MCQ content
 
-    st.markdown(
-        """
-        <style>
-        .gradient-divider {
-            height: 5px;
-            border-radius: 15px;
-            background: linear-gradient(to right, #495057, #212529, #495057);
-            margin: 0px 0;
-            border: none;
-        }
-        </style>
-        <div class="gradient-divider"></div>
-        """,
-        unsafe_allow_html=True
-    )
+def course_page(Course_list, MCQ_list, Tittle):
+    # Initialize session state if it doesn't exist
+    if 'current_index' not in st.session_state:
+        st.session_state['current_index'] = 0
 
-    try:
-        with open(markdown_file, "r") as file:
-            markdown_content = file.read()
-        st.markdown(markdown_content)
-    except FileNotFoundError:
-        st.error(f"File not found: {markdown_file}")
+    # Cap the index within the bounds of Course_list and MCQ_list
+    total_content = len(Course_list) + len(MCQ_list)
+    if st.session_state['current_index'] >= total_content:
+        st.session_state['current_index'] = total_content - 1
 
-    st.markdown(
-        """
-        <style>
-        .gradient-divider {
-            height: 5px;
-            border-radius: 15px;
-            background: linear-gradient(to right, #495057, #212529, #495057);
-            margin: 0px 0;
-            border: none;
-        }
-        </style>
-        <div class="gradient-divider"></div>
-        """,
-        unsafe_allow_html=True
-    )
+    # Call the separated display function
+    display_content(Course_list, MCQ_list, st.session_state['current_index'], Tittle)
 
-    st.markdown("<br>", unsafe_allow_html= True)
-    st.markdown("""
-    <style>
-    .stButton>button {
-        width: 300px;  /* Adjust the width as needed */
-    }
-    </style>
-    """, unsafe_allow_html=True)
 
-    if st.button('Next'):
-        st.success("Heading to next...")
-        return
+    # 'Next' button
+    if st.button('Next Chapter', use_container_width=True):
+        if st.session_state['current_index'] < total_content - 1:
+            st.session_state['current_index'] += 1
+            st.rerun()
+        else:
+            st.success("You have Completed the Course!")
+            st.balloons()

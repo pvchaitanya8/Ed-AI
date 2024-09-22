@@ -4,7 +4,8 @@ import base64
 import mimetypes
 import streamlit as st
 from urllib.parse import urlencode
-
+from Sub_Pages.Course_MCQ import Course_MCQ
+from Sub_Pages.Course_page import course_page
 def load_image_as_base64(image_path):
     with open(image_path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode('utf-8')
@@ -14,11 +15,16 @@ def get_mime_type(filename):
     return mime_type or 'application/octet-stream'
 
 def show_details(selected_image):
-    st.write(f"You clicked on {selected_image}")
-    default_json_file_path = f"Static_Files\\Learn_Page\\All_Courses_Redirecting_JSON\\{selected_image}.json"
-    with open(default_json_file_path, 'r') as f:
+    Redirecting_json_file_path = f"Static_Files\\Learn_Page\\All_Courses_Redirecting_JSON\\{selected_image}.json"
+
+    with open(Redirecting_json_file_path, 'r') as f:
         data = json.load(f)
-        st.write(data)
+
+    Course_Course_title = data["title"]
+    Course_list = data["Course"]
+    MCQ_list = data["Test"]
+
+    course_page(Course_list, MCQ_list, Course_Course_title)
     return
 
 def Learn_page():
@@ -258,3 +264,4 @@ def Learn_page():
         """, unsafe_allow_html=True)
     else:
         st.error(f"Directory not found: {directory_All_Courses}")
+

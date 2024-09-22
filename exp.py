@@ -1,107 +1,268 @@
+import os
 import json
+import base64
+import mimetypes
 import streamlit as st
+from urllib.parse import urlencode
+from Sub_Pages.Course_MCQ import Course_MCQ
+from Sub_Pages.Course_page import course_page
+def load_image_as_base64(image_path):
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode('utf-8')
 
-def Course_MCQ(test_file):
-    with open(test_file, "r") as f:
-        questions_data = json.load(f)
+def get_mime_type(filename):
+    mime_type, _ = mimetypes.guess_type(filename)
+    return mime_type or 'application/octet-stream'
 
-    questions = questions_data['questions']
+def show_details(selected_image):
+    Redirecting_json_file_path = f"Static_Files\\Learn_Page\\All_Courses_Redirecting_JSON\\{selected_image}.json"
 
-    current_question_idx = st.session_state.get('current_question_idx', 0)
-    if 'selected_answers' not in st.session_state:
-        st.session_state['selected_answers'] = [None] * len(questions)
-    selected_answers = st.session_state['selected_answers']
+    with open(Redirecting_json_file_path, 'r') as f:
+        data = json.load(f)
 
-    def navigate(direction):
-        if direction == "next" and current_question_idx < len(questions) - 1:
-            st.session_state['current_question_idx'] = current_question_idx + 1
-        elif direction == "prev" and current_question_idx > 0:
-            st.session_state['current_question_idx'] = current_question_idx - 1
-        else:
-            st.session_state['current_question_idx'] = direction
-        st.rerun()
+    Course_Course_title = data["title"]
+    Course_list = data["Course"]
+    MCQ_list = data["Test"]
 
-    def End_the_test():
-        st.success("Going to next... ")
-        return
+    course_page(Course_list, MCQ_list, Course_Course_title)
+    return
 
-    st.markdown("<h2 style='text-align: center;'>MCQS</h2>", unsafe_allow_html=True)
+def Learn_page():
+    directory_Featured = r"Static_Files\Learn_Page\Featured"
+    directory_All_Courses = r"Static_Files\Learn_Page\All_Courses"
 
-    st.markdown(
-        """
+    query_params = st.query_params
+    if "selected_image" in query_params:
+        selected_image = query_params["selected_image"]
+        base_name, extension = os.path.splitext(selected_image)
+        show_details(base_name)
+        return  
+
+    if os.path.exists(directory_Featured):
+        image_width = 550
+        image_height = 350
+        margin_right = 3
+
+        image_tags = ""
+        filenames = sorted(os.listdir(directory_Featured))
+        N = 0
+        for i, filename in enumerate(filenames):
+            file_path = os.path.join(directory_Featured, filename)
+            if os.path.isfile(file_path):
+                N += 1
+                encoded_image = load_image_as_base64(file_path)
+                mime_type = get_mime_type(filename)
+                margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
+                
+                image_url = f"?{urlencode({'selected_image': filename})}"
+                image_tags += f'<a href="{image_url}"><img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="{margin_style} cursor: pointer;"></a>'
+
+        total_width = N * image_width + (N - 1) * margin_right
+
+        full_image_tags = image_tags + image_tags
+
+        st.markdown(f"""
         <style>
-        .gradient-divider-sidebar {
-            height: 5px;
-            border-radius: 15px;
-            background: linear-gradient(to right, #212529, #343a40, #212529);
-            margin: 30px 0;
-            border: none;
-        }
+        .scroll-container {{
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+        }}
+
+        .scroll-content {{
+            display: flex;
+            width: {2 * total_width}px; /* Double the total width */
+            animation: scroll 30s linear infinite; /* Adjust duration as needed */
+            transition: transform 0.5s ease;
+        }}
+
+        .scroll-content img {{
+            width: {image_width}px;
+            height: {image_height}px;
+            object-fit: cover;
+            border-radius: 3px;
+            flex-shrink: 0; /* Prevent images from shrinking */
+            transition: transform 0.3s ease;
+        }}
+
+        .scroll-container:hover .scroll-content {{
+            animation-play-state: paused; /* Pause animation on hover */
+        }}
+
+        .scroll-content img:hover {{
+            transform: scale(0.9); /* Magnify the image on hover */
+            z-index: 10; /* Bring the hovered image to the front */
+        }}
+
+        @keyframes scroll {{
+            0% {{
+                transform: translateX(0);
+            }}
+            100% {{
+                transform: translateX(-{total_width}px);
+            }}
+        }}
         </style>
-        <div class="gradient-divider-sidebar"></div>
-        """,
-        unsafe_allow_html=True
-    )
+        """, unsafe_allow_html=True)
 
-    colq_1, colq_2 = st.columns([7, 3])
-    with colq_1:
-        st.markdown(f"### Question {current_question_idx + 1}:", unsafe_allow_html=True)
-        st.markdown(f"<h4>{questions[current_question_idx]['question']}</h4>", unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="scroll-container">
+            <div class="scroll-content">
+                {full_image_tags}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.error(f"Directory not found: {directory_Featured}")
 
-        selected_answer = st.radio(
-            "", 
-            questions[current_question_idx]['options'], 
-            index=None if selected_answers[current_question_idx] is None else questions[current_question_idx]['options'].index(selected_answers[current_question_idx]),
-            key=f"question_{current_question_idx}"
-        )
-        
-        if selected_answer:
-            selected_answers[current_question_idx] = selected_answer
-            if selected_answer == questions[current_question_idx]['answer']:
-                st.success("Correct!")
-                st.write(f"Explanation: {questions[current_question_idx]['explanation']}")
-            else:
-                st.error("Incorrect!")
-                selected_option_key = selected_answer[0]
-                explanation = questions[current_question_idx]['incorrect_explanation'].get(selected_option_key, "No explanation available.")
-                st.write(f"Explanation: {explanation}")
+    st.title("Recommendations")
 
-    with colq_2:
-        st.markdown("<h5>Jump to Question</h5>", unsafe_allow_html=True)
-        cols = st.columns(5)
-        for idx, question in enumerate(questions):
-            with cols[idx % 5]:
-                button_label = f"Q{idx + 1}"
-                if st.button(button_label, key=f"q_btn_{idx}"):
-                    navigate(idx)
+    if os.path.exists(directory_All_Courses):
+        image_width = 480 
+        image_height = 230
+        margin_right = 10
 
-    st.markdown(
-        """
+        image_tags = ""
+        filenames = sorted(os.listdir(directory_All_Courses))
+        for i, filename in enumerate(filenames):
+            file_path = os.path.join(directory_All_Courses, filename)
+            if os.path.isfile(file_path):
+                encoded_image = load_image_as_base64(file_path)
+                mime_type = get_mime_type(filename)
+                margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
+                
+                image_url = f"?{urlencode({'selected_image': filename})}"
+                image_tags += f'<a href="{image_url}"><img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;"></a>'
+
+        st.markdown(f"""
         <style>
-        .gradient-divider-sidebar {
-            height: 5px;
-            border-radius: 15px;
-            background: linear-gradient(to right, #212529, #343a40, #212529);
-            margin: 30px 0;
-            border: none;
-        }
+        .scroll-container-static {{
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }}
+
+        .scroll-content-static img {{
+            display: inline-block;
+            width: {image_width}px;
+            height: {image_height}px;
+            object-fit: cover;
+            border-radius: 30px;
+            margin-right: {margin_right}px;
+            vertical-align: middle;
+        }}
+
+        /* Dark themed scrollbar with rounded corners */
+        .scroll-container-static::-webkit-scrollbar {{
+            height: 8px;
+        }}
+
+        .scroll-container-static::-webkit-scrollbar-track {{
+            background: #333;  /* Dark background for the track */
+            border-radius: 20px; /* This does not affect the visual on some browsers */
+        }}
+
+        .scroll-container-static::-webkit-scrollbar-thumb {{
+            background: #555;  /* Darker thumb */
+            border-radius: 10px;
+            border: 2px solid #333; /* Add a border to the thumb to visually create the effect of rounded corners */
+        }}
+
+        .scroll-container-static::-webkit-scrollbar-thumb:hover {{
+            background: #888;  /* Slightly lighter on hover */
+        }}
+
+        .scroll-container-static {{
+            scrollbar-width: thin;  /* Firefox */
+            scrollbar-color: #555 #333;  /* Darker colors for Firefox */
+            border-radius: 10px; /* This will only affect the container, not the scrollbar itself */
+        }}
         </style>
-        <div class="gradient-divider-sidebar"></div>
-        """,
-        unsafe_allow_html=True
-    )
+        """, unsafe_allow_html=True)
 
-    col1, col2 = st.columns(2)
+        st.markdown(f"""
+        <div class="scroll-container-static">
+            {image_tags}
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.error(f"Directory not found: {directory_All_Courses}")
 
-    with col1:
-        if current_question_idx > 0:
-            st.button("Previous", on_click=navigate, args=("prev",), use_container_width=True)
+    st.title("All Courses")
 
-    with col2:
-        if current_question_idx < len(questions) - 1:
-            st.button("Next", on_click=navigate, args=("next",), use_container_width=True)
-    
-    if not (current_question_idx < len(questions) - 1):
-        if st.button("Continue to next Chapter...", use_container_width=True):
-            st.success("Heading to next...")
-            return
+    if os.path.exists(directory_All_Courses):
+        image_width = 480 
+        image_height = 230
+        margin_right = 10 
+
+        image_tags = ""
+        filenames = sorted(os.listdir(directory_All_Courses))
+        for i, filename in enumerate(filenames):
+            file_path = os.path.join(directory_All_Courses, filename)
+            if os.path.isfile(file_path):
+                encoded_image = load_image_as_base64(file_path)
+                mime_type = get_mime_type(filename)
+                margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
+                
+                image_url = f"?{urlencode({'selected_image': filename})}"
+                image_tags += f'<a href="{image_url}"><img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;"></a>'
+
+        st.markdown(f"""
+        <style>
+        .scroll-container-static {{
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }}
+
+        .scroll-content-static img {{
+            display: inline-block;
+            width: {image_width}px;
+            height: {image_height}px;
+            object-fit: cover;
+            border-radius: 30px;
+            margin-right: {margin_right}px;
+            vertical-align: middle;
+        }}
+
+        /* Dark themed scrollbar with rounded corners */
+        .scroll-container-static::-webkit-scrollbar {{
+            height: 8px;
+        }}
+
+        .scroll-container-static::-webkit-scrollbar-track {{
+            background: #333;  /* Dark background for the track */
+            border-radius: 20px; /* This does not affect the visual on some browsers */
+        }}
+
+        .scroll-container-static::-webkit-scrollbar-thumb {{
+            background: #555;  /* Darker thumb */
+            border-radius: 10px;
+            border: 2px solid #333; /* Add a border to the thumb to visually create the effect of rounded corners */
+        }}
+
+        .scroll-container-static::-webkit-scrollbar-thumb:hover {{
+            background: #888;  /* Slightly lighter on hover */
+        }}
+
+        .scroll-container-static {{
+            scrollbar-width: thin;  /* Firefox */
+            scrollbar-color: #555 #333;  /* Darker colors for Firefox */
+            border-radius: 10px; /* This will only affect the container, not the scrollbar itself */
+        }}
+        </style>
+        """, unsafe_allow_html=True)
+
+        st.markdown(f"""
+        <div class="scroll-container-static">
+            {image_tags}
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.error(f"Directory not found: {directory_All_Courses}")
+
+Learn_page()
