@@ -1,6 +1,6 @@
 import streamlit as st
 from UI_Components.Chat_Course import chat
-def course_page():
+def course_page(markdown_file, title):
     st.sidebar.markdown(
         """
         <style>
@@ -59,7 +59,7 @@ def course_page():
         unsafe_allow_html=True
     )
 
-    st.markdown('<h1 class="centered-title">Heading</h1>', unsafe_allow_html=True)
+    st.markdown(f'<h1 class="centered-title">{title}</h1>', unsafe_allow_html=True)
 
     st.markdown(
         """
@@ -76,8 +76,6 @@ def course_page():
         """,
         unsafe_allow_html=True
     )
-
-    markdown_file = r"EXP\Material.md"
 
     try:
         with open(markdown_file, "r") as file:

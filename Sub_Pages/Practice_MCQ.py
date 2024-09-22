@@ -18,7 +18,7 @@ def Practice_MCQ(test_file):
         elif direction == "prev" and current_question_idx > 0:
             st.session_state['current_question_idx'] = current_question_idx - 1
         else:
-            st.session_state['current_question_idx'] = direction  
+            st.session_state['current_question_idx'] = direction  # For question number navigation
 
     def clear_answer():
         selected_answers[current_question_idx] = None
