@@ -1,5 +1,6 @@
 import streamlit as st
 from UI_Components.Chat_Course import chat
+
 def course_page(markdown_file, title):
     st.sidebar.markdown(
         """
@@ -43,7 +44,6 @@ def course_page(markdown_file, title):
         """,
         unsafe_allow_html=True
     )
-
 
     with st.sidebar:
         chat()
@@ -100,5 +100,15 @@ def course_page(markdown_file, title):
         unsafe_allow_html=True
     )
 
+    st.markdown("<br>", unsafe_allow_html= True)
+    st.markdown("""
+    <style>
+    .stButton>button {
+        width: 300px;  /* Adjust the width as needed */
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
     if st.button('Next'):
-        st.write("You clicked Next!")
+        st.success("Heading to next...")
+        return

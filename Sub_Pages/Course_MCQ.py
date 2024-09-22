@@ -21,10 +21,6 @@ def Course_MCQ(test_file):
             st.session_state['current_question_idx'] = direction
         st.rerun()
 
-    def clear_answer():
-        selected_answers[current_question_idx] = None
-        st.rerun()
-
     st.markdown("<h2 style='text-align: center;'>MCQS</h2>", unsafe_allow_html=True)
 
     st.markdown(
@@ -91,7 +87,7 @@ def Course_MCQ(test_file):
         unsafe_allow_html=True
     )
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2 = st.columns(2)
 
     with col1:
         if current_question_idx > 0:
@@ -100,7 +96,8 @@ def Course_MCQ(test_file):
     with col2:
         if current_question_idx < len(questions) - 1:
             st.button("Next", on_click=navigate, args=("next",), use_container_width=True)
-
-    with col3:
-        st.button("Clear", on_click=clear_answer, use_container_width=True)
-
+    
+    if not (current_question_idx < len(questions) - 1):
+        if st.button("Continue to next Chapter...", use_container_width=True):
+            st.success("Heading to next...")
+            return
