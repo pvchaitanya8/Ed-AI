@@ -51,9 +51,10 @@ def Course_MCQ(test_file):
         selected_answer = st.radio(
             "", 
             questions[current_question_idx]['options'], 
-            index=questions[current_question_idx]['options'].index(selected_answers[current_question_idx]) if selected_answers[current_question_idx] else 0,
+            index=None if selected_answers[current_question_idx] is None else questions[current_question_idx]['options'].index(selected_answers[current_question_idx]),
             key=f"question_{current_question_idx}"
         )
+        
         if selected_answer:
             selected_answers[current_question_idx] = selected_answer
             # Show immediate feedback
