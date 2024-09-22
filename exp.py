@@ -19,11 +19,11 @@ def Course_MCQ(test_file):
             st.session_state['current_question_idx'] = current_question_idx - 1
         else:
             st.session_state['current_question_idx'] = direction
-        st.rerun()  # Trigger UI refresh after navigation
+        st.rerun()
 
     def clear_answer():
         selected_answers[current_question_idx] = None
-        st.rerun()  # Trigger UI refresh after clearing the answer
+        st.rerun()
 
     st.markdown("<h2 style='text-align: center;'>MCQS</h2>", unsafe_allow_html=True)
 
@@ -57,13 +57,12 @@ def Course_MCQ(test_file):
         
         if selected_answer:
             selected_answers[current_question_idx] = selected_answer
-            # Show immediate feedback
             if selected_answer == questions[current_question_idx]['answer']:
                 st.success("Correct!")
                 st.write(f"Explanation: {questions[current_question_idx]['explanation']}")
             else:
                 st.error("Incorrect!")
-                selected_option_key = selected_answer[0]  # Extracting the key ('A', 'B', etc.)
+                selected_option_key = selected_answer[0]
                 explanation = questions[current_question_idx]['incorrect_explanation'].get(selected_option_key, "No explanation available.")
                 st.write(f"Explanation: {explanation}")
 
