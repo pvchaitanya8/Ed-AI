@@ -4,8 +4,8 @@ import base64
 import mimetypes
 import streamlit as st
 from urllib.parse import urlencode
-from Sub_Pages.Course_MCQ import Course_MCQ
 from Sub_Pages.Course_page import course_page
+
 def load_image_as_base64(image_path):
     with open(image_path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode('utf-8')
@@ -82,7 +82,7 @@ def Learn_page():
             object-fit: cover;
             border-radius: 3px;
             flex-shrink: 0; /* Prevent images from shrinking */
-            transition: transform 0.3s ease;
+            transition: transform 0.4s ease, border-radius 1s ease;
         }}
 
         .scroll-container:hover .scroll-content {{
@@ -91,7 +91,7 @@ def Learn_page():
 
         .scroll-content img:hover {{
             transform: scale(0.9); /* Magnify the image on hover */
-            z-index: 10; /* Bring the hovered image to the front */
+            border-radius: 11px;
         }}
 
         @keyframes scroll {{
@@ -130,7 +130,7 @@ def Learn_page():
                 encoded_image = load_image_as_base64(file_path)
                 mime_type = get_mime_type(filename)
                 margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
-                
+
                 image_url = f"?{urlencode({'selected_image': filename})}"
                 image_tags += f'<a href="{image_url}"><img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;"></a>'
 
@@ -152,6 +152,12 @@ def Learn_page():
             border-radius: 30px;
             margin-right: {margin_right}px;
             vertical-align: middle;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 1s ease; /* Smooth transition for hover effects */
+        }}
+
+        .scroll-content-static img:hover {{
+            transform: scale(0.95); /* Slightly increase the size on hover */
+            box-shadow: 0px 4px 15px rgba(227, 194, 250, 0.8); /* Add shadow on hover */
         }}
 
         /* Dark themed scrollbar with rounded corners */
@@ -184,7 +190,9 @@ def Learn_page():
 
         st.markdown(f"""
         <div class="scroll-container-static">
-            {image_tags}
+            <div class="scroll-content-static">
+                {image_tags}
+            </div>
         </div>
         """, unsafe_allow_html=True)
     else:
@@ -195,7 +203,7 @@ def Learn_page():
     if os.path.exists(directory_All_Courses):
         image_width = 480 
         image_height = 230
-        margin_right = 10 
+        margin_right = 10  
 
         image_tags = ""
         filenames = sorted(os.listdir(directory_All_Courses))
@@ -205,7 +213,7 @@ def Learn_page():
                 encoded_image = load_image_as_base64(file_path)
                 mime_type = get_mime_type(filename)
                 margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
-                
+
                 image_url = f"?{urlencode({'selected_image': filename})}"
                 image_tags += f'<a href="{image_url}"><img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;"></a>'
 
@@ -227,6 +235,12 @@ def Learn_page():
             border-radius: 30px;
             margin-right: {margin_right}px;
             vertical-align: middle;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 1s ease; /* Smooth transition for hover effects */
+        }}
+
+        .scroll-content-static img:hover {{
+            transform: scale(0.95); /* Slightly increase the size on hover */
+            box-shadow: 0px 4px 15px rgba(227, 194, 250, 0.8); /* Add shadow on hover */
         }}
 
         /* Dark themed scrollbar with rounded corners */
@@ -259,7 +273,9 @@ def Learn_page():
 
         st.markdown(f"""
         <div class="scroll-container-static">
-            {image_tags}
+            <div class="scroll-content-static">
+                {image_tags}
+            </div>
         </div>
         """, unsafe_allow_html=True)
     else:
