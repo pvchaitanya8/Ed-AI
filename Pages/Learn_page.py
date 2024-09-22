@@ -1,9 +1,9 @@
 import os
-import streamlit as st
+import json
 import base64
 import mimetypes
+import streamlit as st
 from urllib.parse import urlencode
-from Sub_Pages.Mock_Interview_page import Mock_Interview
 
 def load_image_as_base64(image_path):
     with open(image_path, "rb") as img_file:
@@ -15,6 +15,10 @@ def get_mime_type(filename):
 
 def show_details(selected_image):
     st.write(f"You clicked on {selected_image}")
+    default_json_file_path = f"Static_Files\\Learn_Page\\All_Courses_Redirecting_JSON\\{selected_image}.json"
+    with open(default_json_file_path, 'r') as f:
+        data = json.load(f)
+        st.write(data)
     return
 
 def Learn_page():
@@ -23,8 +27,9 @@ def Learn_page():
 
     query_params = st.query_params
     if "selected_image" in query_params:
-        selected_image = query_params["selected_image"][0]
-        show_details(selected_image)
+        selected_image = query_params["selected_image"]
+        base_name, extension = os.path.splitext(selected_image)
+        show_details(base_name)
         return  
 
     if os.path.exists(directory_Featured):
