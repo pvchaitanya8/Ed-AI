@@ -280,5 +280,3 @@ def Learn_page():
         """, unsafe_allow_html=True)
     else:
         st.error(f"Directory not found: {directory_All_Courses}")
-
-Learn_page()
