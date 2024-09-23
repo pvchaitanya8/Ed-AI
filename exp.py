@@ -1,101 +1,192 @@
-import json
+import base64
 import streamlit as st
+from Pages.Chat import chat
+from Pages.Learn_page import Learn_page
+from streamlit_option_menu import option_menu
+from Pages.Mock_Interview import Mock_Interview
+from Pages.Mock_Assessment import Mock_Assessment
+from Pages.Practice_MCQ_page import Practice_MCQ_page
+from UI_Components.profile_pic import get_base64_image
+from Pages.Practice_Coding_page import Practice_Coding_page
 
-def Practice_MCQ(test_file):
-    with open(test_file, "r") as f:
-        questions_data = json.load(f)
+def load_image_as_base64(image_path):
+    with open(image_path, "rb") as img_file:
+        base64_string = base64.b64encode(img_file.read()).decode('utf-8')
+    return f"data:image/png;base64,{base64_string}"
 
-    questions = questions_data['questions']
+def navbar():
+    image_path = r"Static_Files\NavBar\Ed AI.png"
+    profile_pic_url = r"Static_Files\NavBar\profile pic.png"
+    encoded_image = load_image_as_base64(image_path)
+    link_url = "https://github.com/pvchaitanya8?tab=repositories"
 
-    current_question_idx = st.session_state.get('current_question_idx', 0)
-    if 'selected_answers' not in st.session_state:
-        st.session_state['selected_answers'] = [None] * len(questions)
-    selected_answers = st.session_state['selected_answers']
+    query_params = st.query_params
+    if "selected_image" not in query_params:
+        col1, col2, col3, col4 = st.columns([0.7, 7, 3, 0.6])
 
-    def navigate(direction):
-        if direction == "next" and current_question_idx < len(questions) - 1:
-            st.session_state['current_question_idx'] = current_question_idx + 1
-        elif direction == "prev" and current_question_idx > 0:
-            st.session_state['current_question_idx'] = current_question_idx - 1
-        else:
-            st.session_state['current_question_idx'] = direction
+        with col1:
+            st.markdown("""
+                <style>
+                .container {
+                    display: flex;
+                    justify-content: center;  # Center the content horizontally
+                    align-items: center;  # Center the content vertically
+                }
+                a img {
+                    max-width: 100%;  # Ensure image does not overflow its container
+                    height: auto;  # Maintain aspect ratio
+                    display: block;  # Remove any extra space below the image
+                    transform: translateY(-40px);  # Move image upwards by 10px
+                }
+                </style>
+                """, unsafe_allow_html=True)
 
-    st.markdown(
-        """
-        <style>
-        .gradient-divider-sidebar {
-            height: 5px;
-            border-radius: 15px;
-            background: linear-gradient(to right, #212529, #343a40, #212529);
-            margin: 30px 0;
-            border: none;
-        }
-        </style>
-        <div class="gradient-divider-sidebar"></div>
-        """,
-        unsafe_allow_html=True
-    )
+            st.markdown(f'<a href="{link_url}" target="_blank"><img src="{encoded_image}" style="max-width: 90%; height: auto; display: block; transform: translateY(-10px);" width="100"></a>', unsafe_allow_html=True)
 
-    colq_1, colq_2 = st.columns([7, 3])
-    with colq_1:
-        st.markdown(f"### Question {current_question_idx + 1}:", unsafe_allow_html=True)
-        st.markdown(f"<h4>{questions[current_question_idx]['question']}</h4>", unsafe_allow_html=True)
+        with col2:
+            selected = option_menu(
+                menu_title=None, 
+                options=["Learn", "Practice", "Mock Interview", "Chat"], 
+                icons=["book", "pencil-square", "briefcase", "chat-dots"], 
+                menu_icon="cast",
+                default_index=0,
+                orientation="horizontal",
+            )
+            
+        with col3:
+            search_query = st.text_input("Search", placeholder="🔎 Search...", label_visibility="collapsed")
+            st.markdown(
+                """
+                <style>
+                    div[data-testid="stTextInput"] label {
+                        display: none;
+                    }
+                </style>
+                """,
+                unsafe_allow_html=True
+            )
 
-        selected_answer = st.radio(
-            "", 
-            questions[current_question_idx]['options'], 
-            index=None if selected_answers[current_question_idx] is None else questions[current_question_idx]['options'].index(selected_answers[current_question_idx]),
-            key=f"question_{current_question_idx}"
+        with col4:
+            User_Display_Name = "Chaitanya"
+            profile_pic_base64 = get_base64_image(profile_pic_url)
+
+            st.markdown(
+                f"""
+                <style>
+                .container {{
+                    position: relative;
+                    width: 50px; 
+                    margin-left: auto;
+                    margin-right: auto;
+                    transition: opacity 0.3s ease-in-out;
+                }}
+
+                .circle-img {{
+                    display: block;
+                    border-radius: 50%;
+                    width: 100%;
+                }}
+
+                .hover-text {{
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, 90%);
+                    color: #9e9fa3;
+                    font-size: 18px;
+                    text-align: center;
+                    opacity: 0;
+                    transition: opacity 0.3s ease-in-out;
+                }}
+
+                .container:hover {{
+                    opacity: 0.8; 
+                }}
+
+                .container:hover .hover-text {{
+                    opacity: 1;
+                }}
+                </style>
+
+                <div class="container">
+                    <img src="data:image/png;base64,{profile_pic_base64}" class="circle-img">
+                    <div class="hover-text">{User_Display_Name}</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        st.markdown(
+            """
+            <style>
+            .gradient-divider {
+                height: 4px;
+                border-radius: 15px;
+                margin: 0px 0;
+                background: linear-gradient(135deg, #f9bec7, #ffafcc, #f72585, #b5179e, #7209b7, #560bad, #480ca8, #3a0ca3, #3f37c9, #4361ee, #4895ef, #4cc9f0, #caf0f8);
+                background-size: 200% 200%;
+                animation: gradientFlow 4.5s ease infinite;
+            }
+            
+            @keyframes gradientFlow {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+            }
+            </style>
+            <div class="gradient-divider"></div>
+            """,
+            unsafe_allow_html=True
         )
-        
-        if selected_answer:
-            selected_answers[current_question_idx] = selected_answer
-            if selected_answer == questions[current_question_idx]['answer']:
-                st.success("Correct!")
-                st.write(f"Explanation: {questions[current_question_idx]['explanation']}")
-            else:
-                st.error("Incorrect!")
-                selected_option_key = selected_answer[0]
-                explanation = questions[current_question_idx]['incorrect_explanation'].get(selected_option_key, "No explanation available.")
-                st.write(f"Explanation: {explanation}")
 
-    with colq_2:
-        st.markdown("<h5>Jump to Question</h5>", unsafe_allow_html=True)
-        cols = st.columns(5)
-        for idx, question in enumerate(questions):
-            with cols[idx % 5]:
-                button_label = f"Q{idx + 1}"
-                if st.button(button_label, key=f"q_btn_{idx}"):
-                    navigate(idx)
+        if selected == "Learn":
+            Learn_page()
 
-    st.markdown(
-        """
-        <style>
-        .gradient-divider-sidebar {
-            height: 5px;
-            border-radius: 15px;
-            background: linear-gradient(to right, #212529, #343a40, #212529);
-            margin: 30px 0;
-            border: none;
-        }
-        </style>
-        <div class="gradient-divider-sidebar"></div>
-        """,
-        unsafe_allow_html=True
-    )
+        elif selected == "Practice":
+            selected_round = st.selectbox(
+                "Select practice type",
+                [
+                    "📄 MCQs Practice",
+                    "🧑‍💻 Coding Practice",
+                ],
+                label_visibility="collapsed"
+            )
 
-    col1, col2 = st.columns(2)
+            if selected_round == "📄 MCQs Practice":
+                Practice_MCQ_page()
+            elif selected_round == "🧑‍💻 Coding Practice":
+                Practice_Coding_page()
 
-    with col1:
-        if current_question_idx > 0:
-            st.button("Previous", on_click=navigate, args=("prev",), use_container_width=True)
+        elif selected == "Mock Interview":
+            selected_round = st.selectbox(
+                "Select Interview Round",
+                [
+                    "📃 MCQ Assessment Round",
+                    "📃 Coding Assessment Round",
+                    "🧑‍💻 Technical Interview Round",
+                    "🧑‍💻 HR Interview Round"
+                ]
+            )
+            if selected_round == "📃 MCQ Assessment Round":
+                Mock_Assessment()
+            elif selected_round == "📃 Coding Assessment Round":
+                Mock_Assessment()
+            elif selected_round == "🧑‍💻 Technical Interview Round":
+                Mock_Interview()
+            elif selected_round == "🧑‍💻 HR Interview Round":
+                Mock_Interview()
 
-    with col2:
-        if current_question_idx < len(questions) - 1:
-            st.button("Next", on_click=navigate, args=("next",), use_container_width=True)
-    if not (current_question_idx < len(questions) - 1):
-        if st.button("End The Test", use_container_width=True):
-            st.balloons()
-            st.success("Completed Test")
+        elif selected == "Chat":
+            chat()
+            
+        if search_query:
+            st.write(f"Search results for: {search_query}")
+    elif selected == "Learn":
+        Learn_page()
+    elif selected == "Practice":
+        if selected_round == "📄 MCQs Practice":
+            Practice_MCQ_page()
+        elif selected_round == "🧑‍💻 Coding Practice":
+            Practice_Coding_page()
 
-Practice_MCQ(r"EXP\test1_data.json")
+navbar()
