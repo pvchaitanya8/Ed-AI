@@ -9,9 +9,7 @@ st.set_page_config(
 )
 
 def main():
-    display_navbar = True
-    if display_navbar:
-        navbar()
+    navbar()
 
 if __name__ == "__main__":
     main()

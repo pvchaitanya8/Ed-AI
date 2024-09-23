@@ -1,282 +1,192 @@
-import os
-import json
 import base64
-import mimetypes
 import streamlit as st
-from urllib.parse import urlencode
-from Sub_Pages.Course_page import course_page
+from Pages.Chat import chat
+from Pages.Learn_page import Learn_page
+from streamlit_option_menu import option_menu
+from Pages.Mock_Interview import Mock_Interview
+from Pages.Mock_Assessment import Mock_Assessment
+from Pages.Practice_MCQ_page import Practice_MCQ_page
+from UI_Components.profile_pic import get_base64_image
+from Pages.Practice_Coding_page import Practice_Coding_page
 
 def load_image_as_base64(image_path):
     with open(image_path, "rb") as img_file:
-        return base64.b64encode(img_file.read()).decode('utf-8')
+        base64_string = base64.b64encode(img_file.read()).decode('utf-8')
+    return f"data:image/png;base64,{base64_string}"
 
-def get_mime_type(filename):
-    mime_type, _ = mimetypes.guess_type(filename)
-    return mime_type or 'application/octet-stream'
-
-def show_details(selected_image):
-    Redirecting_json_file_path = f"Static_Files\\Learn_Page\\All_Courses_Redirecting_JSON\\{selected_image}.json"
-
-    with open(Redirecting_json_file_path, 'r') as f:
-        data = json.load(f)
-
-    Course_Course_title = data["title"]
-    Course_list = data["Course"]
-    MCQ_list = data["Test"]
-
-    course_page(Course_list, MCQ_list, Course_Course_title)
-    return
-
-def Learn_page():
-    directory_Featured = r"Static_Files\Learn_Page\Featured"
-    directory_All_Courses = r"Static_Files\Learn_Page\All_Courses"
+def navbar():
+    image_path = r"Static_Files\NavBar\Ed AI.png"
+    profile_pic_url = r"Static_Files\NavBar\profile pic.png"
+    encoded_image = load_image_as_base64(image_path)
+    link_url = "https://github.com/pvchaitanya8?tab=repositories"
 
     query_params = st.query_params
-    if "selected_image" in query_params:
-        selected_image = query_params["selected_image"]
-        base_name, extension = os.path.splitext(selected_image)
-        show_details(base_name)
-        return  
+    if "selected_image" not in query_params:
+        col1, col2, col3, col4 = st.columns([0.7, 7, 3, 0.6])
 
-    if os.path.exists(directory_Featured):
-        image_width = 550
-        image_height = 350
-        margin_right = 3
+        with col1:
+            st.markdown("""
+                <style>
+                .container {
+                    display: flex;
+                    justify-content: center;  # Center the content horizontally
+                    align-items: center;  # Center the content vertically
+                }
+                a img {
+                    max-width: 100%;  # Ensure image does not overflow its container
+                    height: auto;  # Maintain aspect ratio
+                    display: block;  # Remove any extra space below the image
+                    transform: translateY(-40px);  # Move image upwards by 10px
+                }
+                </style>
+                """, unsafe_allow_html=True)
 
-        image_tags = ""
-        filenames = sorted(os.listdir(directory_Featured))
-        N = 0
-        for i, filename in enumerate(filenames):
-            file_path = os.path.join(directory_Featured, filename)
-            if os.path.isfile(file_path):
-                N += 1
-                encoded_image = load_image_as_base64(file_path)
-                mime_type = get_mime_type(filename)
-                margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
-                
-                image_url = f"?{urlencode({'selected_image': filename})}"
-                image_tags += f'<a href="{image_url}"><img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="{margin_style} cursor: pointer;"></a>'
+            st.markdown(f'<a href="{link_url}" target="_blank"><img src="{encoded_image}" style="max-width: 90%; height: auto; display: block; transform: translateY(-10px);" width="100"></a>', unsafe_allow_html=True)
 
-        total_width = N * image_width + (N - 1) * margin_right
+        with col2:
+            selected = option_menu(
+                menu_title=None, 
+                options=["Learn", "Practice", "Mock Interview", "Chat"], 
+                icons=["book", "pencil-square", "briefcase", "chat-dots"], 
+                menu_icon="cast",
+                default_index=0,
+                orientation="horizontal",
+            )
+            
+        with col3:
+            search_query = st.text_input("Search", placeholder="🔎 Search...", label_visibility="collapsed")
+            st.markdown(
+                """
+                <style>
+                    div[data-testid="stTextInput"] label {
+                        display: none;
+                    }
+                </style>
+                """,
+                unsafe_allow_html=True
+            )
 
-        full_image_tags = image_tags + image_tags
+        with col4:
+            User_Display_Name = "Chaitanya"
+            profile_pic_base64 = get_base64_image(profile_pic_url)
 
-        st.markdown(f"""
-        <style>
-        .scroll-container {{
-            overflow: hidden;
-            position: relative;
-            width: 100%;
-        }}
+            st.markdown(
+                f"""
+                <style>
+                .container {{
+                    position: relative;
+                    width: 50px; 
+                    margin-left: auto;
+                    margin-right: auto;
+                    transition: opacity 0.3s ease-in-out;
+                }}
 
-        .scroll-content {{
-            display: flex;
-            width: {2 * total_width}px;
-            animation: scroll 30s linear infinite;
-            transition: transform 0.5s ease;
-        }}
+                .circle-img {{
+                    display: block;
+                    border-radius: 50%;
+                    width: 100%;
+                }}
 
-        .scroll-content img {{
-            width: {image_width}px;
-            height: {image_height}px;
-            object-fit: cover;
-            border-radius: 3px;
-            flex-shrink: 0;
-            transition: transform 0.4s ease, border-radius 1s ease;
-        }}
+                .hover-text {{
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, 90%);
+                    color: #9e9fa3;
+                    font-size: 18px;
+                    text-align: center;
+                    opacity: 0;
+                    transition: opacity 0.3s ease-in-out;
+                }}
 
-        .scroll-container:hover .scroll-content {{
-            animation-play-state: paused;
-        }}
+                .container:hover {{
+                    opacity: 0.8; 
+                }}
 
-        .scroll-content img:hover {{
-            transform: scale(0.9);
-            border-radius: 11px;
-        }}
+                .container:hover .hover-text {{
+                    opacity: 1;
+                }}
+                </style>
 
-        @keyframes scroll {{
-            0% {{
-                transform: translateX(0);
-            }}
-            100% {{
-                transform: translateX(-{total_width}px);
-            }}
-        }}
-        </style>
-        """, unsafe_allow_html=True)
+                <div class="container">
+                    <img src="data:image/png;base64,{profile_pic_base64}" class="circle-img">
+                    <div class="hover-text">{User_Display_Name}</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
-        st.markdown(f"""
-        <div class="scroll-container">
-            <div class="scroll-content">
-                {full_image_tags}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    else:
-        st.error(f"Directory not found: {directory_Featured}")
+        st.markdown(
+            """
+            <style>
+            .gradient-divider {
+                height: 4px;
+                border-radius: 15px;
+                margin: 0px 0;
+                background: linear-gradient(135deg, #f9bec7, #ffafcc, #f72585, #b5179e, #7209b7, #560bad, #480ca8, #3a0ca3, #3f37c9, #4361ee, #4895ef, #4cc9f0, #caf0f8);
+                background-size: 200% 200%;
+                animation: gradientFlow 4.5s ease infinite;
+            }
+            
+            @keyframes gradientFlow {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+            }
+            </style>
+            <div class="gradient-divider"></div>
+            """,
+            unsafe_allow_html=True
+        )
 
-    st.title("Recommendations")
+        if selected == "Learn":
+            Learn_page()
 
-    if os.path.exists(directory_All_Courses):
-        image_width = 480 
-        image_height = 230
-        margin_right = 10
+        elif selected == "Practice":
+            selected_round = st.selectbox(
+                "Select practice type",
+                [
+                    "📄 MCQs Practice",
+                    "🧑‍💻 Coding Practice",
+                ],
+                label_visibility="collapsed"
+            )
 
-        image_tags = ""
-        filenames = sorted(os.listdir(directory_All_Courses))
-        for i, filename in enumerate(filenames):
-            file_path = os.path.join(directory_All_Courses, filename)
-            if os.path.isfile(file_path):
-                encoded_image = load_image_as_base64(file_path)
-                mime_type = get_mime_type(filename)
-                margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
+            if selected_round == "📄 MCQs Practice":
+                Practice_MCQ_page()
+            elif selected_round == "🧑‍💻 Coding Practice":
+                Practice_Coding_page()
 
-                image_url = f"?{urlencode({'selected_image': filename})}"
-                image_tags += f'<a href="{image_url}"><img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;"></a>'
+        elif selected == "Mock Interview":
+            selected_round = st.selectbox(
+                "Select Interview Round",
+                [
+                    "📃 MCQ Assessment Round",
+                    "📃 Coding Assessment Round",
+                    "🧑‍💻 Technical Interview Round",
+                    "🧑‍💻 HR Interview Round"
+                ]
+            )
+            if selected_round == "📃 MCQ Assessment Round":
+                Mock_Assessment()
+            elif selected_round == "📃 Coding Assessment Round":
+                Mock_Assessment()
+            elif selected_round == "🧑‍💻 Technical Interview Round":
+                Mock_Interview()
+            elif selected_round == "🧑‍💻 HR Interview Round":
+                Mock_Interview()
 
-        st.markdown(f"""
-        <style>
-        .scroll-container-static {{
-            overflow-x: auto;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }}
+        elif selected == "Chat":
+            chat()
+            
+        if search_query:
+            st.write(f"Search results for: {search_query}")
+    elif selected == "Learn":
+        Learn_page()
+    elif selected == "Practice":
+        if selected_round == "📄 MCQs Practice":
+            Practice_MCQ_page()
+        elif selected_round == "🧑‍💻 Coding Practice":
+            Practice_Coding_page()
 
-        .scroll-content-static img {{
-            display: inline-block;
-            width: {image_width}px;
-            height: {image_height}px;
-            object-fit: cover;
-            border-radius: 30px;
-            margin-right: {margin_right}px;
-            vertical-align: middle;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 1s ease;
-        }}
-
-        .scroll-content-static img:hover {{
-            transform: scale(0.95);
-            box-shadow: 0px 4px 15px rgba(227, 194, 250, 0.8);
-        }}
-
-        .scroll-container-static::-webkit-scrollbar {{
-            height: 8px;
-        }}
-
-        .scroll-container-static::-webkit-scrollbar-track {{
-            background: #333;
-            border-radius: 20px;
-        }}
-
-        .scroll-container-static::-webkit-scrollbar-thumb {{
-            background: #555;
-            border-radius: 10px;
-            border: 2px solid #333;
-        }}
-
-        .scroll-container-static::-webkit-scrollbar-thumb:hover {{
-            background: #888; 
-        }}
-
-        .scroll-container-static {{
-            scrollbar-width: thin;
-            scrollbar-color: #555 #333;
-            border-radius: 10px;
-        }}
-        </style>
-        """, unsafe_allow_html=True)
-
-        st.markdown(f"""
-        <div class="scroll-container-static">
-            <div class="scroll-content-static">
-                {image_tags}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    else:
-        st.error(f"Directory not found: {directory_All_Courses}")
-
-    st.title("All Courses")
-
-    if os.path.exists(directory_All_Courses):
-        image_width = 480 
-        image_height = 230
-        margin_right = 10  
-
-        image_tags = ""
-        filenames = sorted(os.listdir(directory_All_Courses))
-        for i, filename in enumerate(filenames):
-            file_path = os.path.join(directory_All_Courses, filename)
-            if os.path.isfile(file_path):
-                encoded_image = load_image_as_base64(file_path)
-                mime_type = get_mime_type(filename)
-                margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
-
-                image_url = f"?{urlencode({'selected_image': filename})}"
-                image_tags += f'<a href="{image_url}"><img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;"></a>'
-
-        st.markdown(f"""
-        <style>
-        .scroll-container-static {{
-            overflow-x: auto;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }}
-
-        .scroll-content-static img {{
-            display: inline-block;
-            width: {image_width}px;
-            height: {image_height}px;
-            object-fit: cover;
-            border-radius: 30px;
-            margin-right: {margin_right}px;
-            vertical-align: middle;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 1s ease;
-        }}
-
-        .scroll-content-static img:hover {{
-            transform: scale(0.95);
-            box-shadow: 0px 4px 15px rgba(227, 194, 250, 0.8);
-        }}
-
-        .scroll-container-static::-webkit-scrollbar {{
-            height: 8px;
-        }}
-
-        .scroll-container-static::-webkit-scrollbar-track {{
-            background: #333;
-            border-radius: 20px;
-        }}
-
-        .scroll-container-static::-webkit-scrollbar-thumb {{
-            background: #555;
-            border-radius: 10px;
-            border: 2px solid #333;
-        }}
-
-        .scroll-container-static::-webkit-scrollbar-thumb:hover {{
-            background: #888;
-        }}
-
-        .scroll-container-static {{
-            scrollbar-width: thin;
-            scrollbar-color: #555 #333;
-            border-radius: 10px;
-        }}
-        </style>
-        """, unsafe_allow_html=True)
-
-        st.markdown(f"""
-        <div class="scroll-container-static">
-            <div class="scroll-content-static">
-                {image_tags}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    else:
-        st.error(f"Directory not found: {directory_All_Courses}")
-
-Learn_page()
+navbar()
