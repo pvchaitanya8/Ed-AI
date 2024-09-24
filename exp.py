@@ -1,216 +1,209 @@
-import base64
+import time
 import streamlit as st
-from Pages.Chat import chat
-from Pages.Learn_page import Learn_page
-from streamlit_option_menu import option_menu
-from Pages.Mock_Interview import Mock_Interview
-from Pages.Mock_Assessment import Mock_Assessment
-from Pages.Practice_MCQ_page import Practice_MCQ_page
-from UI_Components.profile_pic import get_base64_image
-from Pages.Practice_Coding_page import Practice_Coding_page
+from streamlit_ace import st_ace
+import io
+import sys
+import contextlib
 
-def clear_and_rewrite_memory_of_navbar(file_path, new_content):
-    with open(file_path, 'w') as file:
-        file.write(new_content)
+def Coding_Problems_page(markdown_file, Problem_title, test_cases):
+    st.markdown(
+        f"""
+        <style>
+        .title h1 {{
+            font-size: 2.5rem;
+            font-weight: 600;
+            text-align: center;
+            color: #343a40;
+            margin-top: 20px;
+        }}
+        </style>
+        <div class="title">
+        <h1>{Problem_title}</h1>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
-def read_memory_of_navbar(file_path):
-    try:
-        with open(file_path, 'r') as file:
-            content = file.read()
-        return content
-    except FileNotFoundError:
-        return f"File '{file_path}' not found."
-    except Exception as e:
-        return f"An error occurred: {e}"
-    
-def load_image_as_base64(image_path):
-    with open(image_path, "rb") as img_file:
-        base64_string = base64.b64encode(img_file.read()).decode('utf-8')
-    return f"data:image/png;base64,{base64_string}"
+    col_question1, col_question2 = st.columns([5, 5])
 
-def navbar():
-    memory_of_navbar = r'EXP\memory.txt'
-    memory_of_selected_round = r'EXP\memory_1.txt'
+    with col_question1:
+        theme_choice = st.selectbox("Reading Theme", ["Dark", "Light"], help="Adjust the reading mode according to your comfort.")
 
-    image_path = r"Static_Files\NavBar\Ed AI.png"
-    profile_pic_url = r"Static_Files\NavBar\profile pic.png"
-    encoded_image = load_image_as_base64(image_path)
-    link_url = "https://github.com/pvchaitanya8?tab=repositories"
+        if theme_choice == "Light":
+            container_css = """
+            <style>
+            .gradient-divider {
+                height: 5px;
+                border-radius: 15px;
+                background: linear-gradient(to right, #adb5bd, #ced4da, #adb5bd);
+                margin: 0px 0;
+                border: none;
+            }
+            .scroll-container {
+                height: 550px;
+                overflow-y: scroll;
+                padding: 20px;
+                border: 1px solid #ccc;
+                border-radius: 10px;
+                background-color: #f8f9fa;
+                color: #212529;
+                font-family: 'Courier New', Courier, monospace;
+                font-size: 1.1rem;
+                line-height: 1.6;
+            }
+            </style>
+            """
+        else:
+            container_css = """
+            <style>
+            .gradient-divider {
+                height: 5px;
+                border-radius: 15px;
+                background: linear-gradient(to right, #495057, #343a40, #495057);
+                margin: 0px 0;
+                border: none;
+            }
+            .scroll-container {
+                height: 550px;
+                overflow-y: scroll;
+                padding: 20px;
+                border: 1px solid #495057;
+                border-radius: 10px;
+                background-color: #050505;
+                color: #f8f9fa;
+                font-family: 'Courier New', Courier, monospace;
+                font-size: 1.1rem;
+                line-height: 1.6;
+            }
+            </style>
+            """
 
-    query_params = st.query_params
-    if "selected_image" not in query_params:
-        col1, col2, col3, col4 = st.columns([0.7, 7, 3, 0.6])
+        st.markdown(container_css, unsafe_allow_html=True)
 
-        with col1:
-            st.markdown("""
-                <style>
-                .container {
-                    display: flex;
-                    justify-content: center;  # Center the content horizontally
-                    align-items: center;  # Center the content vertically
-                }
-                a img {
-                    max-width: 100%;  # Ensure image does not overflow its container
-                    height: auto;  # Maintain aspect ratio
-                    display: block;  # Remove any extra space below the image
-                    transform: translateY(-40px);  # Move image upwards by 10px
-                }
-                </style>
-                """, unsafe_allow_html=True)
+        st.markdown('<div class="gradient-divider"></div>', unsafe_allow_html=True)
 
-            st.markdown(f'<a href="{link_url}" target="_blank"><img src="{encoded_image}" style="max-width: 90%; height: auto; display: block; transform: translateY(-10px);" width="100"></a>', unsafe_allow_html=True)
-
-        with col2:
-            selected = option_menu(
-                menu_title=None, 
-                options=["Learn", "Practice", "Mock Interview", "Chat"], 
-                icons=["book", "pencil-square", "briefcase", "chat-dots"], 
-                menu_icon="cast",
-                default_index=0,
-                orientation="horizontal",
-            )
-            clear_and_rewrite_memory_of_navbar(memory_of_navbar, selected)
-            
-        with col3:
-            search_query = st.text_input("Search", placeholder="🔎 Search...", label_visibility="collapsed")
-            st.markdown(
-                """
-                <style>
-                    div[data-testid="stTextInput"] label {
-                        display: none;
-                    }
-                </style>
-                """,
-                unsafe_allow_html=True
-            )
-
-        with col4:
-            User_Display_Name = "Chaitanya"
-            profile_pic_base64 = get_base64_image(profile_pic_url)
+        try:
+            with open(markdown_file, "r") as file:
+                markdown_content = file.read()
 
             st.markdown(
                 f"""
-                <style>
-                .container {{
-                    position: relative;
-                    width: 50px; 
-                    margin-left: auto;
-                    margin-right: auto;
-                    transition: opacity 0.3s ease-in-out;
-                }}
-
-                .circle-img {{
-                    display: block;
-                    border-radius: 50%;
-                    width: 100%;
-                }}
-
-                .hover-text {{
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, 90%);
-                    color: #9e9fa3;
-                    font-size: 18px;
-                    text-align: center;
-                    opacity: 0;
-                    transition: opacity 0.3s ease-in-out;
-                }}
-
-                .container:hover {{
-                    opacity: 0.8; 
-                }}
-
-                .container:hover .hover-text {{
-                    opacity: 1;
-                }}
-                </style>
-
-                <div class="container">
-                    <img src="data:image/png;base64,{profile_pic_base64}" class="circle-img">
-                    <div class="hover-text">{User_Display_Name}</div>
+                <div class="scroll-container">
+                {markdown_content}
                 </div>
                 """,
                 unsafe_allow_html=True
             )
+        except FileNotFoundError:
+            st.error(f"File not found: {markdown_file}")
 
-        st.markdown(
-            """
-            <style>
-            .gradient-divider {
-                height: 4px;
-                border-radius: 15px;
-                margin: 0px 0;
-                background: linear-gradient(135deg, #f9bec7, #ffafcc, #f72585, #b5179e, #7209b7, #560bad, #480ca8, #3a0ca3, #3f37c9, #4361ee, #4895ef, #4cc9f0, #caf0f8);
-                background-size: 200% 200%;
-                animation: gradientFlow 4.5s ease infinite;
-            }
-            
-            @keyframes gradientFlow {
-                0% { background-position: 0% 50%; }
-                50% { background-position: 100% 50%; }
-                100% { background-position: 0% 50%; }
-            }
-            </style>
-            <div class="gradient-divider"></div>
-            """,
-            unsafe_allow_html=True
-        )
 
-        if selected == "Learn":
-            Learn_page()
+    with col_question2:
+        themes_options = [
+            "monokai",
+            "tomorrow_night_bright",
+            "tomorrow_night_blue",
+            "tomorrow_night_eighties",
+            "tomorrow_night_eiffel",
+            "tomorrow_night_stark",
+            "twilight",
+            "dracula",
+            "solarized_dark",
+            "solarized_light",
+            "github",
+            "zenburn"
+        ]
 
-        elif selected == "Practice":
-            selected_round = st.selectbox(
-                "Select practice type",
-                [
-                    "📄 MCQs Practice",
-                    "🧑‍💻 Coding Practice",
-                ],
-                label_visibility="collapsed"
+        language_options = [
+            "python"
+        ]
+
+        col_editor1, col_editor2, col_editor3 = st.columns([3, 2, 5])
+        with col_editor1:
+            user_theme = st.selectbox("Compiler Theme", themes_options)
+        with col_editor2:
+            user_language = st.selectbox("Select Language", language_options)
+        with col_editor3:
+            user_font_size = st.slider(
+                "Select Font Size",
+                min_value=10,
+                max_value=30,
+                value=18,
+                step=1,
+                format="%d",
+                key="font_size_slider"
             )
-            if selected_round == "📄 MCQs Practice":
-                temp_selected_round = "MCQs Practice"
-            elif selected_round == "🧑‍💻 Coding Practice":
-                temp_selected_round = "Coding Practice"
-            clear_and_rewrite_memory_of_navbar(memory_of_selected_round, temp_selected_round)
 
-            if selected_round == "📄 MCQs Practice":
-                Practice_MCQ_page()
-            elif selected_round == "🧑‍💻 Coding Practice":
-                Practice_Coding_page()
+        code = st_ace(
+            placeholder="Write your Python code here...",
+            language=user_language,
+            theme=user_theme,
+            height=560, 
+            font_size=user_font_size, 
+            show_gutter=True, 
+            keybinding="vscode", )
 
-        elif selected == "Mock Interview":
-            selected_round = st.selectbox(
-                "Select Interview Round",
-                [
-                    "📃 MCQ Assessment Round",
-                    "📃 Coding Assessment Round",
-                    "🧑‍💻 Technical Interview Round",
-                    "🧑‍💻 HR Interview Round"
-                ]
-            )
-            if selected_round == "📃 MCQ Assessment Round":
-                Mock_Assessment()
-            elif selected_round == "📃 Coding Assessment Round":
-                Mock_Assessment()
-            elif selected_round == "🧑‍💻 Technical Interview Round":
-                Mock_Interview()
-            elif selected_round == "🧑‍💻 HR Interview Round":
-                Mock_Interview()
+    def execute_code(code, inputs):
+        output_buffer = io.StringIO()
+        error_buffer = io.StringIO()
 
-        elif selected == "Chat":
-            chat()
+        try:
+            # Redirect print statements to capture them
+            sys.stdout = output_buffer
+            sys.stderr = error_buffer
             
-        if search_query:
-            st.write(f"Search results for: {search_query}")
-    elif read_memory_of_navbar(memory_of_navbar) == "Learn":
-        Learn_page()
-    elif read_memory_of_navbar(memory_of_navbar) == "Practice":
-        selected_round = read_memory_of_navbar(memory_of_selected_round)
-        if selected_round == "MCQs Practice":
-            Practice_MCQ_page()
-        elif selected_round == "Coding Practice":
-            Practice_Coding_page()
+            # Execute the code with the input_data passed to the function
+            exec(code, {"input_data": inputs})
+            
+            # Get the captured output and errors
+            output = output_buffer.getvalue()
+            error = error_buffer.getvalue()
 
-navbar()
+            # Restore original stdout and stderr
+            sys.stdout = sys.__stdout__
+            sys.stderr = sys.__stderr__
+
+            if error:
+                return f"Error:\n{error}"
+            else:
+                return output.strip() if output else "Code executed successfully, but no output was produced."
+
+        except Exception as e:
+            # Ensure stdout and stderr are restored in case of error
+            sys.stdout = sys.__stdout__
+            sys.stderr = sys.__stderr__
+            return f"An error occurred: {e}"
+
+    # Display test cases
+    st.subheader("Test Cases")
+    for i, (input_data, expected_output) in enumerate(test_cases):
+        st.markdown(f"**Test Case {i+1}:** Input: `{input_data}`, Expected Output: `{expected_output}`")
+
+    # Button to run the code
+    if st.button("Run Code"):
+        if code:
+            st.subheader("Output:")
+            all_passed = True
+            for i, (input_data, expected_output) in enumerate(test_cases):
+                output = execute_code(code, input_data)
+                result = f"Output: `{output}`"
+
+                if output == expected_output:
+                    st.success(f"Test Case {i+1} Passed! {result}")
+                else:
+                    st.error(f"Test Case {i+1} Failed! {result}, Expected: `{expected_output}`")
+                    all_passed = False
+
+            if all_passed:
+                st.balloons()  # Similar to LeetCode's confetti when all test cases pass
+
+        else:
+            st.warning("Please write some code before running it.")
+
+# Example test cases to validate code
+test_cases = [
+    ("1 2", "3"),  # Input as strings to simulate inputs like 'input()'
+    ("3 5", "8"),
+]
+
+Coding_Problems_page(r"EXP\problem.md", "Sum of Two Numbers", test_cases)
