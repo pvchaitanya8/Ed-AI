@@ -9,12 +9,29 @@ from Pages.Practice_MCQ_page import Practice_MCQ_page
 from UI_Components.profile_pic import get_base64_image
 from Pages.Practice_Coding_page import Practice_Coding_page
 
+def clear_and_rewrite_memory_of_navbar(file_path, new_content):
+    with open(file_path, 'w') as file:
+        file.write(new_content)
+
+def read_memory_of_navbar(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            content = file.read()
+        return content
+    except FileNotFoundError:
+        return f"File '{file_path}' not found."
+    except Exception as e:
+        return f"An error occurred: {e}"
+    
 def load_image_as_base64(image_path):
     with open(image_path, "rb") as img_file:
         base64_string = base64.b64encode(img_file.read()).decode('utf-8')
     return f"data:image/png;base64,{base64_string}"
 
 def navbar():
+    memory_of_navbar = r'EXP\memory.txt'
+    memory_of_selected_round = r'EXP\memory_1.txt'
+
     image_path = r"Static_Files\NavBar\Ed AI.png"
     profile_pic_url = r"Static_Files\NavBar\profile pic.png"
     encoded_image = load_image_as_base64(image_path)
@@ -52,6 +69,7 @@ def navbar():
                 default_index=0,
                 orientation="horizontal",
             )
+            clear_and_rewrite_memory_of_navbar(memory_of_navbar, selected)
             
         with col3:
             search_query = st.text_input("Search", placeholder="🔎 Search...", label_visibility="collapsed")
@@ -151,6 +169,11 @@ def navbar():
                 ],
                 label_visibility="collapsed"
             )
+            if selected_round == "📄 MCQs Practice":
+                temp_selected_round = "MCQs Practice"
+            elif selected_round == "🧑‍💻 Coding Practice":
+                temp_selected_round = "Coding Practice"
+            clear_and_rewrite_memory_of_navbar(memory_of_selected_round, temp_selected_round)
 
             if selected_round == "📄 MCQs Practice":
                 Practice_MCQ_page()
@@ -181,5 +204,11 @@ def navbar():
             
         if search_query:
             st.write(f"Search results for: {search_query}")
-    else:
+    elif read_memory_of_navbar(memory_of_navbar) == "Learn":
         Learn_page()
+    elif read_memory_of_navbar(memory_of_navbar) == "Practice":
+        selected_round = read_memory_of_navbar(memory_of_selected_round)
+        if selected_round == "MCQs Practice":
+            Practice_MCQ_page()
+        elif selected_round == "Coding Practice":
+            Practice_Coding_page()
