@@ -36,7 +36,7 @@ def Learn_page():
         selected_image = query_params["selected_image"]
         base_name, extension = os.path.splitext(selected_image)
         show_details(base_name)
-        return  
+        return
 
     if os.path.exists(directory_Featured):
         image_width = 550
