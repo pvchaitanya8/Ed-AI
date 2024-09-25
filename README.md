@@ -4,7 +4,9 @@
    ```bash
    python -m venv venv
    ```
-
+   ```bash
+   Set-ExecutionPolicy RemoteSigned -Scope Process
+   ```
    ```bash
    venv\Scripts\activate
    ```

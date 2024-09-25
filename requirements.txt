@@ -2,6 +2,7 @@ streamlit
 streamlit-option-menu
 streamlit-chat
 streamlit-webrtc
+streamlit-ace
 langchain
 langchain_community
 langchain-google-genai
@@ -18,3 +19,7 @@ vosk
 sounddevice
 numpy
 opencv-python-headless
+mediapipe
+python-dotenv
+google-auth-oauthlib 
+google-auth-transport-requests

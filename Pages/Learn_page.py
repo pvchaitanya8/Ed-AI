@@ -1,50 +1,66 @@
 import os
-import streamlit as st
+import json
 import base64
 import mimetypes
+import streamlit as st
+from urllib.parse import urlencode
+from Sub_Pages.Course_page import course_page
 
-# Helper function to load and encode images in base64
 def load_image_as_base64(image_path):
     with open(image_path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode('utf-8')
 
-# Helper function to get the MIME type based on the file extension
 def get_mime_type(filename):
     mime_type, _ = mimetypes.guess_type(filename)
     return mime_type or 'application/octet-stream'
 
+def show_details(selected_image):
+    Redirecting_json_file_path = f"Static_Files\\Learn_Page\\All_Courses_Redirecting_JSON\\{selected_image}.json"
+
+    with open(Redirecting_json_file_path, 'r') as f:
+        data = json.load(f)
+
+    Course_Course_title = data["title"]
+    Course_list = data["Course"]
+    MCQ_list = data["Test"]
+
+    course_page(Course_list, MCQ_list, Course_Course_title)
+    return
+
 def Learn_page():
-    # Define the directory_Featured containing the images
     directory_Featured = r"Static_Files\Learn_Page\Featured"
     directory_All_Courses = r"Static_Files\Learn_Page\All_Courses"
 
+    query_params = st.query_params
+    if "selected_image" in query_params:
+        selected_image = query_params["selected_image"]
+        base_name, extension = os.path.splitext(selected_image)
+        show_details(base_name)
+        return  
+
     if os.path.exists(directory_Featured):
-        # Image dimensions and margin
         image_width = 550
         image_height = 350
-        margin_right = 3  # Gap between images
+        margin_right = 3
 
-        # Prepare image tags and calculate total width
         image_tags = ""
         filenames = sorted(os.listdir(directory_Featured))
-        N = 0  # Number of images
+        N = 0
         for i, filename in enumerate(filenames):
             file_path = os.path.join(directory_Featured, filename)
             if os.path.isfile(file_path):
                 N += 1
                 encoded_image = load_image_as_base64(file_path)
                 mime_type = get_mime_type(filename)
-                # Remove margin-right for the last image in the sequence
                 margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
-                image_tags += f'<img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="{margin_style}">'
+                
+                image_url = f"?{urlencode({'selected_image': filename})}"
+                image_tags += f'<a href="{image_url}"><img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="{margin_style} cursor: pointer;"></a>'
 
-        # Calculate total width of one set of images (including margins)
         total_width = N * image_width + (N - 1) * margin_right
 
-        # Duplicate images for seamless scrolling
         full_image_tags = image_tags + image_tags
 
-        # Insert CSS with dynamic total_width
         st.markdown(f"""
         <style>
         .scroll-container {{
@@ -55,8 +71,8 @@ def Learn_page():
 
         .scroll-content {{
             display: flex;
-            width: {2 * total_width}px; /* Double the total width */
-            animation: scroll 30s linear infinite; /* Adjust duration as needed */
+            width: {2 * total_width}px;
+            animation: scroll 30s linear infinite;
             transition: transform 0.5s ease;
         }}
 
@@ -65,16 +81,16 @@ def Learn_page():
             height: {image_height}px;
             object-fit: cover;
             border-radius: 3px;
-            flex-shrink: 0; /* Prevent images from shrinking */
+            flex-shrink: 0;
             transition: transform 0.4s ease, border-radius 1s ease;
         }}
 
         .scroll-container:hover .scroll-content {{
-            animation-play-state: paused; /* Pause animation on hover */
+            animation-play-state: paused;
         }}
 
         .scroll-content img:hover {{
-            transform: scale(0.9); /* Magnify the image on hover */
+            transform: scale(0.9);
             border-radius: 11px;
         }}
 
@@ -89,7 +105,6 @@ def Learn_page():
         </style>
         """, unsafe_allow_html=True)
 
-        # Create the scrolling container
         st.markdown(f"""
         <div class="scroll-container">
             <div class="scroll-content">
@@ -100,17 +115,13 @@ def Learn_page():
     else:
         st.error(f"Directory not found: {directory_Featured}")
 
-    # "Recommendation" Section
-    st.title("Recommendation")
+    st.title("Recommendations")
 
-    # Image gallery for all courses (Static image gallery)
     if os.path.exists(directory_All_Courses):
-        # Image dimensions and margin
         image_width = 480 
         image_height = 230
-        margin_right = 10  # Gap between images
+        margin_right = 10
 
-        # Prepare image tags
         image_tags = ""
         filenames = sorted(os.listdir(directory_All_Courses))
         for i, filename in enumerate(filenames):
@@ -118,11 +129,11 @@ def Learn_page():
             if os.path.isfile(file_path):
                 encoded_image = load_image_as_base64(file_path)
                 mime_type = get_mime_type(filename)
-                # Remove margin-right for the last image in the sequence
                 margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
-                image_tags += f'<img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;">'
 
-        # Insert CSS for the scrollable container with hover effects
+                image_url = f"?{urlencode({'selected_image': filename})}"
+                image_tags += f'<a href="{image_url}"><img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;"></a>'
+
         st.markdown(f"""
         <style>
         .scroll-container-static {{
@@ -141,43 +152,41 @@ def Learn_page():
             border-radius: 30px;
             margin-right: {margin_right}px;
             vertical-align: middle;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 1s ease; /* Smooth transition for hover effects */
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 1s ease;
         }}
 
         .scroll-content-static img:hover {{
-            transform: scale(0.95); /* Slightly increase the size on hover */
-            box-shadow: 0px 4px 15px rgba(227, 194, 250, 0.8); /* Add shadow on hover */
+            transform: scale(0.95);
+            box-shadow: 0px 4px 15px rgba(227, 194, 250, 0.8);
         }}
 
-        /* Dark themed scrollbar with rounded corners */
         .scroll-container-static::-webkit-scrollbar {{
             height: 8px;
         }}
 
         .scroll-container-static::-webkit-scrollbar-track {{
-            background: #333;  /* Dark background for the track */
-            border-radius: 20px; /* This does not affect the visual on some browsers */
+            background: #333;
+            border-radius: 20px;
         }}
 
         .scroll-container-static::-webkit-scrollbar-thumb {{
-            background: #555;  /* Darker thumb */
+            background: #555;
             border-radius: 10px;
-            border: 2px solid #333; /* Add a border to the thumb to visually create the effect of rounded corners */
+            border: 2px solid #333;
         }}
 
         .scroll-container-static::-webkit-scrollbar-thumb:hover {{
-            background: #888;  /* Slightly lighter on hover */
+            background: #888; 
         }}
 
         .scroll-container-static {{
-            scrollbar-width: thin;  /* Firefox */
-            scrollbar-color: #555 #333;  /* Darker colors for Firefox */
-            border-radius: 10px; /* This will only affect the container, not the scrollbar itself */
+            scrollbar-width: thin;
+            scrollbar-color: #555 #333;
+            border-radius: 10px;
         }}
         </style>
         """, unsafe_allow_html=True)
 
-        # Create the scrollable container
         st.markdown(f"""
         <div class="scroll-container-static">
             <div class="scroll-content-static">
@@ -188,17 +197,13 @@ def Learn_page():
     else:
         st.error(f"Directory not found: {directory_All_Courses}")
 
-    # "All Courses" Section
     st.title("All Courses")
 
-    # Image gallery for all courses (Static image gallery)
     if os.path.exists(directory_All_Courses):
-        # Image dimensions and margin
         image_width = 480 
         image_height = 230
-        margin_right = 10  # Gap between images
+        margin_right = 10  
 
-        # Prepare image tags
         image_tags = ""
         filenames = sorted(os.listdir(directory_All_Courses))
         for i, filename in enumerate(filenames):
@@ -206,11 +211,11 @@ def Learn_page():
             if os.path.isfile(file_path):
                 encoded_image = load_image_as_base64(file_path)
                 mime_type = get_mime_type(filename)
-                # Remove margin-right for the last image in the sequence
                 margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
-                image_tags += f'<img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;">'
 
-        # Insert CSS for the scrollable container with hover effects
+                image_url = f"?{urlencode({'selected_image': filename})}"
+                image_tags += f'<a href="{image_url}"><img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;"></a>'
+
         st.markdown(f"""
         <style>
         .scroll-container-static {{
@@ -229,43 +234,41 @@ def Learn_page():
             border-radius: 30px;
             margin-right: {margin_right}px;
             vertical-align: middle;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 1s ease; /* Smooth transition for hover effects */
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 1s ease;
         }}
 
         .scroll-content-static img:hover {{
-            transform: scale(0.95); /* Slightly increase the size on hover */
-            box-shadow: 0px 4px 15px rgba(227, 194, 250, 0.8); /* Add shadow on hover */
+            transform: scale(0.95);
+            box-shadow: 0px 4px 15px rgba(227, 194, 250, 0.8);
         }}
 
-        /* Dark themed scrollbar with rounded corners */
         .scroll-container-static::-webkit-scrollbar {{
             height: 8px;
         }}
 
         .scroll-container-static::-webkit-scrollbar-track {{
-            background: #333;  /* Dark background for the track */
-            border-radius: 20px; /* This does not affect the visual on some browsers */
+            background: #333;
+            border-radius: 20px;
         }}
 
         .scroll-container-static::-webkit-scrollbar-thumb {{
-            background: #555;  /* Darker thumb */
+            background: #555;
             border-radius: 10px;
-            border: 2px solid #333; /* Add a border to the thumb to visually create the effect of rounded corners */
+            border: 2px solid #333;
         }}
 
         .scroll-container-static::-webkit-scrollbar-thumb:hover {{
-            background: #888;  /* Slightly lighter on hover */
+            background: #888;
         }}
 
         .scroll-container-static {{
-            scrollbar-width: thin;  /* Firefox */
-            scrollbar-color: #555 #333;  /* Darker colors for Firefox */
-            border-radius: 10px; /* This will only affect the container, not the scrollbar itself */
+            scrollbar-width: thin;
+            scrollbar-color: #555 #333;
+            border-radius: 10px;
         }}
         </style>
         """, unsafe_allow_html=True)
 
-        # Create the scrollable container
         st.markdown(f"""
         <div class="scroll-container-static">
             <div class="scroll-content-static">

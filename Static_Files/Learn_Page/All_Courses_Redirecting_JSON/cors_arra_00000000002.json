@@ -1,0 +1,16 @@
+{
+  "ID": "cors_arra_00000000002",
+  "title": "Array",
+  "Course": [
+    "Course_1",
+    "Course_2",
+    "Course_3",
+    "Course_4"
+  ],
+  "Test": [
+    "Test_1",
+    "Test_2",
+    "Test_3",
+    "Test_4"
+  ]
+}

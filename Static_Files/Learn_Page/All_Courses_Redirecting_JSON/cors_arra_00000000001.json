@@ -1,0 +1,12 @@
+{
+  "ID": "cors_arra_00000000001",
+  "title": "Array",
+  "Course": [
+    "EXP\\Material.md",
+    "Static_Files\\Learn_Page\\All_Courses_Material\\Course_2.md"
+  ],
+  "Test": [
+    "Static_Files\\Learn_Page\\All_Courses_Test\\Test_1.json",
+    "Static_Files\\Learn_Page\\All_Courses_Test\\Test_2.json"
+  ]
+}

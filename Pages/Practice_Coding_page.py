@@ -4,48 +4,39 @@ import base64
 import mimetypes
 import pandas as pd
 
-# Helper function to load and encode images in base64
 def load_image_as_base64(image_path):
     with open(image_path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode('utf-8')
 
-# Helper function to get the MIME type based on the file extension
 def get_mime_type(filename):
     mime_type, _ = mimetypes.guess_type(filename)
     return mime_type or 'application/octet-stream'
 
 def Practice_Coding_page():
-    # Define the directory_Featured containing the images
     directory_Featured = r"Static_Files\Practice_Page_Problems\Featured"
     directory_All_Courses = r"Static_Files\Practice_Page_Problems\All_Courses"
 
     if os.path.exists(directory_Featured):
-        # Image dimensions and margin
         image_width = 550
         image_height = 350
-        margin_right = 3  # Gap between images
+        margin_right = 3  
 
-        # Prepare image tags and calculate total width
         image_tags = ""
         filenames = sorted(os.listdir(directory_Featured))
-        N = 0  # Number of images
+        N = 0  
         for i, filename in enumerate(filenames):
             file_path = os.path.join(directory_Featured, filename)
             if os.path.isfile(file_path):
                 N += 1
                 encoded_image = load_image_as_base64(file_path)
                 mime_type = get_mime_type(filename)
-                # Remove margin-right for the last image in the sequence
                 margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
                 image_tags += f'<img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="{margin_style}">'
 
-        # Calculate total width of one set of images (including margins)
         total_width = N * image_width + (N - 1) * margin_right
 
-        # Duplicate images for seamless scrolling
         full_image_tags = image_tags + image_tags
 
-        # Insert CSS with dynamic total_width
         st.markdown(f"""
         <style>
         .scroll-container {{
@@ -101,17 +92,13 @@ def Practice_Coding_page():
     else:
         st.error(f"Directory not found: {directory_Featured}")
 
-    # "Recommendation" Section
     st.title("Recommendation")
 
-    # Image gallery for all courses (Static image gallery)
     if os.path.exists(directory_All_Courses):
-        # Image dimensions and margin
         image_width = 480 
         image_height = 230
-        margin_right = 10  # Gap between images
+        margin_right = 10  
 
-        # Prepare image tags
         image_tags = ""
         filenames = sorted(os.listdir(directory_All_Courses))
         for i, filename in enumerate(filenames):
@@ -119,11 +106,9 @@ def Practice_Coding_page():
             if os.path.isfile(file_path):
                 encoded_image = load_image_as_base64(file_path)
                 mime_type = get_mime_type(filename)
-                # Remove margin-right for the last image in the sequence
                 margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
                 image_tags += f'<img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;">'
 
-        # Insert CSS for the scrollable container with hover effects
         st.markdown(f"""
         <style>
         .scroll-container-static {{
@@ -178,7 +163,6 @@ def Practice_Coding_page():
         </style>
         """, unsafe_allow_html=True)
 
-        # Create the scrollable container
         st.markdown(f"""
         <div class="scroll-container-static">
             <div class="scroll-content-static">
@@ -189,7 +173,6 @@ def Practice_Coding_page():
     else:
         st.error(f"Directory not found: {directory_All_Courses}")
 
-    # "All Courses" Section
     st.title("All Problems")
     data = {
         "S no.": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"],

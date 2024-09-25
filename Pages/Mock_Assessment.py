@@ -1,5 +1,4 @@
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
 
 def Mock_Assessment():
     col1, col2 = st.columns([5, 4])
@@ -20,7 +19,6 @@ def Mock_Assessment():
     st.markdown("---")
 
     if st.button("Let's Start the Assessment"):
-        # Print out the inputs
         st.write("Hardness:", hardness)
         st.write("Topics selected:", ", ".join(topics) if topics else "None")
         st.write("Additional comments:", comments if comments else "None")
