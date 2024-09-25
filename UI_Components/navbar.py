@@ -31,6 +31,7 @@ def load_image_as_base64(image_path):
 def navbar():
     memory_of_navbar = r'EXP\memory.txt'
     memory_of_selected_round = r'EXP\memory_1.txt'
+    memory_of_select_button = r'EXP\memory select problem.txt'
 
     image_path = r"Static_Files\NavBar\Ed AI.png"
     profile_pic_url = r"Static_Files\NavBar\profile pic.png"
@@ -38,7 +39,13 @@ def navbar():
     link_url = "https://github.com/pvchaitanya8?tab=repositories"
 
     query_params = st.query_params
-    if "selected_image" not in query_params:
+
+    # Check if the memory has already been cleared in the session
+    if 'memory_cleared' not in st.session_state:
+        clear_and_rewrite_memory_of_navbar(memory_of_select_button, "None")
+        st.session_state['memory_cleared'] = True
+
+    if ("selected_image" not in query_params) and (read_memory_of_navbar(memory_of_select_button) == "None"):
         col1, col2, col3, col4 = st.columns([0.7, 7, 3, 0.6])
 
         with col1:

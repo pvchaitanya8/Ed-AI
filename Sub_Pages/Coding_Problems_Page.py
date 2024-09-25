@@ -187,7 +187,7 @@ def Coding_Problems_page(markdown_file, Problem_title, test_cases):
         st.markdown(f"**Test Case {i+1}:** Input: `{input_data}`, Expected Output: `{expected_output}`")
 
     # Button to run the code
-    if st.button("Run Code"):
+    if st.button("Run Code", use_container_width=True):
         if code:
             st.subheader("Output:")
             all_passed = True
