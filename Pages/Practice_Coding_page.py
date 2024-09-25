@@ -1,8 +1,10 @@
 import os
+import json
 import streamlit as st
 import base64
 import mimetypes
 import pandas as pd
+from Sub_Pages.Coding_Problems_Page import Coding_Problems_page
 
 def load_image_as_base64(image_path):
     with open(image_path, "rb") as img_file:
@@ -231,5 +233,14 @@ def Practice_Coding_page():
         with col4:
             if st.button("Solve 💻", key=f"button_{i}"):
                 st.write(f"You clicked on problem: {row['Title']}")
+                with open(r'EXP\Redirecting_test_problem.json', 'r') as file:
+                    data = json.load(file)
+
+                problem_problem_id = data["ID"]
+                problem_title = data["title"]
+                problem_problem_description = data["Problem_Description"]
+                problem_test_cases = data["Test_Cases"]
+
+                Coding_Problems_page(problem_problem_description, problem_title, problem_test_cases)
 
         st.divider()

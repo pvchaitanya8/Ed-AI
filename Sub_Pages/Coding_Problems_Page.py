@@ -193,25 +193,24 @@ def Coding_Problems_page(markdown_file, Problem_title, test_cases):
             all_passed = True
             for i, (input_data, expected_output) in enumerate(test_cases):
                 output = execute_code(code, input_data)
-                result = f"Output: `{output}`"
+                result = output
 
                 if output == expected_output:
-                    st.success(f"Test Case {i+1} Passed! {result}")
+                    st.success(f"""
+                        **✅ Test Case {i+1} Passed!**
+                        - **Your Output:** {result}
+                    """)
+
                 else:
-                    st.error(f"Test Case {i+1} Failed! {result}, Expected: `{expected_output}`")
+                    st.error(f"""
+                        **⚠️ Test Case {i+1} Failed!**  
+                        - **Your Output:** {result}  
+                        - **Expected Output:** `{expected_output}`
+                    """)
                     all_passed = False
 
             if all_passed:
-                st.balloons()  # Similar to LeetCode's confetti when all test cases pass
+                st.balloons()
 
         else:
             st.warning("Please write some code before running it.")
-
-
-# Example test cases to validate code
-test_cases = [
-    ("1 2", "3"),  # Input as strings to simulate inputs like 'input()'
-    ("3 5", "8"),
-]
-
-Coding_Problems_page(r"EXP\problem.md", "Sum of Two Numbers", test_cases)
