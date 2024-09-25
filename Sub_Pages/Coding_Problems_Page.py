@@ -1,22 +1,22 @@
 import streamlit as st
 from streamlit_ace import st_ace
 import io
-import contextlib
+import sys
 
-def Coding_Problems_page(markdown_file):
+def Coding_Problems_page(markdown_file, Problem_title, test_cases):
     st.markdown(
-        """
+        f"""
         <style>
-        .title h1 {
+        .title h1 {{
             font-size: 2.5rem;
             font-weight: 600;
             text-align: center;
             color: #343a40;
             margin-top: 20px;
-        }
+        }}
         </style>
         <div class="title">
-        <h1>Two Sum</h1>
+        <h1>{Problem_title}</h1>
         </div>
         """,
         unsafe_allow_html=True,
@@ -98,13 +98,13 @@ def Coding_Problems_page(markdown_file):
 
     with col_question2:
         themes_options = [
-            "twilight",
+            "monokai",
             "tomorrow_night_bright",
             "tomorrow_night_blue",
             "tomorrow_night_eighties",
             "tomorrow_night_eiffel",
             "tomorrow_night_stark",
-            "monokai",
+            "twilight",
             "dracula",
             "solarized_dark",
             "solarized_light",
@@ -141,31 +141,77 @@ def Coding_Problems_page(markdown_file):
             show_gutter=True, 
             keybinding="vscode", )
 
-    def execute_code(code):
+    def execute_code(code, inputs):
         output_buffer = io.StringIO()
         error_buffer = io.StringIO()
 
-        try:
-            # Capture stdout
-            with contextlib.redirect_stdout(output_buffer):
-                with contextlib.redirect_stderr(error_buffer):
-                    exec(code, {})
+        # Simulate input by overriding the built-in input() function
+        input_lines = iter([inputs])  # Pass the full input string at once
 
+        def mock_input(prompt=None):
+            try:
+                return next(input_lines)  # Return the full input string on the first input() call
+            except StopIteration:
+                raise ValueError("Insufficient input data provided for input() calls")
+
+        try:
+            # Redirect print statements to capture them
+            sys.stdout = output_buffer
+            sys.stderr = error_buffer
+
+            # Execute the user's code, replacing input() with our mock function
+            exec(code, {"input": mock_input})
+
+            # Get the captured output and errors
             output = output_buffer.getvalue()
             error = error_buffer.getvalue()
+
+            # Restore original stdout and stderr
+            sys.stdout = sys.__stdout__
+            sys.stderr = sys.__stderr__
 
             if error:
                 return f"Error:\n{error}"
             else:
-                return output if output else "Code executed successfully, but no output was produced."
+                return output.strip() if output else "Code executed successfully, but no output was produced."
 
         except Exception as e:
+            # Ensure stdout and stderr are restored in case of error
+            sys.stdout = sys.__stdout__
+            sys.stderr = sys.__stderr__
             return f"An error occurred: {e}"
 
+    # Display test cases
+    st.subheader("Test Cases")
+    for i, (input_data, expected_output) in enumerate(test_cases):
+        st.markdown(f"**Test Case {i+1}:** Input: `{input_data}`, Expected Output: `{expected_output}`")
+
+    # Button to run the code
     if st.button("Run Code"):
         if code:
             st.subheader("Output:")
-            output = execute_code(code)
-            st.text(output)
+            all_passed = True
+            for i, (input_data, expected_output) in enumerate(test_cases):
+                output = execute_code(code, input_data)
+                result = f"Output: `{output}`"
+
+                if output == expected_output:
+                    st.success(f"Test Case {i+1} Passed! {result}")
+                else:
+                    st.error(f"Test Case {i+1} Failed! {result}, Expected: `{expected_output}`")
+                    all_passed = False
+
+            if all_passed:
+                st.balloons()  # Similar to LeetCode's confetti when all test cases pass
+
         else:
             st.warning("Please write some code before running it.")
+
+
+# Example test cases to validate code
+test_cases = [
+    ("1 2", "3"),  # Input as strings to simulate inputs like 'input()'
+    ("3 5", "8"),
+]
+
+Coding_Problems_page(r"EXP\problem.md", "Sum of Two Numbers", test_cases)
