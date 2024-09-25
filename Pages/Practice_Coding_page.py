@@ -4,6 +4,7 @@ import streamlit as st
 import base64
 import mimetypes
 import pandas as pd
+from urllib.parse import urlencode
 from Sub_Pages.Coding_Problems_Page import Coding_Problems_page
 
 def load_image_as_base64(image_path):
@@ -14,14 +15,34 @@ def get_mime_type(filename):
     mime_type, _ = mimetypes.guess_type(filename)
     return mime_type or 'application/octet-stream'
 
+def show_details(selected_image):
+    Redirecting_json_file_path = f"EXP\\{selected_image}.json"
+
+    with open(Redirecting_json_file_path, 'r') as f:
+        data = json.load(f)
+
+    problem_title = data["title"]
+    problem_problem_description = data["Problem_Description"]
+    problem_test_cases = data["Test_Cases"]
+
+    Coding_Problems_page(problem_problem_description, problem_title, problem_test_cases)
+    return
+
 def Practice_Coding_page():
     directory_Featured = r"Static_Files\Practice_Page_Problems\Featured"
     directory_All_Courses = r"Static_Files\Practice_Page_Problems\All_Courses"
 
+    query_params = st.query_params
+    if "selected_image" in query_params:
+        selected_image = query_params["selected_image"]
+        base_name, extension = os.path.splitext(selected_image)
+        show_details(base_name)
+        return
+
     if os.path.exists(directory_Featured):
         image_width = 550
         image_height = 350
-        margin_right = 3  
+        margin_right = 3
 
         image_tags = ""
         filenames = sorted(os.listdir(directory_Featured))
@@ -33,7 +54,9 @@ def Practice_Coding_page():
                 encoded_image = load_image_as_base64(file_path)
                 mime_type = get_mime_type(filename)
                 margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
-                image_tags += f'<img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="{margin_style}">'
+
+                image_url = f"?{urlencode({'selected_image': filename})}"
+                image_tags += f'<a href="{image_url}"><img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="{margin_style} cursor: pointer;"></a>'
 
         total_width = N * image_width + (N - 1) * margin_right
 
@@ -94,12 +117,12 @@ def Practice_Coding_page():
     else:
         st.error(f"Directory not found: {directory_Featured}")
 
-    st.title("Recommendation")
+    st.title("Recommendations")
 
     if os.path.exists(directory_All_Courses):
         image_width = 480 
         image_height = 230
-        margin_right = 10  
+        margin_right = 10
 
         image_tags = ""
         filenames = sorted(os.listdir(directory_All_Courses))
@@ -109,7 +132,9 @@ def Practice_Coding_page():
                 encoded_image = load_image_as_base64(file_path)
                 mime_type = get_mime_type(filename)
                 margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
-                image_tags += f'<img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;">'
+
+                image_url = f"?{urlencode({'selected_image': filename})}"
+                image_tags += f'<a href="{image_url}"><img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;"></a>'
 
         st.markdown(f"""
         <style>
@@ -236,7 +261,6 @@ def Practice_Coding_page():
                 with open(r'EXP\Redirecting_test_problem.json', 'r') as file:
                     data = json.load(file)
 
-                problem_problem_id = data["ID"]
                 problem_title = data["title"]
                 problem_problem_description = data["Problem_Description"]
                 problem_test_cases = data["Test_Cases"]
