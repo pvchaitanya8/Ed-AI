@@ -207,6 +207,7 @@ def Coding_Problems_page(markdown_file, Problem_title, test_cases):
         else:
             st.warning("Please write some code before running it.")
 
+
 # Example test cases to validate code
 test_cases = [
     ("1 2", "3"),  # Input as strings to simulate inputs like 'input()'
