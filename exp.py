@@ -1,9 +1,7 @@
-import time
 import streamlit as st
 from streamlit_ace import st_ace
 import io
 import sys
-import contextlib
 
 def Coding_Problems_page(markdown_file, Problem_title, test_cases):
     st.markdown(
@@ -147,14 +145,23 @@ def Coding_Problems_page(markdown_file, Problem_title, test_cases):
         output_buffer = io.StringIO()
         error_buffer = io.StringIO()
 
+        # Simulate input by overriding the built-in input() function
+        input_lines = iter([inputs])  # Pass the full input string at once
+
+        def mock_input(prompt=None):
+            try:
+                return next(input_lines)  # Return the full input string on the first input() call
+            except StopIteration:
+                raise ValueError("Insufficient input data provided for input() calls")
+
         try:
             # Redirect print statements to capture them
             sys.stdout = output_buffer
             sys.stderr = error_buffer
-            
-            # Execute the code with the input_data passed to the function
-            exec(code, {"input_data": inputs})
-            
+
+            # Execute the user's code, replacing input() with our mock function
+            exec(code, {"input": mock_input})
+
             # Get the captured output and errors
             output = output_buffer.getvalue()
             error = error_buffer.getvalue()
