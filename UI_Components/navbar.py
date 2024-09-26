@@ -3,7 +3,7 @@ import streamlit as st
 from Pages.Chat import chat
 from Pages.Learn_page import Learn_page
 from streamlit_option_menu import option_menu
-from Pages.Mock_Interview import Mock_Interview
+from Pages.Mock_Interview_page import Mock_Interview_page
 from Pages.Mock_Assessment import Mock_Assessment
 from Pages.Practice_MCQ_page import Practice_MCQ_page
 from UI_Components.profile_pic import get_base64_image
@@ -202,9 +202,9 @@ def navbar():
             elif selected_round == "📃 Coding Assessment Round":
                 Mock_Assessment()
             elif selected_round == "🧑‍💻 Technical Interview Round":
-                Mock_Interview()
+                Mock_Interview_page()
             elif selected_round == "🧑‍💻 HR Interview Round":
-                Mock_Interview()
+                Mock_Interview_page()
 
         elif selected == "Chat":
             chat()
