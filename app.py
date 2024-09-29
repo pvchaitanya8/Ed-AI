@@ -13,4 +13,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    # st.markdown("<footer style='text-align: center; padding-top: 15px;'>Designed by ❤️ Team Infinite Void</footer>", unsafe_allow_html=True)

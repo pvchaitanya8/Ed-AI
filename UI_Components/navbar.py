@@ -3,12 +3,12 @@ import streamlit as st
 from Pages.Chat import chat
 from Pages.Learn_page import Learn_page
 from streamlit_option_menu import option_menu
-from Pages.Mock_Interview_page import Mock_Interview_page
-from Pages.Mock_Assessment import Mock_Assessment
+from Pages.Mock_Interview_page_tr import Mock_Interview_page_tr
+# from Pages.Mock_Assessment import Mock_Assessment
 from Pages.Practice_MCQ_page import Practice_MCQ_page
 from UI_Components.profile_pic import get_base64_image
 from Pages.Practice_Coding_page import Practice_Coding_page
-
+from Pages.Mock_Interview_page_hr import Mock_Interview_page_hr
 def clear_and_rewrite_memory_of_navbar(file_path, new_content):
     with open(file_path, 'w') as file:
         file.write(new_content)
@@ -191,20 +191,20 @@ def navbar():
             selected_round = st.selectbox(
                 "Select Interview Round",
                 [
-                    "📃 MCQ Assessment Round",
-                    "📃 Coding Assessment Round",
-                    "🧑‍💻 Technical Interview Round",
+                    # "📃 MCQ Assessment Round",
+                    # "📃 Coding Assessment Round",
+                    "💻 Technical Interview Round",
                     "🧑‍💻 HR Interview Round"
                 ]
             )
-            if selected_round == "📃 MCQ Assessment Round":
-                Mock_Assessment()
-            elif selected_round == "📃 Coding Assessment Round":
-                Mock_Assessment()
-            elif selected_round == "🧑‍💻 Technical Interview Round":
-                Mock_Interview_page()
+            # if selected_round == "📃 MCQ Assessment Round":
+            #     Mock_Assessment()
+            # elif selected_round == "📃 Coding Assessment Round":
+            #     Mock_Assessment()
+            if selected_round == "💻 Technical Interview Round":
+                Mock_Interview_page_tr()
             elif selected_round == "🧑‍💻 HR Interview Round":
-                Mock_Interview_page()
+                Mock_Interview_page_hr()
 
         elif selected == "Chat":
             chat()

@@ -1,7 +1,7 @@
 import streamlit as st
 from Sub_Pages.Mock_Interview import Mock_Interview
 
-def Mock_Interview_page():
+def Mock_Interview_page_tr():
     # Initialize session state to store input data
     if 'submitted' not in st.session_state:
         st.session_state.submitted = False
