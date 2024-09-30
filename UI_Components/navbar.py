@@ -33,7 +33,7 @@ def navbar():
     memory_of_selected_round = r'EXP\memory_1.txt'
     memory_of_select_button = r'EXP\memory select problem.txt'
 
-    image_path = r"Static_Files\NavBar\Ed AI.png"
+    image_path = r"Static_Files\NavBar\Ed AI logo.png"
     profile_pic_url = r"Static_Files\NavBar\profile pic.png"
     encoded_image = load_image_as_base64(image_path)
     link_url = "https://github.com/pvchaitanya8?tab=repositories"
@@ -46,26 +46,10 @@ def navbar():
         st.session_state['memory_cleared'] = True
 
     if ("selected_image" not in query_params) and (read_memory_of_navbar(memory_of_select_button) == "None"):
-        col1, col2, col3, col4 = st.columns([0.7, 7, 3, 0.6])
+        col1, col2, col3, col4 = st.columns([0.9, 7, 3, 0.6])
 
         with col1:
-            st.markdown("""
-                <style>
-                .container {
-                    display: flex;
-                    justify-content: center;  # Center the content horizontally
-                    align-items: center;  # Center the content vertically
-                }
-                a img {
-                    max-width: 100%;  # Ensure image does not overflow its container
-                    height: auto;  # Maintain aspect ratio
-                    display: block;  # Remove any extra space below the image
-                    transform: translateY(-40px);  # Move image upwards by 10px
-                }
-                </style>
-                """, unsafe_allow_html=True)
-
-            st.markdown(f'<a href="{link_url}" target="_blank"><img src="{encoded_image}" style="max-width: 90%; height: auto; display: block; transform: translateY(-10px);" width="100"></a>', unsafe_allow_html=True)
+            st.markdown(f'<a href="{link_url}" target="_blank"><img src="{encoded_image}" style="max-width: 200%; height: auto; display: block; transform: translateY(15px);" width="100"></a>', unsafe_allow_html=True)
 
         with col2:
             selected = option_menu(
@@ -116,9 +100,9 @@ def navbar():
                     position: absolute;
                     top: 50%;
                     left: 50%;
-                    transform: translate(-50%, 90%);
+                    transform: translate(-50%, 88%);
                     color: #9e9fa3;
-                    font-size: 18px;
+                    font-size: 16px;
                     text-align: center;
                     opacity: 0;
                     transition: opacity 0.3s ease-in-out;
@@ -145,14 +129,21 @@ def navbar():
             """
             <style>
             .gradient-divider {
-                height: 4px;
+                height: 6px;
                 border-radius: 15px;
-                margin: 0px 0;
-                background: linear-gradient(135deg, #f9bec7, #ffafcc, #f72585, #b5179e, #7209b7, #560bad, #480ca8, #3a0ca3, #3f37c9, #4361ee, #4895ef, #4cc9f0, #caf0f8);
+                margin: 10px 0;
+                background: linear-gradient(135deg, #18008b, #644bdc, #cebfff, #644bdc, #18008b);
                 background-size: 200% 200%;
-                animation: gradientFlow 4.5s ease infinite;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+                animation: gradientFlow 3.5s ease-in-out infinite;
+                transition: height 0.3s ease;
             }
-            
+
+            .gradient-divider:hover {
+                height: 8px;
+                box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+            }
+
             @keyframes gradientFlow {
                 0% { background-position: 0% 50%; }
                 50% { background-position: 100% 50%; }

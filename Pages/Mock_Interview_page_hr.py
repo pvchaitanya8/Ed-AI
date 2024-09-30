@@ -9,14 +9,14 @@ def Mock_Interview_page_hr():
     # Button to start the assessment
     if not st.session_state.submitted:
         # Create the form and store user inputs
+        hardness = st.selectbox("Select the hardness level:", ["😉 Easy", "👍 Medium", "💪 Hard"])
+    
         col1, col2 = st.columns([5, 4])
-
         with col1:
-            hardness = st.selectbox("Select the hardness level:", ["😉 Easy", "👍 Medium", "💪 Hard"])
-            uploaded_file = st.file_uploader("Upload your resume", type="pdf")
+            comments = st.text_area("Anything you'd like to say? (Optional)")
         
         with col2:
-            comments = st.text_area("Anything you'd like to say? (Optional)")
+            uploaded_file = st.file_uploader("Upload your resume", type="pdf")
         
         st.markdown("---")
 
@@ -32,4 +32,3 @@ def Mock_Interview_page_hr():
     if st.session_state.submitted:
 
         Mock_Interview()
-

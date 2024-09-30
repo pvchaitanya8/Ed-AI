@@ -37,7 +37,6 @@ def show_details(selected_image):
 def Practice_Coding_page():
     if 'selected_problem' not in st.session_state:
         st.session_state.selected_problem = None
-
     
     directory_Featured = r"Static_Files\Practice_Page_Problems\Featured"
     directory_All_Courses = r"Static_Files\Practice_Page_Problems\All_Coding_Problems"
@@ -166,12 +165,15 @@ def Practice_Coding_page():
                 border-radius: 30px;
                 margin-right: {margin_right}px;
                 vertical-align: middle;
-                transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 1s ease; /* Smooth transition for hover effects */
+                transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 1s ease, filter 0.4s ease, border-radius 1s ease;
             }}
 
             .scroll-content-static img:hover {{
-                transform: scale(0.95); /* Slightly increase the size on hover */
-                box-shadow: 0px 4px 15px rgba(227, 194, 250, 0.8); /* Add shadow on hover */
+                transform: scale(0.95);
+                box-shadow: 0px 8px 30px rgba(255, 255, 255, 0.2),
+                            0px 4px 15px rgba(0, 0, 0, 0.15);
+                backdrop-filter: blur(10px);
+                filter: brightness(1.1);
             }}
 
             /* Dark themed scrollbar with rounded corners */
