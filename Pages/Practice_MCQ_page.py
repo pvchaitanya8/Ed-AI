@@ -15,9 +15,12 @@ def get_mime_type(filename):
     return mime_type or 'application/octet-stream'
 
 def show_details(selected_image):
-    Tests_Question_json_file_path = f"Static_Files\\Practice_Page\\All_Courses_Test\\{selected_image}.json"
-    Practice_MCQ(Tests_Question_json_file_path)
-    # st.write(Tests_Question_json_file_path)
+    Tests_Question_json_file_path = r"Static_Files\Practice_Page\Redirecting_MCQ_test.json"
+    with open(Tests_Question_json_file_path, 'r') as file:
+        data = json.load(file)
+    
+    MCQ_test_file_value = data[selected_image]['Test_file']
+    Practice_MCQ(rf"{MCQ_test_file_value}")
     return
 
 def Practice_MCQ_page():
@@ -65,7 +68,7 @@ def Practice_MCQ_page():
         .scroll-content {{
             display: flex;
             width: {2 * total_width}px;
-            animation: scroll 30s linear infinite;
+            animation: scroll 50s linear infinite;
             transition: transform 0.5s ease;
         }}
 
