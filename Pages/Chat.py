@@ -82,3 +82,4 @@ def chat():
 
         st.session_state.messages.append({"role": "assistant", "content": response_text})
         response_container.markdown(f'<div class="assistant-message">{response_text}</div>', unsafe_allow_html=True)
+        st.rerun()

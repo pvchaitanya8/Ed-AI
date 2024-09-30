@@ -152,12 +152,15 @@ def Learn_page():
             border-radius: 30px;
             margin-right: {margin_right}px;
             vertical-align: middle;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 1s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 1s ease, filter 0.4s ease, border-radius 1s ease;
         }}
 
         .scroll-content-static img:hover {{
             transform: scale(0.95);
-            box-shadow: 0px 4px 15px rgba(227, 194, 250, 0.8);
+            box-shadow: 0px 8px 30px rgba(255, 255, 255, 0.2),
+                        0px 4px 15px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            filter: brightness(1.1);
         }}
 
         .scroll-container-static::-webkit-scrollbar {{
@@ -234,12 +237,16 @@ def Learn_page():
             border-radius: 30px;
             margin-right: {margin_right}px;
             vertical-align: middle;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 1s ease;
+            transition: transform 0.4s ease, box-shadow 0.4s ease, filter 0.4s ease, border-radius 1s ease;
         }}
 
         .scroll-content-static img:hover {{
-            transform: scale(0.95);
-            box-shadow: 0px 4px 15px rgba(227, 194, 250, 0.8);
+            transform: scale(0.93);
+            box-shadow: 0px 8px 30px rgba(255, 255, 255, 0.2),
+                        0px 4px 15px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            filter: brightness(1.1);
+            border-radius: 12px;
         }}
 
         .scroll-container-static::-webkit-scrollbar {{
