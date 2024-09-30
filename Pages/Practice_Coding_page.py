@@ -220,29 +220,25 @@ def Practice_Coding_page():
             clear_and_rewrite_memory_of_navbar(memory_of_select_button, str(st.session_state.selected_problem))
 
         # Sample Data
-        data = {
-            "S no.": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"],
-            "Title": [
-                "Find the Longest Substring Containing",
-                "Two Sum",
-                "Add Two Numbers",
-                "Longest Substring Without Repeating",
-                "Median of Two Sorted Arrays",
-                "Longest Palindromic Substring",
-                "Zigzag Conversion",
-                "Reverse Integer",
-                "String to Integer (atoi)",
-                "Palindrome Number",
-                "Regular Expression Matching",
-                "Container With Most Water",
-                "Integer to Roman",
-                "Roman to Integer",
-                "Longest Common Prefix"
-            ],
-            "Difficulty": ["Medium", "Easy", "Medium", "Medium", "Hard", "Medium", "Medium", "Medium", "Medium", "Easy", "Hard", "Medium", "Medium", "Easy", "Easy"]
+        with open(r'Static_Files\Practice_Page_Problems\Coding_Problem.json') as f:
+            json_data = json.load(f)
+
+        problems_data = {
+            "S no.": [],
+            "Title": [],
+            "Difficulty": [],
+            "ID": []
         }
 
-        df = pd.DataFrame(data)
+        problems_info = json_data["problems"]  # Access problems from the loaded JSON data
+
+        for idx, (key, problem) in enumerate(problems_info.items(), start=1):
+            problems_data["S no."].append(str(idx))
+            problems_data["Title"].append(problem["title"])
+            problems_data["Difficulty"].append(problem["Difficulty"])
+            problems_data["ID"].append(key)  # Use the key as the ID
+
+        df = pd.DataFrame(problems_data)
 
         # Filtering Mechanism
         difficulty_filter = st.selectbox("Filter by Difficulty:", ["All", "Easy", "Medium", "Hard"], index=0)
@@ -302,17 +298,18 @@ def Practice_Coding_page():
 
     else:
         selected = st.session_state.selected_problem
+        Coding_Q_ID = selected["ID"]
 
         # Load Problem Details from JSON or any other logic
         try:
-            with open(r'EXP\Redirecting_test_problem.json', 'r') as file:
+            with open(r'Static_Files\Practice_Page_Problems\Coding_Problem.json', 'r') as file:
                 data = json.load(file)
 
-            problem_title = data["title"]
-            problem_problem_description = data["Problem_Description"]
-            problem_test_cases = data["Test_Cases"]
+            problem_title = data["problems"][Coding_Q_ID]["title"]
+            problem_problem_description = data["problems"][Coding_Q_ID]["Problem_Description"]
+            problem_test_cases = data["problems"][Coding_Q_ID]["Test_Cases"]
 
-            Coding_Problems_page(problem_problem_description, selected['Title'], problem_test_cases)
+            Coding_Problems_page(problem_problem_description, problem_title, problem_test_cases)
 
         except FileNotFoundError:
             st.error("Problem details file not found.")
