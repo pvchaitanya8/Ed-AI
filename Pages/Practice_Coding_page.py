@@ -22,14 +22,14 @@ def get_mime_type(filename):
     return mime_type or 'application/octet-stream'
 
 def show_details(selected_image):
-    Redirecting_json_file_path = f"EXP\\{selected_image}.json"
+    Redirecting_json_file_path = r"Static_Files\Practice_Page_Problems\Coding_Problem.json"
 
     with open(Redirecting_json_file_path, 'r') as f:
         data = json.load(f)
 
-    problem_title = data["title"]
-    problem_problem_description = data["Problem_Description"]
-    problem_test_cases = data["Test_Cases"]
+    problem_title = data['problems'][selected_image]["title"]
+    problem_problem_description = data['problems'][selected_image]["Problem_Description"]
+    problem_test_cases = data['problems'][selected_image]["Test_Cases"]
 
     Coding_Problems_page(problem_problem_description, problem_title, problem_test_cases)
     return
@@ -40,7 +40,7 @@ def Practice_Coding_page():
 
     
     directory_Featured = r"Static_Files\Practice_Page_Problems\Featured"
-    directory_All_Courses = r"Static_Files\Practice_Page_Problems\All_Courses"
+    directory_All_Courses = r"Static_Files\Practice_Page_Problems\All_Coding_Problems"
     
     # Check if no problem is selected
     if not st.session_state.selected_problem:
@@ -85,7 +85,7 @@ def Practice_Coding_page():
             .scroll-content {{
                 display: flex;
                 width: {2 * total_width}px; /* Double the total width */
-                animation: scroll 30s linear infinite; /* Adjust duration as needed */
+                animation: scroll 60s linear infinite; /* Adjust duration as needed */
                 transition: transform 0.5s ease;
             }}
 
