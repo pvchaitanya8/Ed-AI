@@ -56,7 +56,7 @@ def Practice_MCQ(test_file):
             else:
                 st.error("Incorrect!")
                 selected_option_key = selected_answer[0]
-                explanation = questions[current_question_idx]['incorrect_explanation'].get(selected_option_key, "No explanation available.")
+                explanation = questions[current_question_idx]['incorrect_explanation'].get(selected_answer, "No explanation available.")
                 st.write(f"Explanation: {explanation}")
 
     with colq_2:
