@@ -15,7 +15,7 @@ def get_mime_type(filename):
     return mime_type or 'application/octet-stream'
 
 def show_details(selected_image):
-    Redirecting_json_file_path = f"Static_Files\\Learn_Page\\All_Courses_Redirecting_JSON\\{selected_image}.json"
+    Redirecting_json_file_path = f"Static_Files\\Learn_Page\\{selected_image}\\{selected_image}.json"
 
     with open(Redirecting_json_file_path, 'r') as f:
         data = json.load(f)
@@ -72,7 +72,7 @@ def Learn_page():
         .scroll-content {{
             display: flex;
             width: {2 * total_width}px;
-            animation: scroll 30s linear infinite;
+            animation: scroll 130s linear infinite;
             transition: transform 0.5s ease;
         }}
 

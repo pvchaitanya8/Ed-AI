@@ -146,7 +146,7 @@ def Coding_Problems_page(markdown_file, Problem_title, test_cases):
         error_buffer = io.StringIO()
 
         # Simulate input by overriding the built-in input() function
-        input_lines = iter([inputs])  # Pass the full input string at once
+        input_lines = iter(inputs.split('\n'))
 
         def mock_input(prompt=None):
             try:
