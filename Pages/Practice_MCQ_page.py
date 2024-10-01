@@ -20,7 +20,7 @@ def show_details(selected_image):
         data = json.load(file)
     
     MCQ_test_file_value = data[selected_image]['Test_file']
-    Practice_MCQ(rf"{MCQ_test_file_value}")
+    Practice_MCQ(rf"{MCQ_test_file_value}", selected_image)
     return
 
 def Practice_MCQ_page():

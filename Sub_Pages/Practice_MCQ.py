@@ -1,7 +1,22 @@
 import json
 import streamlit as st
 
-def Practice_MCQ(test_file):
+def update_problem_status(file_path, problem_id, completed_status):
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+
+    if problem_id in data:
+        data[problem_id]['Completed'] = completed_status
+        print(f"Updated {problem_id} to Completed = {completed_status}")
+    else:
+        return f"Problem ID {problem_id} not found in the data"
+
+    with open(file_path, 'w') as file:
+        json.dump(data, file, indent=4)
+
+    return "JSON file updated successfully."
+
+def Practice_MCQ(test_file, Test_ID):
     with open(test_file, "r") as f:
         questions_data = json.load(f)
 
@@ -96,4 +111,8 @@ def Practice_MCQ(test_file):
     if not (current_question_idx < len(questions) - 1):
         if st.button("End The Test", use_container_width=True):
             st.balloons()
+            file_path = 'dynamic files\Main_pages\Practice_MCQ.json'
+            completed_status = True
+            print(update_problem_status(file_path, Test_ID, completed_status))
+
             st.success("Completed Test")

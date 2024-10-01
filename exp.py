@@ -1,8 +1,5 @@
-import streamlit as st
-from streamlit_ace import st_ace
-import io
-import sys
 import json
+import streamlit as st
 
 def update_problem_status(file_path, problem_id, completed_status):
     with open(file_path, 'r') as file:
@@ -19,223 +16,107 @@ def update_problem_status(file_path, problem_id, completed_status):
 
     return "JSON file updated successfully."
 
-def Coding_Problems_page(markdown_file, Problem_title, test_cases, problem_ID):
+def Practice_MCQ(test_file, Test_ID):
+    with open(test_file, "r") as f:
+        questions_data = json.load(f)
+
+    questions = questions_data['questions']
+
+    current_question_idx = st.session_state.get('current_question_idx', 0)
+    if 'selected_answers' not in st.session_state:
+        st.session_state['selected_answers'] = [None] * len(questions)
+    selected_answers = st.session_state['selected_answers']
+
+    def navigate(direction):
+        if direction == "next" and current_question_idx < len(questions) - 1:
+            st.session_state['current_question_idx'] = current_question_idx + 1
+        elif direction == "prev" and current_question_idx > 0:
+            st.session_state['current_question_idx'] = current_question_idx - 1
+        else:
+            st.session_state['current_question_idx'] = direction
+
     st.markdown(
-        f"""
+        """
         <style>
-        .title h1 {{
-            font-size: 2.5rem;
-            font-weight: 600;
-            text-align: center;
-            color: #343a40;
-            margin-top: 20px;
-        }}
+        .gradient-divider-sidebar {
+            height: 5px;
+            border-radius: 15px;
+            background: linear-gradient(to right, #212529, #343a40, #212529);
+            margin: 30px 0;
+            border: none;
+        }
         </style>
-        <div class="title">
-        <h1>{Problem_title}</h1>
-        </div>
+        <div class="gradient-divider-sidebar"></div>
         """,
-        unsafe_allow_html=True,
+        unsafe_allow_html=True
     )
 
-    col_question1, col_question2 = st.columns([5, 5])
+    colq_1, colq_2 = st.columns([7, 3])
+    with colq_1:
+        st.markdown(f"### Question {current_question_idx + 1}:", unsafe_allow_html=True)
+        st.markdown(f"<h4>{questions[current_question_idx]['question']}</h4>", unsafe_allow_html=True)
 
-    with col_question1:
-        theme_choice = st.selectbox("Reading Theme", ["Dark", "Light"], help="Adjust the reading mode according to your comfort.")
-
-        if theme_choice == "Light":
-            container_css = """
-            <style>
-            .gradient-divider {
-                height: 5px;
-                border-radius: 15px;
-                background: linear-gradient(to right, #adb5bd, #ced4da, #adb5bd);
-                margin: 0px 0;
-                border: none;
-            }
-            .scroll-container {
-                height: 550px;
-                overflow-y: scroll;
-                padding: 20px;
-                border: 1px solid #ccc;
-                border-radius: 10px;
-                background-color: #f8f9fa;
-                color: #212529;
-                font-family: 'Courier New', Courier, monospace;
-                font-size: 1.1rem;
-                line-height: 1.6;
-            }
-            </style>
-            """
-        else:
-            container_css = """
-            <style>
-            .gradient-divider {
-                height: 5px;
-                border-radius: 15px;
-                background: linear-gradient(to right, #495057, #343a40, #495057);
-                margin: 0px 0;
-                border: none;
-            }
-            .scroll-container {
-                height: 550px;
-                overflow-y: scroll;
-                padding: 20px;
-                border: 1px solid #495057;
-                border-radius: 10px;
-                background-color: #050505;
-                color: #f8f9fa;
-                font-family: 'Courier New', Courier, monospace;
-                font-size: 1.1rem;
-                line-height: 1.6;
-            }
-            </style>
-            """
-
-        st.markdown(container_css, unsafe_allow_html=True)
-
-        st.markdown('<div class="gradient-divider"></div>', unsafe_allow_html=True)
-
-        try:
-            with open(markdown_file, "r") as file:
-                markdown_content = file.read()
-
-            st.markdown(
-                f"""
-                <div class="scroll-container">
-                {markdown_content}
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-        except FileNotFoundError:
-            st.error(f"File not found: {markdown_file}")
-
-
-    with col_question2:
-        themes_options = [
-            "monokai",
-            "tomorrow_night_bright",
-            "tomorrow_night_blue",
-            "tomorrow_night_eighties",
-            "tomorrow_night_eiffel",
-            "tomorrow_night_stark",
-            "twilight",
-            "dracula",
-            "solarized_dark",
-            "solarized_light",
-            "github",
-            "zenburn"
-        ]
-
-        language_options = [
-            "python"
-        ]
-
-        col_editor1, col_editor2, col_editor3 = st.columns([3, 2, 5])
-        with col_editor1:
-            user_theme = st.selectbox("Compiler Theme", themes_options)
-        with col_editor2:
-            user_language = st.selectbox("Select Language", language_options)
-        with col_editor3:
-            user_font_size = st.slider(
-                "Select Font Size",
-                min_value=10,
-                max_value=30,
-                value=18,
-                step=1,
-                format="%d",
-                key="font_size_slider"
-            )
-
-        code = st_ace(
-            placeholder="Write your Python code here...",
-            language=user_language,
-            theme=user_theme,
-            height=560, 
-            font_size=user_font_size, 
-            show_gutter=True, 
-            keybinding="vscode", )
-
-    def execute_code(code, inputs):
-        output_buffer = io.StringIO()
-        error_buffer = io.StringIO()
-
-        # Simulate input by overriding the built-in input() function
-        input_lines = iter(inputs.split('\n'))
-
-        def mock_input(prompt=None):
-            try:
-                return next(input_lines)  # Return the full input string on the first input() call
-            except StopIteration:
-                raise ValueError("Insufficient input data provided for input() calls")
-
-        try:
-            # Redirect print statements to capture them
-            sys.stdout = output_buffer
-            sys.stderr = error_buffer
-
-            # Execute the user's code, replacing input() with our mock function
-            exec(code, {"input": mock_input})
-
-            # Get the captured output and errors
-            output = output_buffer.getvalue()
-            error = error_buffer.getvalue()
-
-            # Restore original stdout and stderr
-            sys.stdout = sys.__stdout__
-            sys.stderr = sys.__stderr__
-
-            if error:
-                return f"Error:\n{error}"
+        selected_answer = st.radio(
+            "", 
+            questions[current_question_idx]['options'], 
+            index=None if selected_answers[current_question_idx] is None else questions[current_question_idx]['options'].index(selected_answers[current_question_idx]),
+            key=f"question_{current_question_idx}"
+        )
+        
+        if selected_answer:
+            selected_answers[current_question_idx] = selected_answer
+            if selected_answer == questions[current_question_idx]['answer']:
+                st.success("Correct!")
+                st.write(f"Explanation: {questions[current_question_idx]['explanation']}")
             else:
-                return output.strip() if output else "Code executed successfully, but no output was produced."
+                st.error("Incorrect!")
+                selected_option_key = selected_answer[0]
+                explanation = questions[current_question_idx]['incorrect_explanation'].get(selected_answer, "No explanation available.")
+                st.write(f"Explanation: {explanation}")
 
-        except Exception as e:
-            # Ensure stdout and stderr are restored in case of error
-            sys.stdout = sys.__stdout__
-            sys.stderr = sys.__stderr__
-            return f"An error occurred: {e}"
+    with colq_2:
+        st.markdown("<h5>Jump to Question</h5>", unsafe_allow_html=True)
+        cols = st.columns(5)
+        for idx, question in enumerate(questions):
+            with cols[idx % 5]:
+                button_label = f"Q{idx + 1}"
+                if st.button(button_label, key=f"q_btn_{idx}"):
+                    navigate(idx)
 
-    # Display test cases
-    st.subheader("Test Cases")
-    for i, (input_data, expected_output) in enumerate(test_cases):
-        st.markdown(f"**Test Case {i+1}:** Input: `{input_data}`, Expected Output: `{expected_output}`")
+    st.markdown(
+        """
+        <style>
+        .gradient-divider-sidebar {
+            height: 5px;
+            border-radius: 15px;
+            background: linear-gradient(to right, #212529, #343a40, #212529);
+            margin: 30px 0;
+            border: none;
+        }
+        </style>
+        <div class="gradient-divider-sidebar"></div>
+        """,
+        unsafe_allow_html=True
+    )
 
-    # Button to run the code
-    if st.button("Run Code", use_container_width=True):
-        if code:
-            st.subheader("Output:")
-            all_passed = True
-            for i, (input_data, expected_output) in enumerate(test_cases):
-                output = execute_code(code, input_data)
-                result = output
+    col1, col2 = st.columns(2)
 
-                if output == expected_output:
-                    st.success(f"""
-                        **✅ Test Case {i+1} Passed!**
-                        - **Your Output:** {result}
-                    """)
+    with col1:
+        if current_question_idx > 0:
+            st.button("Previous", on_click=navigate, args=("prev",), use_container_width=True)
 
-                else:
-                    st.error(f"""
-                        **⚠️ Test Case {i+1} Failed!**  
-                        - **Your Output:** {result}  
-                        - **Expected Output:** `{expected_output}`
-                    """)
-                    all_passed = False
+    with col2:
+        if current_question_idx < len(questions) - 1:
+            st.button("Next", on_click=navigate, args=("next",), use_container_width=True)
+    if not (current_question_idx < len(questions) - 1):
+        if st.button("End The Test", use_container_width=True):
+            st.balloons()
+            file_path = 'dynamic files\Main_pages\Practice_MCQ.json'
+            completed_status = True
+            print(update_problem_status(file_path, Test_ID, completed_status))
 
-            if all_passed:
-                st.balloons()
-                file_path = 'dynamic files/Main_pages/Practice_Coding_Problems.json'
-                completed_status = True
-                print(update_problem_status(file_path, problem_ID, completed_status))
-        else:
-            st.warning("Please write some code before running it.")
+            st.success("Completed Test")
 
-markdown_file = 'Static_Files\\Practice_Page_Problems\\problem_description\\Maximum_Subarray_Sum.md'
-Problem_title = 'Maximum Subarray Sum'
-test_cases = [['8\n-2 -3 4 -1 -2 1 5 -3', '7'], ['5\n1 2 3 4 5', '15'], ['5\n-1 -2 -3 -4 -5', '-1'], ['6\n-2 -3 -1 -4 -6 -5', '-1'], ['9\n-2 1 -3 4 -1 2 1 -5 4', '6']]
-problem_ID = 'prob_arr_00000000004'
-
-Coding_Problems_page(markdown_file, Problem_title, test_cases, problem_ID)
+test_file = 'Static_Files/Practice_Page/All_Courses_Test/Array_000001.json'
+Test_ID = 'Array_000001'
+Practice_MCQ(test_file, Test_ID)
