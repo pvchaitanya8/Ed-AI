@@ -19,9 +19,9 @@
       "Title": "Queue",
       "Test_file": "Static_Files/Practice_Page/All_Courses_Test/Queue_000001.json"
     },
-    "Tree_000001": {
-      "Title": "Tree",
-      "Test_file": "Static_Files/Practice_Page/All_Courses_Test/Tree_000001.json"
+    "Trees_000001": {
+      "Title": "Trees",
+      "Test_file": "Static_Files/Practice_Page/All_Courses_Test/Trees_000001.json"
     },
     "Graph_000001": {
       "Title": "Graph",
