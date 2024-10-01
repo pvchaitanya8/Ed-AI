@@ -201,7 +201,8 @@ def navbar():
             chat()
             
         if search_query:
-            st.write(f"Search results for: {search_query}")
+            # st.write(f"Search results for: {search_query}")
+            print(f"Search results for: {search_query}")
     elif read_memory_of_navbar(memory_of_navbar) == "Learn":
         Learn_page()
     elif read_memory_of_navbar(memory_of_navbar) == "Practice":

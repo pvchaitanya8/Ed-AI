@@ -1,6 +1,22 @@
 import streamlit as st
 from UI_Components.Chat_Course import chat
 from Sub_Pages.Course_MCQ import Course_MCQ
+import json
+
+def update_problem_status(file_path, problem_id, completed_status):
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+
+    if problem_id in data:
+        data[problem_id]['Completed'] = completed_status
+        print(f"Updated {problem_id} to Completed = {completed_status}")
+    else:
+        return f"Problem ID {problem_id} not found in the data"
+
+    with open(file_path, 'w') as file:
+        json.dump(data, file, indent=4)
+
+    return "JSON file updated successfully."
 
 def display_content(Course_list, MCQ_list, current_index, Tittle):
     st.sidebar.markdown(
@@ -92,7 +108,7 @@ def display_content(Course_list, MCQ_list, current_index, Tittle):
         st.markdown(f'<h1 class="centered-title">MCQ {current_index // 2 + 1}</h1>', unsafe_allow_html=True)
         Course_MCQ(mcq_file)  # Call the function to display MCQ content
 
-def course_page(Course_list, MCQ_list, Tittle):
+def course_page(Course_list, MCQ_list, Tittle, Course_ID):
     # Initialize session state if it doesn't exist
     if 'current_index' not in st.session_state:
         st.session_state['current_index'] = 0
@@ -114,3 +130,6 @@ def course_page(Course_list, MCQ_list, Tittle):
         else:
             st.success("You have Completed the Course!")
             st.balloons()
+            file_path = r'dynamic files\Main_pages\Learn.json'
+            completed_status = True
+            print(update_problem_status(file_path, Course_ID, completed_status))

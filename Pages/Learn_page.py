@@ -24,7 +24,7 @@ def show_details(selected_image):
     Course_list = data["Course"]
     MCQ_list = data["Test"]
 
-    course_page(Course_list, MCQ_list, Course_Course_title)
+    course_page(Course_list, MCQ_list, Course_Course_title, selected_image)
     return
 
 def Learn_page():

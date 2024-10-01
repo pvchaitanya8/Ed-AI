@@ -2,8 +2,24 @@ import streamlit as st
 from streamlit_ace import st_ace
 import io
 import sys
+import json
 
-def Coding_Problems_page(markdown_file, Problem_title, test_cases):
+def update_problem_status(file_path, problem_id, completed_status):
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+
+    if problem_id in data:
+        data[problem_id]['Completed'] = completed_status
+        print(f"Updated {problem_id} to Completed = {completed_status}")
+    else:
+        return f"Problem ID {problem_id} not found in the data"
+
+    with open(file_path, 'w') as file:
+        json.dump(data, file, indent=4)
+
+    return "JSON file updated successfully."
+
+def Coding_Problems_page(markdown_file, Problem_title, test_cases, problem_ID):
     st.markdown(
         f"""
         <style>
@@ -211,6 +227,9 @@ def Coding_Problems_page(markdown_file, Problem_title, test_cases):
 
             if all_passed:
                 st.balloons()
+                file_path = r'dynamic files/Main_pages/Practice_Coding_Problems.json'
+                completed_status = True
+                print(update_problem_status(file_path, problem_ID, completed_status))
 
         else:
             st.warning("Please write some code before running it.")
