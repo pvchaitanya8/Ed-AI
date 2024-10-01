@@ -74,42 +74,10 @@ def handle_query(query, llm, system_prompt):
     return response
 
 # Display the mock interview page
-def Mock_Interview():
+def tr_Mock_Interview():
     # Initialize session state
     initialize_session_state()
-    
-    # Custom CSS for centering all content
-    st.markdown("""
-    <style>
-    .centered-content {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        text-align: center;
-    }
-    .mentor-title {
-        font-size: 28px;
-        font-weight: bold;
-        background: linear-gradient(90deg, #FFF5EE, #F3CFC6, #f9bec7, #ffafcc, #f72585, #b5179e, #7209b7, #560bad, #480ca8, #3a0ca3, #3f37c9, #4361ee, #4895ef, #4cc9f0, #caf0f8, #FFF5EE, #FFF5EE);
-        background-clip: text;
-        -webkit-background-clip: text;
-        color: transparent;
-        background-size: 200% 200%;
-        animation: gradientFlow 5s ease infinite;
-        margin-top: 0;
-        margin-bottom: 15px;
-    }
-    @keyframes gradientFlow {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-    </style>
-    <div class="centered-content">
-        <h1 class="mentor-title">✨ Mock Interview</h1>
-    </div>
-    """, unsafe_allow_html=True)
+
     col1, spacer, col2 = st.columns([1.5, 0.1, 1])  # Adjust the middle column width (spacer) as needed
     with col1:
         Mock_Interview_screen()
@@ -123,8 +91,16 @@ def Mock_Interview():
             llm = initialize_llm()
 
             system_prompt = (
-                "You are an AI conducting a professional interview. Ask questions based on the user's responses, "
-                "follow up with clarifications, and provide feedback on their answers."
+                "You are an AI-powered Technical Recruiter conducting a professional interview for a SDE position. "
+                "Your objectives are to assess the candidate's technical skills, problem-solving abilities, cultural fit, and overall suitability for the role. "
+                "During the interview, you should:\n"
+                "1. **Introduce Yourself and the Interview Process**: Begin with a brief introduction of yourself and outline the structure of the interview.\n"
+                "2. **Ask Comprehensive Questions**: Pose clear and relevant questions that cover technical competencies, past experiences, and behavioral aspects.\n"
+                "3. **Adapt Based on Responses**: Listen to the candidate's answers and follow up with clarifying questions or delve deeper into specific areas as needed.\n"
+                "4. **Provide Constructive Feedback**: After each major section, offer feedback on the candidate's responses, highlighting strengths and areas for improvement.\n"
+                "5. **Maintain Professionalism and Encouragement**: Keep the tone professional yet approachable to make the candidate feel comfortable.\n"
+                "6. **Conclude the Interview**: Summarize the key points discussed, outline the next steps in the hiring process, and thank the candidate for their time.\n\n"
+                "Ensure that the interview is interactive, engaging, and tailored to the candidate's background as revealed through their responses."
             )
             response = handle_query(user_input, llm, system_prompt)
 
@@ -142,6 +118,3 @@ def Mock_Interview():
             st.markdown(f'<p style="text-align:left; margin-bottom:5px;"><strong>Interviewer:</strong> {response}</p>', unsafe_allow_html=True)
 
         st.markdown('</div>', unsafe_allow_html=True)
-
-if __name__ == "__main__":
-    Mock_Interview()
