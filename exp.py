@@ -1,173 +1,85 @@
-import time
-import random
 import streamlit as st
-import re
-import textwrap
+from langchain_community.document_loaders import PyPDFLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_chroma import Chroma
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain.chains import create_retrieval_chain
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_core.prompts import ChatPromptTemplate
+from dotenv import load_dotenv
 
-def generate_response_socratic():
-    """Generate a random response with a slight delay to simulate typing."""
-    responses = [
-        textwrap.dedent("""\
-            generate_response_socratic | Here's a simple Python code snippet that prints "Hello, World!" to the console:
+load_dotenv()
 
-            ```python
-            # This is a simple program that prints "Hello, World!"
-            print("Hello, World!")
-            for i in range(2):
-                print(i)
-            ```
-        """),
+def initialize_session_state():
+    """Initialize chat history in session state if not already done."""
+    if 'chat_history' not in st.session_state:
+        st.session_state.chat_history = []
 
-        textwrap.dedent("""\
-        generate_response_non_socratic | Here’s a sample JSON response with user details:
+def load_and_split_documents(pdf_path, chunk_size=1000):
+    """Load a PDF document and split it into chunks."""
+    loader = PyPDFLoader(pdf_path)
+    data = loader.load()
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size)
+    docs = text_splitter.split_documents(data)
+    return docs
 
-        ```json
-        {
-            "name": "John Doe",
-            "age": 30,
-            "email": "johndoe@example.com",
-            "is_verified": true,
-            "address": {
-                "street": "123 Main St",
-                "city": "Anytown",
-                "zip_code": "12345"
-            }
-        }
-        ```
-        The above JSON contains basic user information."""),
+def setup_vectorstore_and_retriever(docs, embedding_model, k=10):
+    """Setup the vectorstore and retriever for document similarity search."""
+    vectorstore = Chroma.from_documents(documents=docs, embedding=GoogleGenerativeAIEmbeddings(model=embedding_model))
+    retriever = vectorstore.as_retriever(search_type="similarity", search_kwargs={"k": k})
+    return retriever
 
-        textwrap.dedent("generate_response_socratic | Hello there! How can I assist you today?")
-    ]
-    response = random.choice(responses)
+def initialize_llm(model_name, temperature=0.7, max_tokens=None, timeout=None):
+    """Initialize the language model for answering queries."""
+    return ChatGoogleGenerativeAI(model=model_name, temperature=temperature, max_tokens=max_tokens, timeout=timeout)
+
+def get_prompt_with_history(history, user_input):
+    """Generate the conversation history and combine it with the new user input."""
+    history_text = ""
+    for item in history:
+        history_text += f"Human: {item['user_input']}\n{item['response']}\n"
+    history_text += f"Human: {user_input}\n"
+    return history_text
+
+def create_rag_chain(retriever, llm, system_prompt, query):
+    """Create a Retrieval-Augmented Generation (RAG) chain using the retriever and LLM."""
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", system_prompt),
+        ("human", get_prompt_with_history(st.session_state.chat_history, query))
+    ])
+    question_answer_chain = create_stuff_documents_chain(llm, prompt)
+    return create_retrieval_chain(retriever, question_answer_chain)
+
+def handle_query(query, retriever, llm, system_prompt):
+    """Handle the user query, process it, and update the session state with the response."""
+    rag_chain = create_rag_chain(retriever, llm, system_prompt, query)
+    response = rag_chain.invoke({"input": query})['answer']
+    
+    st.session_state.chat_history.append({"user_input": query, "response": response})
+    
     return response
 
-def generate_response_non_socratic():
-    """Generate a random response with a slight delay to simulate typing."""
-    responses = [
-        textwrap.dedent("""\
-            generate_response_non_socratic | Here's a simple Python code snippet that prints "Hello, World!" to the console:
+def AI_response():
+    initialize_session_state()
 
-            ```python
-            # This is a simple program that prints "Hello, World!"
-            print("Hello, World!")
-            ```
-        """),
+    docs = load_and_split_documents(r"EXP\mental_health.pdf")
+    retriever = setup_vectorstore_and_retriever(docs, embedding_model="models/embedding-001")
 
-        textwrap.dedent("""\
-        generate_response_non_socratic | Here’s a sample JSON response with user details:
+    llm = initialize_llm(model_name="gemini-1.5-pro")
+    system_prompt = (
+        "You are an AI assistant providing empathetic mental health and emotional support to students. "
+        "Your role is to listen, understand, and offer comforting, positive guidance. Ensure your responses "
+        "are gentle and encouraging. If you don’t know something or if the situation seems severe, suggest that "
+        "the user speak to a counselor or a trusted person.\n\n"
+        "{context}"
+    )
 
-        ```json
-        {
-            "name": "John Doe",
-            "age": 30,
-            "email": "johndoe@example.com",
-            "is_verified": true,
-            "address": {
-                "street": "123 Main St",
-                "city": "Anytown",
-                "zip_code": "12345"
-            }
-        }
-        ```
-        The above JSON contains basic user information."""),
+    query = st.chat_input("How are you feeling today?")
 
-        textwrap.dedent("generate_response_non_socratic | Hello there! How can I assist you today?")
-    ]
-    response = random.choice(responses)
-    return response
+    if query:
+        response = handle_query(query, retriever, llm, system_prompt)
+        st.write(response)
 
-def chat():
-    toggle_socratic = st.toggle("Socratic Mode", value=True)
 
-    # Custom CSS for chat UI
-    st.markdown("""
-        <style>
-        .assistant-message {
-            text-align: left !important;
-            background: linear-gradient(135deg, #3d0e61, #613dc1); /* Gradient from dark blue to a lighter blue */
-            color: white;
-            padding: 12px;
-            border-radius: 20px;
-            margin: 5px 0;
-            width: fit-content;
-            max-width: 80%;
-        }
-        .user-message {
-            text-align: right !important;
-            background-color: #333333;
-            color: white;
-            padding: 12px;
-            border-radius: 20px;
-            margin: 5px 0;
-            width: fit-content;
-            max-width: 80%;
-            margin-left: auto !important;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
-    # Initialize the session state for messages
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
-
-    # Function to separate text and code in the assistant's message
-    def render_message(content):
-        # Patterns to detect both Python and JSON code blocks
-        code_block_pattern = r'```(python|json)(.*?)```'
-        
-        # Split the content by code blocks
-        parts = re.split(code_block_pattern, content, flags=re.DOTALL)
-        
-        for i in range(0, len(parts), 3):
-            text_part = parts[i].strip()  # Regular text
-            if text_part:
-                st.markdown(f'<div class="assistant-message">{text_part}</div>', unsafe_allow_html=True)
-            
-            if i + 1 < len(parts):
-                language = parts[i + 1]  # Either 'python' or 'json'
-                code_part = parts[i + 2].strip()  # Code block content
-                if code_part:
-                    st.code(code_part, language=language)
-
-    # Display previous chat messages
-    for message in st.session_state.messages:
-        if message["role"] == "assistant":
-            render_message(message["content"])
-        else:
-            st.markdown(f'<div class="user-message">{message["content"]}</div>', unsafe_allow_html=True)
-
-    # User input section
-    prompt = st.chat_input("What’s on your mind?")
-    if prompt:
-        # Store the user message in session state and render it
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        st.markdown(f'<div class="user-message">{prompt}</div>', unsafe_allow_html=True)
-
-        # Generate a response based on the toggle
-        if toggle_socratic:
-            response_text = generate_response_socratic()
-        else:
-            response_text = generate_response_non_socratic()
-
-        # Simulate assistant's typing effect with delay
-        response_container = st.empty()
-        partial_response = ""
-        for word in response_text.split():
-            partial_response += word + " "
-            if "```python" in partial_response:
-                # Display code block if detected in the message
-                code_content = partial_response.split("```python")[1].split("```")[0]
-                response_container.code(code_content, language='python')
-            else:
-                response_container.markdown(f'<div class="assistant-message">{partial_response}</div>', unsafe_allow_html=True)
-            time.sleep(0.1)
-
-        # Store the assistant's full response and render it completely
-        st.session_state.messages.append({"role": "assistant", "content": response_text})
-        render_message(response_text)
-
-        # Rerun to update the chat UI
-        st.rerun()
-
-# Run the chat interface
-chat()
+AI_response()

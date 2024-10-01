@@ -23,7 +23,6 @@ mediapipe
 python-dotenv
 streamlit-modal
 google-auth-oauthlib
-
 langchain
 langchain_community
 langchain-google-genai

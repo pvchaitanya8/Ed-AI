@@ -2,18 +2,41 @@ import time
 import random
 import streamlit as st
 import re
+import textwrap
 
 def generate_response_socratic():
     """Generate a random response with a slight delay to simulate typing."""
     responses = [
-        "generate_response_socratic | Hello there! How can I assist you today?",
-        """generate_response_socratic | Here's a simple Python code snippet that prints "Hello, World!" to the console:
+        textwrap.dedent("""\
+            generate_response_socratic | Here's a simple Python code snippet that prints "Hello, World!" to the console:
 
-        ```python
-        # This is a simple program that prints "Hello, World!"
-        print("Hello, World!")
+            ```python
+            # This is a simple program that prints "Hello, World!"
+            print("Hello, World!")
+            for i in range(2):
+                print(i)
+            ```
+        """),
+
+        textwrap.dedent("""\
+        generate_response_non_socratic | Here’s a sample JSON response with user details:
+
+        ```json
+        {
+            "name": "John Doe",
+            "age": 30,
+            "email": "johndoe@example.com",
+            "is_verified": true,
+            "address": {
+                "street": "123 Main St",
+                "city": "Anytown",
+                "zip_code": "12345"
+            }
+        }
         ```
-        """
+        The above JSON contains basic user information."""),
+
+        textwrap.dedent("generate_response_socratic | Hello there! How can I assist you today?")
     ]
     response = random.choice(responses)
     return response
@@ -21,14 +44,34 @@ def generate_response_socratic():
 def generate_response_non_socratic():
     """Generate a random response with a slight delay to simulate typing."""
     responses = [
-        "generate_response_non_socratic | Hello there! How can I assist you today?",
-        """generate_response_non_socratic | Here's a simple Python code snippet that prints "Hello, World!" to the console:
+        textwrap.dedent("""\
+            generate_response_non_socratic | Here's a simple Python code snippet that prints "Hello, World!" to the console:
 
-        ```python
-        # This is a simple program that prints "Hello, World!"
-        print("Hello, World!")
+            ```python
+            # This is a simple program that prints "Hello, World!"
+            print("Hello, World!")
+            ```
+        """),
+
+        textwrap.dedent("""\
+        generate_response_non_socratic | Here’s a sample JSON response with user details:
+
+        ```json
+        {
+            "name": "John Doe",
+            "age": 30,
+            "email": "johndoe@example.com",
+            "is_verified": true,
+            "address": {
+                "street": "123 Main St",
+                "city": "Anytown",
+                "zip_code": "12345"
+            }
+        }
         ```
-        """
+        The above JSON contains basic user information."""),
+
+        textwrap.dedent("generate_response_non_socratic | Hello there! How can I assist you today?")
     ]
     response = random.choice(responses)
     return response
@@ -69,14 +112,22 @@ def chat():
 
     # Function to separate text and code in the assistant's message
     def render_message(content):
-        code_block_pattern = r'```python(.*?)```'
+        # Patterns to detect both Python and JSON code blocks
+        code_block_pattern = r'```(python|json)(.*?)```'
+        
+        # Split the content by code blocks
         parts = re.split(code_block_pattern, content, flags=re.DOTALL)
         
-        for i, part in enumerate(parts):
-            if i % 2 == 0:  # Regular text
-                st.markdown(f'<div class="assistant-message">{part.strip()}</div>', unsafe_allow_html=True)
-            else:  # Python code
-                st.code(part.strip(), language='python')
+        for i in range(0, len(parts), 3):
+            text_part = parts[i].strip()  # Regular text
+            if text_part:
+                st.markdown(f'<div class="assistant-message">{text_part}</div>', unsafe_allow_html=True)
+            
+            if i + 1 < len(parts):
+                language = parts[i + 1]  # Either 'python' or 'json'
+                code_part = parts[i + 2].strip()  # Code block content
+                if code_part:
+                    st.code(code_part, language=language)
 
     # Display previous chat messages
     for message in st.session_state.messages:
