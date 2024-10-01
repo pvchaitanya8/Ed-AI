@@ -25,11 +25,11 @@
     },
     "Graph_000001": {
         "Title": "Graph",
-        "Completed": false
+        "Completed": true
     },
     "Hashing_000001": {
         "Title": "Hashing",
-        "Completed": false
+        "Completed": true
     },
     "Heap_000001": {
         "Title": "Heap",

@@ -1,6 +1,7 @@
 import streamlit as st
 from UI_Components.Chat_Course import chat
 from Sub_Pages.Course_MCQ import Course_MCQ
+from Gen_Process.Learn_Recommendations import write_recommendation_data_to_Learn_file
 import json
 
 def update_problem_status(file_path, problem_id, completed_status):
@@ -133,3 +134,4 @@ def course_page(Course_list, MCQ_list, Tittle, Course_ID):
             file_path = r'dynamic files\Main_pages\Learn.json'
             completed_status = True
             print(update_problem_status(file_path, Course_ID, completed_status))
+            write_recommendation_data_to_Learn_file()
