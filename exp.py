@@ -110,7 +110,7 @@ def Mock_Interview():
         <h1 class="mentor-title">✨ Mock Interview</h1>
     </div>
     """, unsafe_allow_html=True)
-    col1, col2 = st.columns([5, 4])
+    col1, spacer, col2 = st.columns([1.5, 0.1, 1])  # Adjust the middle column width (spacer) as needed
     with col1:
         Mock_Interview_screen()
 

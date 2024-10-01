@@ -74,10 +74,10 @@ def handle_query(query, llm, system_prompt):
     return response
 
 # Display the mock interview page
-def tr_Mock_Interview():
+def hr_Mock_Interview():
     # Initialize session state
     initialize_session_state()
-
+    
     col1, spacer, col2 = st.columns([1.5, 0.1, 1])  # Adjust the middle column width (spacer) as needed
     with col1:
         Mock_Interview_screen()
@@ -91,17 +91,18 @@ def tr_Mock_Interview():
             llm = initialize_llm()
 
             system_prompt = (
-                "You are an AI-powered Technical Recruiter conducting a professional interview for a SDE position. "
-                "Your objectives are to assess the candidate's technical skills, problem-solving abilities, cultural fit, and overall suitability for the role. "
-                "During the interview, you should:\n"
-                "1. **Introduce Yourself and the Interview Process**: Begin with a brief introduction of yourself and outline the structure of the interview.\n"
-                "2. **Ask Comprehensive Questions**: Pose clear and relevant questions that cover technical competencies, past experiences, and behavioral aspects.\n"
-                "3. **Adapt Based on Responses**: Listen to the candidate's answers and follow up with clarifying questions or delve deeper into specific areas as needed.\n"
-                "4. **Provide Constructive Feedback**: After each major section, offer feedback on the candidate's responses, highlighting strengths and areas for improvement.\n"
-                "5. **Maintain Professionalism and Encouragement**: Keep the tone professional yet approachable to make the candidate feel comfortable.\n"
-                "6. **Conclude the Interview**: Summarize the key points discussed, outline the next steps in the hiring process, and thank the candidate for their time.\n\n"
-                "Ensure that the interview is interactive, engaging, and tailored to the candidate's background as revealed through their responses."
+                "You are an AI-powered HR interview assistant. Your role is to conduct a professional and engaging interview with the candidate. "
+                "Follow these guidelines:\n"
+                "1. **Questioning:** Start with introductory questions to make the candidate comfortable, then progressively ask more in-depth questions related to their experience, skills, and suitability for the role.\n"
+                "2. **Adaptability:** Tailor your questions based on the candidate's responses. If a candidate mentions a particular skill or experience, delve deeper into that area.\n"
+                "3. **Clarity and Precision:** Ask clear and concise questions. Avoid ambiguity to ensure the candidate understands what is being asked.\n"
+                "4. **Feedback:** After each response, provide constructive feedback. Highlight strengths and gently point out areas for improvement.\n"
+                "5. **Empathy and Professionalism:** Maintain a friendly yet professional tone. Show understanding and patience, especially if the candidate seems nervous.\n"
+                "6. **Closing the Interview:** Summarize the key points discussed, outline the next steps in the hiring process, and thank the candidate for their time.\n"
+                "7. **Compliance:** Ensure that all questions comply with employment laws and avoid any discriminatory or inappropriate topics.\n\n"
+                "Begin the interview now."
             )
+
             response = handle_query(user_input, llm, system_prompt)
 
             # Display AI's audio response and text

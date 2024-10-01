@@ -1,5 +1,5 @@
 import streamlit as st
-from Sub_Pages.Mock_Interview import Mock_Interview
+from Interview_Files.TR_Interview_page import tr_Mock_Interview
 
 def Mock_Interview_page_tr():
     # Initialize session state to store input data
@@ -36,5 +36,5 @@ def Mock_Interview_page_tr():
     # If the button is clicked, display the summary and hide form inputs
     if st.session_state.submitted:
 
-        Mock_Interview()
+        tr_Mock_Interview()
 
