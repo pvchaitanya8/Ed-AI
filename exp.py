@@ -1,325 +1,178 @@
-import os
-import json
+import time
 import streamlit as st
-import base64
-import mimetypes
-import pandas as pd
-from urllib.parse import urlencode
-from Sub_Pages.Coding_Problems_Page import Coding_Problems_page
+import re
+import streamlit as st
+from langchain_community.document_loaders import TextLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_chroma import Chroma
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain.chains import create_retrieval_chain
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain.prompts import ChatPromptTemplate  # Corrected import path
+from dotenv import load_dotenv
 
-memory_of_select_button = r'EXP\memory select problem.txt'
+load_dotenv()
 
-def clear_and_rewrite_memory_of_navbar(file_path, new_content):
-    with open(file_path, 'w') as file:
-        file.write(new_content)
+def initialize_session_state():
+    """Initialize chat history in session state if not already done."""
+    if 'chat_history' not in st.session_state:
+        st.session_state.chat_history = []
 
-def load_image_as_base64(image_path):
-    with open(image_path, "rb") as img_file:
-        return base64.b64encode(img_file.read()).decode('utf-8')
+def load_and_split_documents(txt_path, chunk_size=1000):
+    """Load a TXT document and split it into chunks."""
+    loader = TextLoader(txt_path, encoding='utf-8')  # Use TextLoader with appropriate encoding
+    data = loader.load()
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=100)  # Optional: adjust overlap
+    docs = text_splitter.split_documents(data)
+    return docs
 
-def get_mime_type(filename):
-    mime_type, _ = mimetypes.guess_type(filename)
-    return mime_type or 'application/octet-stream'
+def setup_vectorstore_and_retriever(docs, embedding_model, k=10):
+    """Setup the vectorstore and retriever for document similarity search."""
+    vectorstore = Chroma.from_documents(documents=docs, embedding=GoogleGenerativeAIEmbeddings(model=embedding_model))
+    retriever = vectorstore.as_retriever(search_type="similarity", search_kwargs={"k": k})
+    return retriever
 
-def show_details(selected_image):
-    Redirecting_json_file_path = r"Static_Files\Practice_Page_Problems\Coding_Problem.json"
+def initialize_llm(model_name, temperature=0.8, max_tokens=None, timeout=None):
+    """Initialize the language model for answering queries."""
+    return ChatGoogleGenerativeAI(model=model_name, temperature=temperature, max_tokens=max_tokens, timeout=timeout)
 
-    with open(Redirecting_json_file_path, 'r') as f:
-        data = json.load(f)
+def get_prompt_with_history(history, user_input):
+    """Generate the conversation history and combine it with the new user input."""
+    history_text = ""
+    for item in history:
+        history_text += f"Human: {item['user_input']}\n{item['response']}\n"
+    history_text += f"Human: {user_input}\n"
+    return history_text
 
-    problem_ID = selected_image
-    problem_title = data['problems'][selected_image]["title"]
-    problem_problem_description = data['problems'][selected_image]["Problem_Description"]
-    problem_test_cases = data['problems'][selected_image]["Test_Cases"]
+def create_rag_chain(retriever, llm, system_prompt, query):
+    """Create a Retrieval-Augmented Generation (RAG) chain using the retriever and LLM."""
+    query = ChatPromptTemplate.from_messages([
+        ("system", system_prompt),
+        ("human", get_prompt_with_history(st.session_state.chat_history, query))
+    ])
+    question_answer_chain = create_stuff_documents_chain(llm, query)
+    return create_retrieval_chain(retriever, question_answer_chain)
 
-    Coding_Problems_page(problem_problem_description, problem_title, problem_test_cases, problem_ID)
-    return
-
-def Practice_Coding_page():
-    if 'selected_problem' not in st.session_state:
-        st.session_state.selected_problem = None
+def handle_query(query, retriever, llm, system_prompt):
+    """Handle the user query, process it, and update the session state with the response."""
+    rag_chain = create_rag_chain(retriever, llm, system_prompt, query)
+    response = rag_chain.invoke({"input": query})['answer']
     
-    directory_Featured = r"Static_Files\Practice_Page_Problems\Featured"
-    directory_All_Courses = r"Static_Files\Practice_Page_Problems\All_Coding_Problems"
+    st.session_state.chat_history.append({"user_input": query, "response": response})
     
-    # Check if no problem is selected
-    if not st.session_state.selected_problem:
-        query_params = st.query_params
-        if "selected_image" in query_params:
-            selected_image = query_params["selected_image"]
-            base_name, extension = os.path.splitext(selected_image)
-            show_details(base_name)
-            return
+    return response
 
-        if os.path.exists(directory_Featured):
-            image_width = 550
-            image_height = 350
-            margin_right = 3
+def chat():
+    initialize_session_state()
+    docs = load_and_split_documents(r"EXP\Learn.txt")  # Changed from .pdf to .txt
+    retriever = setup_vectorstore_and_retriever(docs, embedding_model="models/embedding-001")
 
-            image_tags = ""
-            filenames = sorted(os.listdir(directory_Featured))
-            N = 0  
-            for i, filename in enumerate(filenames):
-                file_path = os.path.join(directory_Featured, filename)
-                if os.path.isfile(file_path):
-                    N += 1
-                    encoded_image = load_image_as_base64(file_path)
-                    mime_type = get_mime_type(filename)
-                    margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
+    llm = initialize_llm(model_name="gemini-1.5-pro")
 
-                    image_url = f"?{urlencode({'selected_image': filename})}"
-                    image_tags += f'<a href="{image_url}"><img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="{margin_style} cursor: pointer;"></a>'
-
-            total_width = N * image_width + (N - 1) * margin_right
-
-            full_image_tags = image_tags + image_tags
-
-            st.markdown(f"""
-            <style>
-            .scroll-container {{
-                overflow: hidden;
-                position: relative;
-                width: 100%;
-            }}
-
-            .scroll-content {{
-                display: flex;
-                width: {2 * total_width}px; /* Double the total width */
-                animation: scroll 60s linear infinite; /* Adjust duration as needed */
-                transition: transform 0.5s ease;
-            }}
-
-            .scroll-content img {{
-                width: {image_width}px;
-                height: {image_height}px;
-                object-fit: cover;
-                border-radius: 3px;
-                flex-shrink: 0; /* Prevent images from shrinking */
-                transition: transform 0.4s ease, border-radius 1s ease;
-            }}
-
-            .scroll-container:hover .scroll-content {{
-                animation-play-state: paused; /* Pause animation on hover */
-            }}
-
-            .scroll-content img:hover {{
-                transform: scale(0.9); /* Magnify the image on hover */
-                border-radius: 11px;
-            }}
-
-            @keyframes scroll {{
-                0% {{
-                    transform: translateX(0);
-                }}
-                100% {{
-                    transform: translateX(-{total_width}px);
-                }}
-            }}
-            </style>
-            """, unsafe_allow_html=True)
-
-            # Create the scrolling container
-            st.markdown(f"""
-            <div class="scroll-container">
-                <div class="scroll-content">
-                    {full_image_tags}
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.error(f"Directory not found: {directory_Featured}")
-
-        st.title("Recommendations")
-
-        if os.path.exists(directory_All_Courses):
-            image_width = 480 
-            image_height = 230
-            margin_right = 10
-
-            image_tags = ""
-            filenames = sorted(os.listdir(directory_All_Courses))
-            for i, filename in enumerate(filenames):
-                file_path = os.path.join(directory_All_Courses, filename)
-                if os.path.isfile(file_path):
-                    encoded_image = load_image_as_base64(file_path)
-                    mime_type = get_mime_type(filename)
-                    margin_style = f"margin-right: {margin_right}px;" if i < len(filenames) - 1 else ""
-
-                    image_url = f"?{urlencode({'selected_image': filename})}"
-                    image_tags += f'<a href="{image_url}"><img src="data:{mime_type};base64,{encoded_image}" alt="{filename}" style="border-radius: 3px; {margin_style} width: {image_width}px; height: {image_height}px; object-fit: cover; vertical-align: middle;"></a>'
-
-            st.markdown(f"""
-            <style>
-            .scroll-container-static {{
-                overflow-x: auto;
-                white-space: nowrap;
-                -webkit-overflow-scrolling: touch;
-                padding-bottom: 10px;
-                margin-bottom: 20px;
-            }}
-
-            .scroll-content-static img {{
-                display: inline-block;
-                width: {image_width}px;
-                height: {image_height}px;
-                object-fit: cover;
-                border-radius: 30px;
-                margin-right: {margin_right}px;
-                vertical-align: middle;
-                transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 1s ease, filter 0.4s ease, border-radius 1s ease;
-            }}
-
-            .scroll-content-static img:hover {{
-                transform: scale(0.95);
-                box-shadow: 0px 8px 30px rgba(255, 255, 255, 0.2),
-                            0px 4px 15px rgba(0, 0, 0, 0.15);
-                backdrop-filter: blur(10px);
-                filter: brightness(1.1);
-            }}
-
-            /* Dark themed scrollbar with rounded corners */
-            .scroll-container-static::-webkit-scrollbar {{
-                height: 8px;
-            }}
-
-            .scroll-container-static::-webkit-scrollbar-track {{
-                background: #333;  /* Dark background for the track */
-                border-radius: 20px; /* This does not affect the visual on some browsers */
-            }}
-
-            .scroll-container-static::-webkit-scrollbar-thumb {{
-                background: #555;  /* Darker thumb */
-                border-radius: 10px;
-                border: 2px solid #333; /* Add a border to the thumb to visually create the effect of rounded corners */
-            }}
-
-            .scroll-container-static::-webkit-scrollbar-thumb:hover {{
-                background: #888;  /* Slightly lighter on hover */
-            }}
-
-            .scroll-container-static {{
-                scrollbar-width: thin;  /* Firefox */
-                scrollbar-color: #555 #333;  /* Darker colors for Firefox */
-                border-radius: 10px; /* This will only affect the container, not the scrollbar itself */
-            }}
-            </style>
-            """, unsafe_allow_html=True)
-
-            st.markdown(f"""
-            <div class="scroll-container-static">
-                <div class="scroll-content-static">
-                    {image_tags}
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.error(f"Directory not found: {directory_All_Courses}")
-
-        st.title("All Coding Problems")
-
-        # Initialize Session State for navigation
-        if 'selected_problem' not in st.session_state:
-            st.session_state.selected_problem = None
-            clear_and_rewrite_memory_of_navbar(memory_of_select_button, str(st.session_state.selected_problem))
-
-        # Sample Data
-        with open(r'Static_Files\Practice_Page_Problems\Coding_Problem.json') as f:
-            json_data = json.load(f)
-
-        problems_data = {
-            "S no.": [],
-            "Title": [],
-            "Difficulty": [],
-            "ID": []
+    toggle_socratic = st.toggle("Socratic Mode", value=True)
+    # Custom CSS for chat UI
+    st.markdown("""
+        <style>
+        .assistant-message {
+            text-align: left !important;
+            background: linear-gradient(90deg, #33006e, #41008b, #5202db);
+            color: white;
+            padding: 12px;
+            border-radius: 20px;
+            margin: 5px 0;
+            width: fit-content;
+            max-width: 80%;
         }
+        .user-message {
+            text-align: right !important;
+            background-color: #333333;
+            color: white;
+            padding: 12px;
+            border-radius: 20px;
+            margin: 5px 0;
+            width: fit-content;
+            max-width: 80%;
+            margin-left: auto !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
-        problems_info = json_data["problems"]  # Access problems from the loaded JSON data
+    # Initialize the session state for messages
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
 
-        for idx, (key, problem) in enumerate(problems_info.items(), start=1):
-            problems_data["S no."].append(str(idx))
-            problems_data["Title"].append(problem["title"])
-            problems_data["Difficulty"].append(problem["Difficulty"])
-            problems_data["ID"].append(key)  # Use the key as the ID
+    # Function to separate text and code in the assistant's message
+    def render_message(content):
+        # Patterns to detect both Python and JSON code blocks
+        code_block_pattern = r'```(python|json)(.*?)```'
+        
+        # Split the content by code blocks
+        parts = re.split(code_block_pattern, content, flags=re.DOTALL)
+        
+        for i in range(0, len(parts), 3):
+            text_part = parts[i].strip()  # Regular text
+            if text_part:
+                st.markdown(f'<div class="assistant-message">{text_part}</div>', unsafe_allow_html=True)
+            
+            if i + 1 < len(parts):
+                language = parts[i + 1]  # Either 'python' or 'json'
+                code_part = parts[i + 2].strip()  # Code block content
+                if code_part:
+                    st.code(code_part, language=language)
 
-        df = pd.DataFrame(problems_data)
+    # Display previous chat messages
+    for message in st.session_state.messages:
+        if message["role"] == "assistant":
+            render_message(message["content"])
+        else:
+            st.markdown(f'<div class="user-message">{message["content"]}</div>', unsafe_allow_html=True)
 
-        # Filtering Mechanism
-        difficulty_filter = st.selectbox("Filter by Difficulty:", ["All", "Easy", "Medium", "Hard"], index=0)
+    # User input section
+    query = st.chat_input("What’s on your mind?")
+    if query:
+        # Store the user message in session state and render it
+        st.session_state.messages.append({"role": "user", "content": query})
+        st.markdown(f'<div class="user-message">{query}</div>', unsafe_allow_html=True)
 
-        if difficulty_filter != "All":
-            df = df[df["Difficulty"] == difficulty_filter]
+        # Generate a response based on the toggle
+        if toggle_socratic:
+            system_prompt = (
+                "You are an AI teaching assistant specializing in Data Structures and Algorithms."
+                "Your primary teaching method is the Socratic method, where you guide students by asking probing and thought-provoking questions instead of providing direct answers. "
+                "Your goal is to help students understand concepts deeply by encouraging them to think critically and arrive at solutions independently. "
+                "Ensure your interactions are patient, encouraging, and supportive, adapting your questions based on the student's responses to lead them toward the correct understanding. "
+                "If a student remains stuck or frustrated after an extended conversation, provide a direct answer with a clear explanation to help them overcome the obstacle.\n\n"
+                "{context}"
+            )
+        else:
+            system_prompt = (
+                "You are a Friendly Teacher specializing in Data Structures and Algorithms. "
+                "Your primary teaching method is direct instruction, where you provide clear explanations and engaging examples to help students grasp concepts effectively. "
+                "Your goal is to support students in their learning journey by offering detailed insights, step-by-step guidance, and practical applications in a welcoming manner. "
+                "Ensure your interactions are warm, encouraging, and supportive, providing clear explanations that anticipate student questions and challenges. "
+                "If a student expresses confusion or difficulty, address their concerns directly with comprehensive explanations and relatable examples, fostering a positive learning environment.\n\n"
+                "{context}"
+            )
 
-        # Function to Style Difficulty Labels
-        def difficulty_bg_color(difficulty):
-            if difficulty == "Easy":
-                return 'background-color: rgba(0, 200, 0, 0.7); color: white; font-weight: bold; border-radius: 30px; padding: 5px; text-align: center;'
-            elif difficulty == "Medium":
-                return 'background-color: rgba(249, 105, 14, 0.75); color: white; font-weight: bold; border-radius: 30px; padding: 5px; text-align: center;'
-            elif difficulty == "Hard":
-                return 'background-color: rgba(255, 0, 0, 0.7); color: white; font-weight: bold; border-radius: 30px; padding: 5px; text-align: center;'
-            return ''
+        response_text = handle_query(query, retriever, llm, system_prompt)
+        # Simulate assistant's typing effect with delay
+        response_container = st.empty()
+        partial_response = ""
+        for word in response_text.split():
+            partial_response += word + " "
+            if "```python" in partial_response:
+                # Display code block if detected in the message
+                code_content = partial_response.split("```python")[1].split("```")[0]
+                response_container.code(code_content, language='python')
+            else:
+                response_container.markdown(f'<div class="assistant-message">{partial_response}</div>', unsafe_allow_html=True)
+            time.sleep(0.1)
 
-        # Styling and Headers
-        st.markdown("""
-            <style>
-                .problem-row { margin-bottom: 10px; }
-                .solve-button { text-align: center; }
-            </style>
-            <hr style='border: 2px solid #ccc; border-radius: 5px;'>
-        """, unsafe_allow_html=True)
+        # Store the assistant's full response and render it completely
+        st.session_state.messages.append({"role": "assistant", "content": response_text})
+        render_message(response_text)
 
-        col1, col2, col3, col4 = st.columns([1, 5, 2, 2])
-        with col1:
-            st.subheader("S no.")
-        with col2:
-            st.subheader("Title")
-        with col3:
-            st.subheader("Difficulty")
-        with col4:
-            st.subheader("Action")
-
-        st.markdown("<hr style='border: 1px solid #ddd;'>", unsafe_allow_html=True)
-
-        # Displaying the List of Problems
-        for i, row in df.iterrows():
-            col1, col2, col3, col4 = st.columns([1, 5, 2, 2])
-
-            with col1:
-                st.markdown(f"<p style='text-align: center;'>{row['S no.']}</p>", unsafe_allow_html=True)
-
-            with col2:
-                st.markdown(f"<p style='font-size: 16px; text-align: left;'>{row['Title']}</p>", unsafe_allow_html=True)
-
-            with col3:
-                st.markdown(f"<div style='{difficulty_bg_color(row['Difficulty'])}'>{row['Difficulty']}</div>", unsafe_allow_html=True)
-
-            with col4:
-                if st.button(f"Solve 💻", key=f"button_{i}"):
-                    st.session_state.selected_problem = row.to_dict()
-                    clear_and_rewrite_memory_of_navbar(memory_of_select_button, str(st.session_state.selected_problem))
-                    st.rerun()  # Re-run the app to refresh the UI and hide the problem list
-
-    else:
-        selected = st.session_state.selected_problem
-        Coding_Q_ID = selected["ID"]
-
-        # Load Problem Details from JSON or any other logic
-        try:
-            with open(r'Static_Files\Practice_Page_Problems\Coding_Problem.json', 'r') as file:
-                data = json.load(file)
-
-            problem_title = data["problems"][Coding_Q_ID]["title"]
-            problem_problem_description = data["problems"][Coding_Q_ID]["Problem_Description"]
-            problem_test_cases = data["problems"][Coding_Q_ID]["Test_Cases"]
-
-            Coding_Problems_page(problem_problem_description, problem_title, problem_test_cases, Coding_Q_ID)
-
-        except FileNotFoundError:
-            st.error("Problem details file not found.")
-
-        # Option to Go Back to the List
-        if st.button("Go to 🏡Home Page", use_container_width=True):
-            st.session_state.selected_problem = None
-            clear_and_rewrite_memory_of_navbar(memory_of_select_button, str(st.session_state.selected_problem))
-            st.rerun()
-Practice_Coding_page()
+        # Rerun to update the chat UI
+        st.rerun()
+chat()
