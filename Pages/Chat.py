@@ -70,7 +70,7 @@ def chat():
 
     llm = initialize_llm(model_name="gemini-1.5-flash")
 
-    toggle_socratic = st.toggle("Socratic Mode", value=True)
+    toggle_socratic = st.toggle("Socratic Mode", value=True, key="socratic_mode_toggle_2")
     # Custom CSS for chat UI
     st.markdown("""
         <style>
