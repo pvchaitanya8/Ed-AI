@@ -40,7 +40,8 @@ def Practice_Coding_page():
         st.session_state.selected_problem = None
     
     directory_Featured = r"Static_Files\Practice_Page_Problems\Featured"
-    directory_All_Courses = r"Static_Files\Practice_Page_Problems\All_Coding_Problems"
+    directory_Recommendation = r"Static_Files\Practice_Page_Problems\All_Coding_Problems"
+    directory_Recommendation = r"dynamic files\Main_pages\Recommendations\Practice_Coding_page_recommendation"
     
     # Check if no problem is selected
     if not st.session_state.selected_problem:
@@ -131,15 +132,15 @@ def Practice_Coding_page():
 
         st.title("Recommendations")
 
-        if os.path.exists(directory_All_Courses):
+        if os.path.exists(directory_Recommendation):
             image_width = 480 
             image_height = 230
             margin_right = 10
 
             image_tags = ""
-            filenames = sorted(os.listdir(directory_All_Courses))
+            filenames = sorted(os.listdir(directory_Recommendation))
             for i, filename in enumerate(filenames):
-                file_path = os.path.join(directory_All_Courses, filename)
+                file_path = os.path.join(directory_Recommendation, filename)
                 if os.path.isfile(file_path):
                     encoded_image = load_image_as_base64(file_path)
                     mime_type = get_mime_type(filename)
@@ -213,7 +214,7 @@ def Practice_Coding_page():
             </div>
             """, unsafe_allow_html=True)
         else:
-            st.error(f"Directory not found: {directory_All_Courses}")
+            st.error(f"Directory not found: {directory_Recommendation}")
 
         st.title("All Coding Problems")
 
