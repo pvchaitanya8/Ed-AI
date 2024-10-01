@@ -1,5 +1,7 @@
-import json
 import streamlit as st
+from UI_Components.Chat_Course import chat
+from Sub_Pages.Course_MCQ import Course_MCQ
+import json
 
 def update_problem_status(file_path, problem_id, completed_status):
     with open(file_path, 'r') as file:
@@ -16,33 +18,43 @@ def update_problem_status(file_path, problem_id, completed_status):
 
     return "JSON file updated successfully."
 
-def Practice_MCQ(test_file, Test_ID):
-    with open(test_file, "r") as f:
-        questions_data = json.load(f)
+def display_content(Course_list, MCQ_list, current_index, Tittle):
+    st.sidebar.markdown(
+        """
+        <style>
+        .mentor-title {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #FFF5EE, #F3CFC6, #f9bec7, #ffafcc, #f72585, #b5179e, #7209b7, #560bad, #480ca8, #3a0ca3, #3f37c9, #4361ee, #4895ef, #4cc9f0, #caf0f8, #FFF5EE, #FFF5EE);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            background-size: 200% 200%;
+            animation: gradientFlow 5s ease infinite;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
 
-    questions = questions_data['questions']
-
-    current_question_idx = st.session_state.get('current_question_idx', 0)
-    if 'selected_answers' not in st.session_state:
-        st.session_state['selected_answers'] = [None] * len(questions)
-    selected_answers = st.session_state['selected_answers']
-
-    def navigate(direction):
-        if direction == "next" and current_question_idx < len(questions) - 1:
-            st.session_state['current_question_idx'] = current_question_idx + 1
-        elif direction == "prev" and current_question_idx > 0:
-            st.session_state['current_question_idx'] = current_question_idx - 1
-        else:
-            st.session_state['current_question_idx'] = direction
-
-    st.markdown(
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        </style>
+        <h1 class="mentor-title">✨ Mentor Chat</h1>
+        """,
+        unsafe_allow_html=True
+    )
+    
+    st.sidebar.markdown(
         """
         <style>
         .gradient-divider-sidebar {
             height: 5px;
             border-radius: 15px;
             background: linear-gradient(to right, #212529, #343a40, #212529);
-            margin: 30px 0;
+            margin: 0px 0;
             border: none;
         }
         </style>
@@ -51,72 +63,81 @@ def Practice_MCQ(test_file, Test_ID):
         unsafe_allow_html=True
     )
 
-    colq_1, colq_2 = st.columns([7, 3])
-    with colq_1:
-        st.markdown(f"### Question {current_question_idx + 1}:", unsafe_allow_html=True)
-        st.markdown(f"<h4>{questions[current_question_idx]['question']}</h4>", unsafe_allow_html=True)
+    with st.sidebar:
+        chat()
 
-        selected_answer = st.radio(
-            "", 
-            questions[current_question_idx]['options'], 
-            index=None if selected_answers[current_question_idx] is None else questions[current_question_idx]['options'].index(selected_answers[current_question_idx]),
-            key=f"question_{current_question_idx}"
+
+    st.markdown(
+        """
+        <style>
+        .centered-title {
+            text-align: center;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Alternate display between course and MCQ
+    if current_index % 2 == 0:  # Even index for Course
+        course_file = Course_list[current_index // 2]
+        st.markdown(f'<h1 class="centered-title">{Tittle}</h1>', unsafe_allow_html=True)
+        st.markdown(
+            """
+            <style>
+            .gradient-divider-sidebar {
+                height: 5px;
+                border-radius: 15px;
+                background: linear-gradient(to right, #212529, #343a40, #212529);
+                margin: 30px 0;
+                border: none;
+            }
+            </style>
+            <div class="gradient-divider-sidebar"></div>
+            """,
+            unsafe_allow_html=True
         )
-        
-        if selected_answer:
-            selected_answers[current_question_idx] = selected_answer
-            if selected_answer == questions[current_question_idx]['answer']:
-                st.success("Correct!")
-                st.write(f"Explanation: {questions[current_question_idx]['explanation']}")
-            else:
-                st.error("Incorrect!")
-                selected_option_key = selected_answer[0]
-                explanation = questions[current_question_idx]['incorrect_explanation'].get(selected_answer, "No explanation available.")
-                st.write(f"Explanation: {explanation}")
+        try:
+            with open(course_file, "r") as file:
+                markdown_content = file.read()
+            st.markdown(markdown_content)
+        except FileNotFoundError:
+            st.error(f"File not found: {course_file}")
+    else:  # Odd index for MCQ
+        mcq_file = MCQ_list[current_index // 2]
+        st.markdown(f'<h1 class="centered-title">MCQ {current_index // 2 + 1}</h1>', unsafe_allow_html=True)
+        Course_MCQ(mcq_file)  # Call the function to display MCQ content
 
-    with colq_2:
-        st.markdown("<h5>Jump to Question</h5>", unsafe_allow_html=True)
-        cols = st.columns(5)
-        for idx, question in enumerate(questions):
-            with cols[idx % 5]:
-                button_label = f"Q{idx + 1}"
-                if st.button(button_label, key=f"q_btn_{idx}"):
-                    navigate(idx)
+def course_page(Course_list, MCQ_list, Tittle, Course_ID):
+    # Initialize session state if it doesn't exist
+    if 'current_index' not in st.session_state:
+        st.session_state['current_index'] = 0
 
-    st.markdown(
-        """
-        <style>
-        .gradient-divider-sidebar {
-            height: 5px;
-            border-radius: 15px;
-            background: linear-gradient(to right, #212529, #343a40, #212529);
-            margin: 30px 0;
-            border: none;
-        }
-        </style>
-        <div class="gradient-divider-sidebar"></div>
-        """,
-        unsafe_allow_html=True
-    )
+    # Cap the index within the bounds of Course_list and MCQ_list
+    total_content = len(Course_list) + len(MCQ_list)
+    if st.session_state['current_index'] >= total_content:
+        st.session_state['current_index'] = total_content - 1
 
-    col1, col2 = st.columns(2)
+    # Call the separated display function
+    display_content(Course_list, MCQ_list, st.session_state['current_index'], Tittle)
 
-    with col1:
-        if current_question_idx > 0:
-            st.button("Previous", on_click=navigate, args=("prev",), use_container_width=True)
 
-    with col2:
-        if current_question_idx < len(questions) - 1:
-            st.button("Next", on_click=navigate, args=("next",), use_container_width=True)
-    if not (current_question_idx < len(questions) - 1):
-        if st.button("End The Test", use_container_width=True):
+    # 'Next' button
+    if st.button('Next Chapter', use_container_width=True):
+        if st.session_state['current_index'] < total_content - 1:
+            st.session_state['current_index'] += 1
+            st.rerun()
+        else:
+            st.success("You have Completed the Course!")
             st.balloons()
-            file_path = 'dynamic files\Main_pages\Practice_MCQ.json'
+            file_path = r'dynamic files\Main_pages\Learn.json'
             completed_status = True
-            print(update_problem_status(file_path, Test_ID, completed_status))
+            print(update_problem_status(file_path, Course_ID, completed_status))
 
-            st.success("Completed Test")
 
-test_file = 'Static_Files/Practice_Page/All_Courses_Test/Array_000001.json'
-Test_ID = 'Array_000001'
-Practice_MCQ(test_file, Test_ID)
+Course_list = ['Static_Files/Learn_Page/Image Box 1/Course Markdown File/DSA Intro.md']
+MCQ_list = ['Static_Files/Learn_Page/Image Box 1/Test JSON File/DSA Intro.json']
+Tittle = 'DSA Introduction'
+Course_ID = 'Image Box 1'
+
+course_page(Course_list, MCQ_list, Tittle, Course_ID)
