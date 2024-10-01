@@ -8,7 +8,6 @@ from io import BytesIO
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.schema import SystemMessage, HumanMessage, AIMessage
 from dotenv import load_dotenv
-from Interview_Files.Screen import Mock_Interview_screen
 
 # Load environment variables
 load_dotenv()
@@ -77,7 +76,7 @@ def handle_query(query, llm, system_prompt):
 def Mock_Interview():
     # Initialize session state
     initialize_session_state()
-    
+
     # Custom CSS for centering all content
     st.markdown("""
     <style>
@@ -110,38 +109,35 @@ def Mock_Interview():
         <h1 class="mentor-title">✨ Mock Interview</h1>
     </div>
     """, unsafe_allow_html=True)
-    col1, col2 = st.columns([5, 4])
-    with col1:
-        Mock_Interview_screen()
 
-    with col2:
-        # Center the audio recording and response content
-        st.markdown('<div class="centered-content">', unsafe_allow_html=True)
-        user_input = capture_audio()
+    # Center the audio recording and response content
+    st.markdown('<div class="centered-content">', unsafe_allow_html=True)
+    user_input = capture_audio()
 
-        if user_input:
-            llm = initialize_llm()
+    if user_input:
+        llm = initialize_llm()
 
-            system_prompt = (
-                "You are an AI conducting a professional interview. Ask questions based on the user's responses, "
-                "follow up with clarifications, and provide feedback on their answers."
-            )
-            response = handle_query(user_input, llm, system_prompt)
+        system_prompt = (
+            "You are an AI conducting a professional interview. Ask questions based on the user's responses, "
+            "follow up with clarifications, and provide feedback on their answers."
+        )
+        response = handle_query(user_input, llm, system_prompt)
 
-            # Display AI's audio response and text
-            audio_response = text_to_speech(response)
-            st.audio(audio_response, format="audio/mp3")
-        
-        else:
-            response = None
-        
-        # Ensure response and user_input are not None before rendering
-        if user_input:
-            st.markdown(f'<p style="text-align:right; margin-bottom:10px; color:gray;"><strong>You:</strong> {user_input}</p>', unsafe_allow_html=True)
-        if response:
-            st.markdown(f'<p style="text-align:left; margin-bottom:5px;"><strong>Interviewer:</strong> {response}</p>', unsafe_allow_html=True)
+        # Display AI's audio response and text
+        audio_response = text_to_speech(response)
+        st.audio(audio_response, format="audio/mp3")
 
-        st.markdown('</div>', unsafe_allow_html=True)
+    
+    else:
+        response = None
+    
+    # Ensure response and user_input are not None before rendering
+    if user_input:
+        st.markdown(f'<p style="text-align:right; margin-bottom:10px; color:gray;"><strong>You:</strong> {user_input}</p>', unsafe_allow_html=True)
+    if response:
+        st.markdown(f'<p style="text-align:left; margin-bottom:5px;"><strong>Interviewer:</strong> {response}</p>', unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 if __name__ == "__main__":
     Mock_Interview()
