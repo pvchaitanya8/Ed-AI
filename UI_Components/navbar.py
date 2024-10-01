@@ -1,3 +1,6 @@
+import os
+import shutil
+import json
 import base64
 import streamlit as st
 from Pages.Chat import chat
@@ -9,6 +12,34 @@ from Pages.Practice_MCQ_page import Practice_MCQ_page
 from UI_Components.profile_pic import get_base64_image
 from Pages.Practice_Coding_page import Practice_Coding_page
 from Pages.Mock_Interview_page_hr import Mock_Interview_page_hr
+
+def delete_all_files_in_directory(directory_path):
+    try:
+        for filename in os.listdir(directory_path):
+            file_path = os.path.join(directory_path, filename)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+                print(f"Deleted: {file_path}")
+            else:
+                print(f"Skipped (not a file): {file_path}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+def copy_imagesto_folder_from_list(Image_list_json_path, Images_path, destination_path):
+    delete_all_files_in_directory(destination_path)
+    os.makedirs(destination_path, exist_ok=True)
+
+    with open(Image_list_json_path, 'r') as file:
+        Image_list = json.load(file)
+
+    for image_name in Image_list:
+        source_file = os.path.join(Images_path, f"{image_name}.jpg")
+        if os.path.isfile(source_file):
+            shutil.copy(source_file, destination_path)
+            print(f"Copied: {source_file} to {destination_path}")
+        else:
+            print(f"File does not exist: {source_file}")
+
 def clear_and_rewrite_memory_of_navbar(file_path, new_content):
     with open(file_path, 'w') as file:
         file.write(new_content)
@@ -40,8 +71,24 @@ def navbar():
 
     query_params = st.query_params
 
-    # Check if the memory has already been cleared in the session
+    # SINGLE
     if 'memory_cleared' not in st.session_state:
+        learn_Image_list_json_path = r"dynamic files\Main_pages\Recommendations\Learn_Recommendation.json"
+        learn_Images_path = r"Static_Files\Learn_Page\All_Courses"
+        learn_destination_path = r"dynamic files\Main_pages\Recommendations\Learn_page_recommendation"
+        copy_imagesto_folder_from_list(learn_Image_list_json_path, learn_Images_path, learn_destination_path)
+
+        Practice_MCQ_page_Image_list_json_path = r"dynamic files\Main_pages\Recommendations\Practice_MCQ_Recommendation.json"
+        Practice_MCQ_page_Images_path = r"Static_Files\Practice_Page\All_Courses"
+        Practice_MCQ_page_destination_path = r"dynamic files\Main_pages\Recommendations\Practice_MCQ_page_recommendation"
+        copy_imagesto_folder_from_list(Practice_MCQ_page_Image_list_json_path, Practice_MCQ_page_Images_path, Practice_MCQ_page_destination_path)
+
+        Practice_Coding_page_Image_list_json_path = r"dynamic files\Main_pages\Recommendations\Practice_Coding_Problems_Recommendation.json"
+        Practice_Coding_page_Images_path = r"Static_Files\Practice_Page_Problems\All_Coding_Problems"
+        Practice_Coding_page_destination_path = r"dynamic files\Main_pages\Recommendations\Practice_Coding_page_recommendation"
+        copy_imagesto_folder_from_list(Practice_Coding_page_Image_list_json_path, Practice_Coding_page_Images_path, Practice_Coding_page_destination_path)
+
+
         clear_and_rewrite_memory_of_navbar(memory_of_select_button, "None")
         st.session_state['memory_cleared'] = True
 

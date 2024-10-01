@@ -1,5 +1,6 @@
 import json
 import streamlit as st
+from Gen_Process.Practice_MCQS_Recommendations import write_recommendation_data_to_Practice_MCQs
 
 def update_problem_status(file_path, problem_id, completed_status):
     with open(file_path, 'r') as file:
@@ -114,5 +115,5 @@ def Practice_MCQ(test_file, Test_ID):
             file_path = r'dynamic files\Main_pages\Practice_MCQ.json'
             completed_status = True
             print(update_problem_status(file_path, Test_ID, completed_status))
-
+            write_recommendation_data_to_Practice_MCQs()
             st.success("Completed Test")

@@ -30,6 +30,7 @@ def show_details(selected_image):
 def Learn_page():
     directory_Featured = r"Static_Files\Learn_Page\Featured"
     directory_All_Courses = r"Static_Files\Learn_Page\All_Courses"
+    directory_Recommendation = r"dynamic files\Main_pages\Recommendations\Learn_page_recommendation"
 
     query_params = st.query_params
     if "selected_image" in query_params:
@@ -117,15 +118,15 @@ def Learn_page():
 
     st.title("Recommendations")
 
-    if os.path.exists(directory_All_Courses):
+    if os.path.exists(directory_Recommendation):
         image_width = 480 
         image_height = 230
         margin_right = 10
 
         image_tags = ""
-        filenames = sorted(os.listdir(directory_All_Courses))
+        filenames = sorted(os.listdir(directory_Recommendation))
         for i, filename in enumerate(filenames):
-            file_path = os.path.join(directory_All_Courses, filename)
+            file_path = os.path.join(directory_Recommendation, filename)
             if os.path.isfile(file_path):
                 encoded_image = load_image_as_base64(file_path)
                 mime_type = get_mime_type(filename)
@@ -198,7 +199,7 @@ def Learn_page():
         </div>
         """, unsafe_allow_html=True)
     else:
-        st.error(f"Directory not found: {directory_All_Courses}")
+        st.error(f"Directory not found: {directory_Recommendation}")
 
     st.title("All Courses")
 

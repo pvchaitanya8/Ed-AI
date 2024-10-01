@@ -3,6 +3,7 @@ from streamlit_ace import st_ace
 import io
 import sys
 import json
+from Gen_Process.Practice_Coding_Problem_Recommendations import write_recommendation_data_to_Practice_Coding_Problem
 
 def update_problem_status(file_path, problem_id, completed_status):
     with open(file_path, 'r') as file:
@@ -230,6 +231,6 @@ def Coding_Problems_page(markdown_file, Problem_title, test_cases, problem_ID):
                 file_path = r'dynamic files/Main_pages/Practice_Coding_Problems.json'
                 completed_status = True
                 print(update_problem_status(file_path, problem_ID, completed_status))
-
+                write_recommendation_data_to_Practice_Coding_Problem()
         else:
             st.warning("Please write some code before running it.")
