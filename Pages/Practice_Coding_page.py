@@ -312,7 +312,7 @@ def Practice_Coding_page():
             problem_problem_description = data["problems"][Coding_Q_ID]["Problem_Description"]
             problem_test_cases = data["problems"][Coding_Q_ID]["Test_Cases"]
 
-            Coding_Problems_page(problem_problem_description, problem_title, problem_test_cases)
+            Coding_Problems_page(problem_problem_description, problem_title, problem_test_cases, Coding_Q_ID)
 
         except FileNotFoundError:
             st.error("Problem details file not found.")

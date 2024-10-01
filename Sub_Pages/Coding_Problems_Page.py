@@ -227,7 +227,7 @@ def Coding_Problems_page(markdown_file, Problem_title, test_cases, problem_ID):
 
             if all_passed:
                 st.balloons()
-                file_path = 'dynamic files/Main_pages/Practice_Coding_Problems.json'
+                file_path = r'dynamic files/Main_pages/Practice_Coding_Problems.json'
                 completed_status = True
                 print(update_problem_status(file_path, problem_ID, completed_status))
 
