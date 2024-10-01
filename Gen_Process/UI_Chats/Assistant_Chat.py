@@ -73,7 +73,12 @@ def Help_Chat():
 
     llm = initialize_llm(model_name="gemini-1.5-flash")
 
-    toggle_socratic = st.toggle("Socratic Mode", value=True)
+    # Generate a unique key for the toggle and chat input based on session state or time
+    unique_toggle_key = f"socratic_mode_toggle_{time.time()}"
+    unique_chat_input_key = f"chat_input_{time.time()}"
+
+    toggle_socratic = st.toggle("Socratic Mode", value=True, key=unique_toggle_key)
+
     # Custom CSS for chat UI
     st.markdown("""
         <style>
@@ -131,8 +136,8 @@ def Help_Chat():
         else:
             st.markdown(f'<div class="user-message">{message["content"]}</div>', unsafe_allow_html=True)
 
-    # User input section
-    query = st.chat_input("What’s on your mind?")
+    # User input section with a unique key
+    query = st.chat_input("What’s on your mind?", key=unique_chat_input_key)
     if query:
         # Store the user message in session state and render it
         st.session_state.messages.append({"role": "user", "content": query})
