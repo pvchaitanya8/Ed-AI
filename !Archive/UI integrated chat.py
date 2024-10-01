@@ -1,6 +1,7 @@
 import time
 import streamlit as st
 import re
+import textwrap
 import streamlit as st
 from langchain.document_loaders import TextLoader  # Updated import
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -76,7 +77,7 @@ def chat():
         <style>
         .assistant-message {
             text-align: left !important;
-            background: linear-gradient(90deg, #33006e, #41008b, #5202db);
+            background: linear-gradient(135deg, #3d0e61, #613dc1); /* Gradient from dark blue to a lighter blue */
             color: white;
             padding: 12px;
             border-radius: 20px;
@@ -175,3 +176,4 @@ def chat():
 
         # Rerun to update the chat UI
         st.rerun()
+chat()
