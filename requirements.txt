@@ -22,4 +22,15 @@ opencv-python-headless
 mediapipe
 python-dotenv
 streamlit-modal
-google-auth-oauthlib 
+google-auth-oauthlib
+
+langchain
+langchain_community
+langchain-google-genai
+python-dotenv
+langchain_experimental
+sentence-transformers
+langchainhub
+pypdf
+rapidocr-onnxruntime
+langchain_chroma
