@@ -1,6 +1,6 @@
 import streamlit as st
 import streamlit.components.v1 as components
-from UI_Components.Chat_Mock_interview import chat
+from Gen_Process.UI_Chats.Assistant_Chat import Help_Chat
 
 def Mock_Interview():
     st.markdown(
@@ -48,7 +48,7 @@ def Mock_Interview():
 
 
     with st.sidebar:
-        chat()
+        Help_Chat()
 
     html_code = """
     <!DOCTYPE html>

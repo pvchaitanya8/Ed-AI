@@ -66,7 +66,7 @@ def AI_response():
     docs = load_and_split_documents(r"EXP\mental_health.pdf")
     retriever = setup_vectorstore_and_retriever(docs, embedding_model="models/embedding-001")
 
-    llm = initialize_llm(model_name="gemini-1.5-pro")
+    llm = initialize_llm(model_name="gemini-1.5-flash")
     system_prompt = (
         "You are an AI assistant providing empathetic mental health and emotional support to students. "
         "Your role is to listen, understand, and offer comforting, positive guidance. Ensure your responses "

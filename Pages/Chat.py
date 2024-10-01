@@ -68,7 +68,7 @@ def chat():
     docs = load_and_split_documents(r"EXP\Learn.txt")  # Changed from .pdf to .txt
     retriever = setup_vectorstore_and_retriever(docs, embedding_model="models/embedding-001")
 
-    llm = initialize_llm(model_name="gemini-1.5-pro")
+    llm = initialize_llm(model_name="gemini-1.5-flash")
 
     toggle_socratic = st.toggle("Socratic Mode", value=True)
     # Custom CSS for chat UI

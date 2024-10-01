@@ -1,5 +1,5 @@
 import streamlit as st
-from UI_Components.Chat_Course import chat
+from Gen_Process.UI_Chats.Assistant_Chat import Help_Chat
 from Sub_Pages.Course_MCQ import Course_MCQ
 from Gen_Process.Learn_Recommendations import write_recommendation_data_to_Learn_file
 import json
@@ -65,8 +65,7 @@ def display_content(Course_list, MCQ_list, current_index, Tittle):
     )
 
     with st.sidebar:
-        chat()
-
+        Help_Chat()
 
     st.markdown(
         """

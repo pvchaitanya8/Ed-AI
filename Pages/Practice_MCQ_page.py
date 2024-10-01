@@ -5,6 +5,7 @@ import mimetypes
 import streamlit as st
 from urllib.parse import urlencode
 from Sub_Pages.Practice_MCQ import Practice_MCQ
+from Gen_Process.UI_Chats.Assistant_Chat import Help_Chat
 
 def load_image_as_base64(image_path):
     with open(image_path, "rb") as img_file:
@@ -24,6 +25,52 @@ def show_details(selected_image):
     return
 
 def Practice_MCQ_page():
+    st.sidebar.markdown(
+        """
+        <style>
+        .mentor-title {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #FFF5EE, #F3CFC6, #f9bec7, #ffafcc, #f72585, #b5179e, #7209b7, #560bad, #480ca8, #3a0ca3, #3f37c9, #4361ee, #4895ef, #4cc9f0, #caf0f8, #FFF5EE, #FFF5EE);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            background-size: 200% 200%;
+            animation: gradientFlow 5s ease infinite;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        </style>
+        <h1 class="mentor-title">✨ Mentor Chat</h1>
+        """,
+        unsafe_allow_html=True
+    )
+    
+    st.sidebar.markdown(
+        """
+        <style>
+        .gradient-divider-sidebar {
+            height: 5px;
+            border-radius: 15px;
+            background: linear-gradient(to right, #212529, #343a40, #212529);
+            margin: 0px 0;
+            border: none;
+        }
+        </style>
+        <div class="gradient-divider-sidebar"></div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    with st.sidebar:
+        Help_Chat()
     directory_Featured = r"Static_Files\Practice_Page\Featured"
     directory_All_Courses = r"Static_Files\Practice_Page\All_Courses"
     directory_Recommendation = r"dynamic files\Main_pages\Recommendations\Practice_MCQ_page_recommendation"
