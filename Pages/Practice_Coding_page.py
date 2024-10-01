@@ -27,11 +27,12 @@ def show_details(selected_image):
     with open(Redirecting_json_file_path, 'r') as f:
         data = json.load(f)
 
+    problem_ID = selected_image
     problem_title = data['problems'][selected_image]["title"]
     problem_problem_description = data['problems'][selected_image]["Problem_Description"]
     problem_test_cases = data['problems'][selected_image]["Test_Cases"]
 
-    Coding_Problems_page(problem_problem_description, problem_title, problem_test_cases)
+    Coding_Problems_page(problem_problem_description, problem_title, problem_test_cases, problem_ID)
     return
 
 def Practice_Coding_page():
