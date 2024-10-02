@@ -1,6 +1,6 @@
 import streamlit as st
 from dotenv import load_dotenv
-from Pre_Pages.login_page import login
+# from Pre_Pages.login_page import login
 from UI_Components.navbar import navbar
 load_dotenv()
 

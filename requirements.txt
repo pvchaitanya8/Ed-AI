@@ -37,3 +37,4 @@ rapidocr-onnxruntime
 langchain_chroma
 pydub
 audio-recorder-streamlit
+gtts
