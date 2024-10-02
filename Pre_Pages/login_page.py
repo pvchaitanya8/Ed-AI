@@ -3,9 +3,9 @@ import streamlit as st
 from dotenv import load_dotenv
 from google_auth_oauthlib.flow import Flow
 import google.auth.transport.requests
-from Pages.Learn_page import Learn_page
+from UI_Components.navbar import navbar
 from UI_Components.Ed_AI_tittle import Ed_AI_tittle
-
+from Pre_Pages.SignUp_page import SignUp
 load_dotenv()
 client_secrets_file = 'Login_Secret.json'
 
@@ -120,6 +120,6 @@ def login():
                     st.write("Ensure that the redirect URI matches the one configured in Google Cloud Console and that the authorization code is valid.")
 
             if st.button("Don't Have Account, Create New Account?", key='create_account', use_container_width=True, help='Click to create a new account'):
-                st.write("Dummy function executed!")
+                SignUp()
     else:
-        Learn_page()
+        navbar()

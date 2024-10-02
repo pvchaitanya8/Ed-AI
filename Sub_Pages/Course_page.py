@@ -78,8 +78,7 @@ def display_content(Course_list, MCQ_list, current_index, Tittle):
         unsafe_allow_html=True
     )
 
-    # Alternate display between course and MCQ
-    if current_index % 2 == 0:  # Even index for Course
+    if current_index % 2 == 0:
         course_file = Course_list[current_index // 2]
         st.markdown(f'<h1 class="centered-title">{Tittle}</h1>', unsafe_allow_html=True)
         st.markdown(
@@ -103,26 +102,21 @@ def display_content(Course_list, MCQ_list, current_index, Tittle):
             st.markdown(markdown_content)
         except FileNotFoundError:
             st.error(f"File not found: {course_file}")
-    else:  # Odd index for MCQ
+    else:
         mcq_file = MCQ_list[current_index // 2]
         st.markdown(f'<h1 class="centered-title">MCQ {current_index // 2 + 1}</h1>', unsafe_allow_html=True)
-        Course_MCQ(mcq_file)  # Call the function to display MCQ content
+        Course_MCQ(mcq_file)
 
 def course_page(Course_list, MCQ_list, Tittle, Course_ID):
-    # Initialize session state if it doesn't exist
     if 'current_index' not in st.session_state:
         st.session_state['current_index'] = 0
 
-    # Cap the index within the bounds of Course_list and MCQ_list
     total_content = len(Course_list) + len(MCQ_list)
     if st.session_state['current_index'] >= total_content:
         st.session_state['current_index'] = total_content - 1
 
-    # Call the separated display function
     display_content(Course_list, MCQ_list, st.session_state['current_index'], Tittle)
 
-
-    # 'Next' button
     if st.button('Next Chapter', use_container_width=True):
         if st.session_state['current_index'] < total_content - 1:
             st.session_state['current_index'] += 1

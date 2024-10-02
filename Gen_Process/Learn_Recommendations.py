@@ -6,7 +6,7 @@ import google.generativeai as genai
 
 load_dotenv()
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 Learn_list_file_path = r"dynamic files\Main_pages\Learn.json"
 
 def learn_recommendation():

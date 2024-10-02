@@ -14,7 +14,7 @@ def Assignment_MCQ(test_file):
     selected_answers = st.session_state['selected_answers']
 
     if 'timer_end_time' not in st.session_state:
-        st.session_state['timer_end_time'] = time.time() + 30 * 60  # 30 minutes
+        st.session_state['timer_end_time'] = time.time() + 30 * 60 
 
     timer_placeholder = st.empty()
 
@@ -24,7 +24,7 @@ def Assignment_MCQ(test_file):
         elif direction == "prev" and current_question_idx > 0:
             st.session_state['current_question_idx'] = current_question_idx - 1
         else:
-            st.session_state['current_question_idx'] = direction  # For question number navigation
+            st.session_state['current_question_idx'] = direction 
 
     def clear_answer():
         selected_answers[current_question_idx] = None
@@ -143,7 +143,7 @@ def Assignment_MCQ(test_file):
         if time_left == 0:
             st.warning("Time's up! Submitting automatically.")
             st.session_state['submit'] = True
-            st.rerun()  # Force the app to refresh and submit when the timer runs out
+            st.rerun()
         
         minutes, seconds = divmod(time_left, 60)
     

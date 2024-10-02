@@ -2,14 +2,14 @@ import time
 import streamlit as st
 import re
 import streamlit as st
-from langchain.document_loaders import TextLoader  # Updated import
+from langchain.document_loaders import TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_chroma import Chroma
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain.prompts import ChatPromptTemplate  # Corrected import path
+from langchain.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -21,9 +21,9 @@ def initialize_session_state():
 
 def load_and_split_documents(txt_path, chunk_size=1000):
     """Load a TXT document and split it into chunks."""
-    loader = TextLoader(txt_path, encoding='utf-8')  # Use TextLoader with appropriate encoding
+    loader = TextLoader(txt_path, encoding='utf-8') 
     data = loader.load()
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=100)  # Optional: adjust overlap
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=100) 
     docs = text_splitter.split_documents(data)
     return docs
 
@@ -65,13 +65,12 @@ def handle_query(query, retriever, llm, system_prompt):
 
 def chat():
     initialize_session_state()
-    docs = load_and_split_documents(r"EXP\Learn.txt")  # Changed from .pdf to .txt
+    docs = load_and_split_documents(r"EXP\Learn.txt") 
     retriever = setup_vectorstore_and_retriever(docs, embedding_model="models/embedding-001")
 
     llm = initialize_llm(model_name="gemini-1.5-flash")
 
     toggle_socratic = st.toggle("Socratic Mode", value=True, key="socratic_mode_toggle_2")
-    # Custom CSS for chat UI
     st.markdown("""
         <style>
         .assistant-message {
@@ -98,44 +97,36 @@ def chat():
         </style>
     """, unsafe_allow_html=True)
 
-    # Initialize the session state for messages
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
-    # Function to separate text and code in the assistant's message
     def render_message(content):
-        # Patterns to detect both Python and JSON code blocks
         code_block_pattern = r'```(python|json)(.*?)```'
         
-        # Split the content by code blocks
         parts = re.split(code_block_pattern, content, flags=re.DOTALL)
         
         for i in range(0, len(parts), 3):
-            text_part = parts[i].strip()  # Regular text
+            text_part = parts[i].strip()
             if text_part:
                 st.markdown(f'<div class="assistant-message">{text_part}</div>', unsafe_allow_html=True)
             
             if i + 1 < len(parts):
-                language = parts[i + 1]  # Either 'python' or 'json'
-                code_part = parts[i + 2].strip()  # Code block content
+                language = parts[i + 1] 
+                code_part = parts[i + 2].strip() 
                 if code_part:
                     st.code(code_part, language=language)
 
-    # Display previous chat messages
     for message in st.session_state.messages:
         if message["role"] == "assistant":
             render_message(message["content"])
         else:
             st.markdown(f'<div class="user-message">{message["content"]}</div>', unsafe_allow_html=True)
 
-    # User input section
     query = st.chat_input("What’s on your mind?")
     if query:
-        # Store the user message in session state and render it
         st.session_state.messages.append({"role": "user", "content": query})
         st.markdown(f'<div class="user-message">{query}</div>', unsafe_allow_html=True)
 
-        # Generate a response based on the toggle
         if toggle_socratic:
             system_prompt = (
                 "You are an AI teaching assistant specializing in Data Structures and Algorithms."
@@ -156,22 +147,18 @@ def chat():
             )
 
         response_text = handle_query(query, retriever, llm, system_prompt)
-        # Simulate assistant's typing effect with delay
         response_container = st.empty()
         partial_response = ""
         for word in response_text.split():
             partial_response += word + " "
             if "```python" in partial_response:
-                # Display code block if detected in the message
                 code_content = partial_response.split("```python")[1].split("```")[0]
                 response_container.code(code_content, language='python')
             else:
                 response_container.markdown(f'<div class="assistant-message">{partial_response}</div>', unsafe_allow_html=True)
             time.sleep(0.1)
 
-        # Store the assistant's full response and render it completely
         st.session_state.messages.append({"role": "assistant", "content": response_text})
         render_message(response_text)
 
-        # Rerun to update the chat UI
         st.rerun()

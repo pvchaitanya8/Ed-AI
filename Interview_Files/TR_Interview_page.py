@@ -10,10 +10,8 @@ from langchain.schema import SystemMessage, HumanMessage, AIMessage
 from dotenv import load_dotenv
 from Interview_Files.Screen import Mock_Interview_screen
 
-# Load environment variables
 load_dotenv()
 
-# Function for capturing and transcribing audio
 def capture_audio():
     recognizer = sr.Recognizer()
     audio_bytes = audio_recorder()
@@ -34,7 +32,6 @@ def capture_audio():
         os.remove(audio_file_path)
     return None
 
-# Function for text-to-speech conversion
 def text_to_speech(text):
     tts = gTTS(text=text, lang='en')
     audio_buffer = BytesIO()
@@ -42,16 +39,13 @@ def text_to_speech(text):
     audio_buffer.seek(0)
     return audio_buffer
 
-# Initialize session state for chat history
 def initialize_session_state():
     if 'chat_history' not in st.session_state:
         st.session_state.chat_history = []
 
-# Initialize the language model
 def initialize_llm():
     return ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.7)
 
-# Build chat messages for the LLM
 def build_messages(history, user_input, system_prompt):
     messages = [SystemMessage(content=system_prompt)]
     for chat in history:
@@ -60,7 +54,6 @@ def build_messages(history, user_input, system_prompt):
     messages.append(HumanMessage(content=user_input))
     return messages
 
-# Handle user input and generate AI response
 def handle_query(query, llm, system_prompt):
     messages = build_messages(st.session_state.chat_history, query, system_prompt)
     response_message = llm(messages)
@@ -73,17 +66,14 @@ def handle_query(query, llm, system_prompt):
     st.session_state.chat_history.append({"user_input": query, "response": response})
     return response
 
-# Display the mock interview page
 def tr_Mock_Interview():
-    # Initialize session state
     initialize_session_state()
 
-    col1, spacer, col2 = st.columns([1.5, 0.1, 1])  # Adjust the middle column width (spacer) as needed
+    col1, spacer, col2 = st.columns([1.5, 0.1, 1])
     with col1:
         Mock_Interview_screen()
 
     with col2:
-        # Center the audio recording and response content
         st.markdown('<div class="centered-content">', unsafe_allow_html=True)
         user_input = capture_audio()
 
@@ -104,14 +94,12 @@ def tr_Mock_Interview():
             )
             response = handle_query(user_input, llm, system_prompt)
 
-            # Display AI's audio response and text
             audio_response = text_to_speech(response)
             st.audio(audio_response, format="audio/mp3")
         
         else:
             response = None
         
-        # Ensure response and user_input are not None before rendering
         if user_input:
             st.markdown(f'<p style="text-align:right; margin-bottom:10px; color:gray;"><strong>You:</strong> {user_input}</p>', unsafe_allow_html=True)
         if response:

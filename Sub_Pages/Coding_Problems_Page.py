@@ -210,28 +210,23 @@ def Coding_Problems_page(markdown_file, Problem_title, test_cases, problem_ID):
         output_buffer = io.StringIO()
         error_buffer = io.StringIO()
 
-        # Simulate input by overriding the built-in input() function
         input_lines = iter(inputs.split('\n'))
 
         def mock_input(prompt=None):
             try:
-                return next(input_lines)  # Return the full input string on the first input() call
+                return next(input_lines)
             except StopIteration:
                 raise ValueError("Insufficient input data provided for input() calls")
 
         try:
-            # Redirect print statements to capture them
             sys.stdout = output_buffer
             sys.stderr = error_buffer
 
-            # Execute the user's code, replacing input() with our mock function
             exec(code, {"input": mock_input})
 
-            # Get the captured output and errors
             output = output_buffer.getvalue()
             error = error_buffer.getvalue()
 
-            # Restore original stdout and stderr
             sys.stdout = sys.__stdout__
             sys.stderr = sys.__stderr__
 
@@ -241,17 +236,14 @@ def Coding_Problems_page(markdown_file, Problem_title, test_cases, problem_ID):
                 return output.strip() if output else "Code executed successfully, but no output was produced."
 
         except Exception as e:
-            # Ensure stdout and stderr are restored in case of error
             sys.stdout = sys.__stdout__
             sys.stderr = sys.__stderr__
             return f"An error occurred: {e}"
 
-    # Display test cases
     st.subheader("Test Cases")
     for i, (input_data, expected_output) in enumerate(test_cases):
         st.markdown(f"**Test Case {i+1}:** Input: `{input_data}`, Expected Output: `{expected_output}`")
 
-    # Button to run the code
     if st.button("Run Code", use_container_width=True):
         if code:
             st.subheader("Output:")

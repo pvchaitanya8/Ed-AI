@@ -1,5 +1,7 @@
 import streamlit as st
-from UI_Components.navbar import navbar
+from dotenv import load_dotenv
+from Pre_Pages.login_page import login
+load_dotenv()
 
 st.set_page_config(
     page_title="Ed AI",
@@ -9,7 +11,7 @@ st.set_page_config(
 )
 
 def main():
-    navbar()
+    login()
 
 if __name__ == "__main__":
     main()
