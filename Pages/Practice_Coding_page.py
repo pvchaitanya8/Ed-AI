@@ -43,7 +43,6 @@ def Practice_Coding_page():
     directory_Recommendation = r"Static_Files\Practice_Page_Problems\All_Coding_Problems"
     directory_Recommendation = r"dynamic files\Main_pages\Recommendations\Practice_Coding_page_recommendation"
     
-    # Check if no problem is selected
     if not st.session_state.selected_problem:
         query_params = st.query_params
         if "selected_image" in query_params:
@@ -119,7 +118,6 @@ def Practice_Coding_page():
             </style>
             """, unsafe_allow_html=True)
 
-            # Create the scrolling container
             st.markdown(f"""
             <div class="scroll-container">
                 <div class="scroll-content">
@@ -218,12 +216,10 @@ def Practice_Coding_page():
 
         st.title("All Coding Problems")
 
-        # Initialize Session State for navigation
         if 'selected_problem' not in st.session_state:
             st.session_state.selected_problem = None
             clear_and_rewrite_memory_of_navbar(memory_of_select_button, str(st.session_state.selected_problem))
 
-        # Sample Data
         with open(r'Static_Files\Practice_Page_Problems\Coding_Problem.json') as f:
             json_data = json.load(f)
 
@@ -234,23 +230,21 @@ def Practice_Coding_page():
             "ID": []
         }
 
-        problems_info = json_data["problems"]  # Access problems from the loaded JSON data
+        problems_info = json_data["problems"]
 
         for idx, (key, problem) in enumerate(problems_info.items(), start=1):
             problems_data["S no."].append(str(idx))
             problems_data["Title"].append(problem["title"])
             problems_data["Difficulty"].append(problem["Difficulty"])
-            problems_data["ID"].append(key)  # Use the key as the ID
+            problems_data["ID"].append(key)
 
         df = pd.DataFrame(problems_data)
 
-        # Filtering Mechanism
         difficulty_filter = st.selectbox("Filter by Difficulty:", ["All", "Easy", "Medium", "Hard"], index=0)
 
         if difficulty_filter != "All":
             df = df[df["Difficulty"] == difficulty_filter]
 
-        # Function to Style Difficulty Labels
         def difficulty_bg_color(difficulty):
             if difficulty == "Easy":
                 return 'background-color: rgba(0, 200, 0, 0.7); color: white; font-weight: bold; border-radius: 30px; padding: 5px; text-align: center;'
@@ -260,7 +254,6 @@ def Practice_Coding_page():
                 return 'background-color: rgba(255, 0, 0, 0.7); color: white; font-weight: bold; border-radius: 30px; padding: 5px; text-align: center;'
             return ''
 
-        # Styling and Headers
         st.markdown("""
             <style>
                 .problem-row { margin-bottom: 10px; }
@@ -281,7 +274,6 @@ def Practice_Coding_page():
 
         st.markdown("<hr style='border: 1px solid #ddd;'>", unsafe_allow_html=True)
 
-        # Displaying the List of Problems
         for i, row in df.iterrows():
             col1, col2, col3, col4 = st.columns([1, 5, 2, 2])
 
@@ -298,13 +290,12 @@ def Practice_Coding_page():
                 if st.button(f"Solve 💻", key=f"button_{i}"):
                     st.session_state.selected_problem = row.to_dict()
                     clear_and_rewrite_memory_of_navbar(memory_of_select_button, str(st.session_state.selected_problem))
-                    st.rerun()  # Re-run the app to refresh the UI and hide the problem list
+                    st.rerun()
 
     else:
         selected = st.session_state.selected_problem
         Coding_Q_ID = selected["ID"]
 
-        # Load Problem Details from JSON or any other logic
         try:
             with open(r'Static_Files\Practice_Page_Problems\Coding_Problem.json', 'r') as file:
                 data = json.load(file)
@@ -318,7 +309,6 @@ def Practice_Coding_page():
         except FileNotFoundError:
             st.error("Problem details file not found.")
 
-        # Option to Go Back to the List
         if st.button("Go to 🏡Home Page", use_container_width=True):
             st.session_state.selected_problem = None
             clear_and_rewrite_memory_of_navbar(memory_of_select_button, str(st.session_state.selected_problem))

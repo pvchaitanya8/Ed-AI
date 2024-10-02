@@ -65,9 +65,10 @@ def SignUp():
 
             st.markdown("<div class='SignUp-container'>", unsafe_allow_html=True)
 
-            username = st.text_input("Username")
-            password = st.text_input("Password", type="password")
-            re_password = st.text_input("Confirm Password", type="password")
+            username = st.text_input("Username", key="signup_username")
+            password = st.text_input("Password", type="password", key="signup_password")
+            re_password = st.text_input("Confirm Password", type="password", key="signup_re_password")
+
 
             if st.button("SignUp", use_container_width=True):
                 if (password == re_password)and (username == "1" and password == "1"):
@@ -116,8 +117,8 @@ def SignUp():
                     st.error(f"Error during SignUp: {e}")
                     st.write("Ensure that the redirect URI matches the one configured in Google Cloud Console and that the authorization code is valid.")
 
-            if st.button("Already Have an Account?", key='create_account', use_container_width=True, help='Click to create a new account'):
-                st.write("Dummy function executed!")
+            if st.button("Already Have an Account?", key='signup_create_account', use_container_width=True, help='Click to create a new account'):
+                st.write("Login now")
         with col2:
           Ed_AI_tittle()
     else:

@@ -71,7 +71,7 @@ def navbar():
 
     query_params = st.query_params
 
-    # SINGLE
+    # SINGLE_Execution
     if 'memory_cleared' not in st.session_state:
         learn_Image_list_json_path = r"dynamic files\Main_pages\Recommendations\Learn_Recommendation.json"
         learn_Images_path = r"Static_Files\Learn_Page\All_Courses"

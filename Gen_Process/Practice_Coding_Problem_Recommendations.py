@@ -6,7 +6,7 @@ import google.generativeai as genai
 
 load_dotenv()
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 Coding_Problems_list_file_path = r"dynamic files\Main_pages\Practice_Coding_Problems.json"
 
 def Practice_Coding_Problem_recommendation():
