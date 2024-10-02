@@ -184,7 +184,7 @@ To secure sensitive information such as API keys, follow these steps to create a
 ---
 ![4 Coding Problems](https://github.com/user-attachments/assets/27db88ed-0443-4997-9b07-8b3291bb369f)
 ---
-![5 Chat Page](https://github.com/user-attachments/assets/bb6a7940-89da-4842-9698-40c68d293875)
+![Screenshot 2024-10-02 195936](https://github.com/user-attachments/assets/6a7b261a-d8bf-42f2-bf69-a5e143119235)
 ---
 ![11 Interview](https://github.com/user-attachments/assets/64669cc1-634b-4b5a-a4fa-946d7fe941ad)
 ---
@@ -192,7 +192,7 @@ To secure sensitive information such as API keys, follow these steps to create a
 ---
 
 ### 🔗 Quick Links
-- [📺 Live Demo](https://yourdemourl.com)
+- [📺 Live Demo](https://youtu.be/iMmVZVYfqn0)
 ---
 > **Enhance Your Learning Journey with ED AI!**  
 > Empowering students with personalized, interactive, and effective educational tools. **Happy Learning!** 🎓✨
