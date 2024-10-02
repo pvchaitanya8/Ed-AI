@@ -1,6 +1,7 @@
 import streamlit as st
 from dotenv import load_dotenv
 from Pre_Pages.login_page import login
+from UI_Components.navbar import navbar
 load_dotenv()
 
 st.set_page_config(
@@ -11,7 +12,7 @@ st.set_page_config(
 )
 
 def main():
-    login()
+    navbar()
 
 if __name__ == "__main__":
     main()
