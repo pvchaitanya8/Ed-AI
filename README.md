@@ -1,5 +1,5 @@
 # 🚀 **ED AI**
-![Revolutionizing Learning with AI (1)](https://github.com/user-attachments/assets/ebe88c6c-e25e-4c32-8a4e-b3efc1850df3)
+![ED AI Thumbnail](https://github.com/user-attachments/assets/40774176-1692-49f8-8b08-fb7aa4088ebd)
 > **Revolutionizing Learning with AI!**  
 
 **ED AI** is an innovative AI-powered educational assistant designed to revolutionize the learning experience. By offering personalized course recommendations, a Socratic method-based AI chat, and mock interview simulations, ED AI addresses key challenges in personalized learning and scalable teaching assistance.
