@@ -1,9 +1,5 @@
 # TODO: make ids unique
 # TODO: make file paths unique and correct
-# TODO: data: MentorHelpTextChatLearnRequest
-
-# TODO: make triple quotes consistent
-# TODO: change all dates to dd-mm-yyyy format
 
 from fastapi import FastAPI, APIRouter, Body, Query, Path
 from pydantic import BaseModel, Field
