@@ -1,4 +1,4 @@
-# TODO: make ids unique
+# TODO: Remove unccesry commas
 
 from fastapi import FastAPI, APIRouter, Body, Query, Path
 from pydantic import BaseModel, Field
@@ -29,7 +29,9 @@ async def get_streak_data():
 
 @common_router.get("/greeting-audio")
 async def get_greeting_audio():
-    return {"audioFilePath": "/path/to/greeting_audio.mp3"}
+    return {
+        "audioFilePath": r"API_Endpoint\Temp_Static_data\Profile\greeting_audio.mp3"
+    }
 
 
 @common_router.get("/user-details")
@@ -37,7 +39,7 @@ async def get_user_details():
     return {
         "firstName": "Katoro",
         "lastName": "Kamado",
-        "image": "/path/to/user_image.png",
+        "image": r"API_Endpoint\Temp_Static_data\Profile\user_image.png",
     }
 
 
@@ -66,7 +68,7 @@ class VoiceChatLandingRequest(BaseModel):
 @landing_router.post("/voice-chat")
 async def landing_voice_chat(data: VoiceChatLandingRequest):
     return {
-        "responseAudio": "/path/to/response_audio.mp3",
+        "responseAudio": r"API_Endpoint\Temp_Static_data\Chat\Response.mp3",
         "conversationHistory": [
             {"speaker": "user", "text": "Transcribed user speech"},
             {"speaker": "AI", "" "text": "AI's text response"},
@@ -118,14 +120,14 @@ async def get_all_courses(
 async def get_course_content(courseId: str = Path(...)):
     return {
         "course": [
-            "{filePath}/DSA_Intro_1.md",
-            "{filePath}/DSA_Intro_2.md",
-            "{filePath}/DSA_Intro_3.md",
+            r"API_Endpoint\Temp_Static_data\Learn Page\DSA_Intro_1.md",
+            r"API_Endpoint\Temp_Static_data\Learn Page\DSA_Intro_2.md",
+            r"API_Endpoint\Temp_Static_data\Learn Page\DSA_Intro_3.md",
         ],
         "test": [
-            "{filePath}/DSA_Intro_1.json",
-            "{filePath}/DSA_Intro_2.json",
-            "{filePath}/DSA_Intro_3.json",
+            r"API_Endpoint\Temp_Static_data\Learn Page\DSA_Intro_1.json",
+            r"API_Endpoint\Temp_Static_data\Learn Page\DSA_Intro_2.json",
+            r"API_Endpoint\Temp_Static_data\Learn Page\DSA_Intro_3.json",
         ],
         "bookmark": True,
         "completed": True,
@@ -278,14 +280,16 @@ async def get_practice_items(
 
 @practice_router.get("/mcq/{testId}")
 async def get_mcq_test(testId: str = Path(...)):
-    return {"testFile": "{filePath}/Programming_Fundamentals_000001.json"}
+    return {
+        "testFile": r"API_Endpoint\Temp_Static_data\Practice Page\MCQ\Programming_Fundamentals_000001.json"
+    }
 
 
 @practice_router.get("/coding-problem/{problemId}")
 async def get_coding_problem(problemId: str = Path(...)):
     return {
-        "problemDescription": "{filePath}/Concatenation_of_Array.md",
-        "problemSolution": "{filePath}/Concatenation_of_Array_solution.py",
+        "problemDescription": r"API_Endpoint\Temp_Static_data\Practice Page\CodingProblem\Concatenation_of_Array.md",
+        "problemSolution": r"API_Endpoint\Temp_Static_data\Practice Page\CodingProblem\Concatenation_of_Array_solution.py",
         "testCases": [
             ["1 2 1", [1, 2, 1, 1, 2, 1]],
             ["1 3 2 1", [1, 3, 2, 1, 1, 3, 2, 1]],
@@ -448,7 +452,7 @@ class VoiceChatInterviewRequest(BaseModel):
 @interview_router.post("/voice-chat")
 async def interview_voice_chat(data: VoiceChatInterviewRequest):
     return {
-        "responseAudio": "/path/to/response_audio.mp3",
+        "responseAudio": r"API_Endpoint\Temp_Static_data\Chat\Response.mp3",
         "user": "Transcribed user speech",
         "AI": "AI's text response",
         "conversationHistory": [
@@ -500,7 +504,7 @@ class VoiceChatRequest(BaseModel):
 @chat_router.post("/voice")
 async def chat_voice(data: VoiceChatRequest):
     return {
-        "user": "Transcribed user speech audio path file.mp3",
+        "user": r"API_Endpoint\Temp_Static_data\Chat\Response.mp3",
         "AI": "AI's text response",
         "conversationHistory": [
             {"speaker": "user", "text": "Transcribed user speech"},
@@ -539,12 +543,16 @@ async def analyze_job_match(data: ResumeAnalysisRequest):
 
 @resume_router.post("/generate-cover-letter")
 async def generate_cover_letter(data: ResumeAnalysisRequest):
-    return {"coverLetter": "File Path to cover letter.txt"}
+    return {
+        "coverLetter": r"API_Endpoint\Temp_Static_data\JobSearchOptimization\CoverLetter.txt"
+    }
 
 
 @resume_router.post("/generate-talore")
 async def generate_talore_resume(data: ResumeAnalysisRequest):
-    return {"pdfFile": "/path/to/generated_resume.pdf"}
+    return {
+        "pdfFile": r"API_Endpoint\Temp_Static_data\JobSearchOptimization\generated_resume.pdf"
+    }
 
 
 class CoverLetterChatRequest(BaseModel):
@@ -555,7 +563,9 @@ class CoverLetterChatRequest(BaseModel):
 
 @resume_router.post("/cover-letter-chat")
 async def cover_letter_chat(data: CoverLetterChatRequest):
-    return {"coverLetter": "Updated File Path to cover letter.txt"}
+    return {
+        "coverLetter": r"API_Endpoint\Temp_Static_data\JobSearchOptimization\CoverLetter.txt"
+    }
 
 
 class TaloreChatRequest(BaseModel):
@@ -566,15 +576,26 @@ class TaloreChatRequest(BaseModel):
 
 @resume_router.post("/talore-chat")
 async def talore_chat(data: TaloreChatRequest):
-    return {"pdfFile": "/path/to/updated_resume.pdf"}
+    return {
+        "pdfFile": r"API_Endpoint\Temp_Static_data\JobSearchOptimization\generated_resume.pdf"
+    }
 
 
 @resume_router.get("/previous-cover-letters")
 async def get_previous_cover_letters():
     return [
-        {"date": "1-03-2024", "result": "cover_letter_john_doe.txt"},
-        {"date": "2-03-2024", "result": "cover_letter_john_doe.txt"},
-        {"date": "3-03-2024", "result": "cover_letter_john_doe.txt"},
+        {
+            "date": "1-03-2024",
+            "result": r"API_Endpoint\Temp_Static_data\JobSearchOptimization\CoverLetter.txt",
+        },
+        {
+            "date": "2-03-2024",
+            "result": r"API_Endpoint\Temp_Static_data\JobSearchOptimization\CoverLetter.txt",
+        },
+        {
+            "date": "3-03-2024",
+            "result": r"API_Endpoint\Temp_Static_data\JobSearchOptimization\CoverLetter.txt",
+        },
     ]
 
 
