@@ -1,729 +1,1044 @@
-# later:
+# API Endpoints Plan
 
-## Sign up Page:
-<!-- Are there any api endopints -->
+---
 
-## Sign Up Form Page:
-<!-- Are there any api endopints -->
+## 1. Common API
 
-## Sign Up Coding Page:
-<!-- Are there any api endopints -->
+### 1.1. Default Login Data
 
-## Sign Up MCQs Page:
-<!-- Are there any api endopints -->
+#### 1.1.1. Get Streak Data
+- **Method:** GET
+- **URL:** `/api/common/streak`
+- **Input:** None
+- **Output:**
+```json
+{
+  "streak": 5,
+  "streakData": [
+    { "date": "dd-mm-yyyy", "status": true },
+    { "date": "dd-mm-yyyy", "status": false },
+    { "date": "dd-mm-yyyy", "status": true },
+    { "date": "dd-mm-yyyy", "status": true },
+    { "date": "dd-mm-yyyy", "status": false },
+    { "date": "dd-mm-yyyy", "status": true }
+  ]
+}
+```
 
-## Sign Up Chat Page:
-- Mentor Help:
-    >???
+#### 1.1.2. Get Greeting Audio
+- **Method:** GET
+- **URL:** `/api/common/greeting-audio`
+- **Input:** None
+- **Output:**
+```json
+{
+  "audioFilePath": "/path/to/greeting_audio.mp3"
+}
+```
 
-## Sign Up Welcome Loading:
-<!-- Are there any api endopints -->
+#### 1.1.3. Get User Details
+- **Method:** GET
+- **URL:** `/api/common/user-details`
+- **Input:** None
+- **Output:**
+```json
+{
+  "firstName": "Katoro",
+  "lastName": "Kamado",
+  "image": "/path/to/user_image.png"
+}
+```
 
-## LogIn Page:
-<!-- Are there any api endopints -->
+### 1.2. Save Book mark
+- **Method:** POST
+- **URL:** `/api/common/save`
+- **Input:**
+```json
+{
+  "id": "course_Or_pratice_id",
+  "value": true
+}
+```
+- **Output:**
+```json
+{
+  "acknowledgement": true
+}
+```
 
+---
 
-# Current:
+## 2. Landing Page
 
-## Common API:
-- Default Login Data:
-    - Streak Data
-        - INPUT: NULL
-        - OUTPUT:
-            {
-                "streak": int,
-                "streakData": [
-                    {"date": "dd-mm-yyyy", "status": bool},
-                    {"date": "dd-mm-yyyy", "status": bool},
-                    {"date": "dd-mm-yyyy", "status": bool},
-                    {"date": "dd-mm-yyyy", "status": bool},
-                    {"date": "dd-mm-yyyy", "status": bool},
-                    {"date": "dd-mm-yyyy", "status": bool}
-                ]
-            }
+### 2.1. Voice Chat Endpoint
+- **Method:** POST
+- **URL:** `/api/landing/voice-chat`
+- **Input:**
+```json
+{
+  "audioFile": "/path/to/audio_file.mp3",
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+- **Output:**
+```json
+{
+  "responseAudio": "/path/to/response_audio.mp3",
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
 
-    - Greeting Audio:
-        - INPUT: NULL
-        - OUTPUT: 
-            "Audio File path"
+---
 
-    - User Details:
-        - INPUT: NULL
-        - OUTPUT:
-            {
-                "First Name": "Katoro"
-                "Last Name": "kamado"
-                "Image": "image File path"
-            }
+## 3. Learn Section
 
-- save:
-    - INPUT: Id, True
-    - OUTPUT: bool
+### 3.1. Learn Page 1
 
-## Landing Page:
-- Voice Chat Api end points:
-    - INPUT:
-        {
-            "audio_file": "Audio File path",
-            "conversation_history": [ 
-                    {"speaker": "user", "text": "Transcribed user speech"},
-                    {"speaker": "ai", "text": "AI's text response"},
-            ]
-        }
+#### 3.1.1. Get Recommendations & Filters for Courses
+- **Method:** GET
+- **URL:** `/api/learn/recommendations`
+- **Input:** None
+- **Output:**
+```json
+{
+  "recommendations": [
+    { "id": "1", "courseName": "DSA Intro" },
+    { "id": "2", "courseName": "Trees" },
+    { "id": "3", "courseName": "Linked Lists" }
+  ],
+  "filters": {
+    "level": ["Easy", "Medium", "Hard"],
+    "topic": ["Linked_List", "Trees", "Stacks", "Queues", "Arrays", "Strings"],
+    "status": [true, false]
+  }
+}
+```
 
+#### 3.1.2. Get All Courses (with optional filters)
+- **Method:** GET
+- **URL:** `/api/learn/courses`
+- **Input:** (Query Parameters)
+```json
+{
+  "level": "Optional[string]",
+  "status": "Optional[boolean]",
+  "topic": "Optional[string]"
+}
+```
+- **Output:**
+```json
+[
+  { "id": "1", "courseName": "DSA Intro" },
+  { "id": "2", "courseName": "Trees" },
+  { "id": "3", "courseName": "Linked Lists" }
+]
+```
 
-    - OUTPUT:
-        {
-            "response_audio": "Audio File path",
-            "conversation_history": [
-                {"speaker": "user", "text": "Transcribed user speech"},
-                {"speaker": "ai", "text": "AI's text response"},
-            ]
-        }
+#### 3.1.3. Get Course Content and Test Data
+- **Method:** GET
+- **URL:** `/api/learn/course/{courseId}`
+- **Input:** URL Parameter: `courseId`
+- **Output:**
+```json
+{
+  "course": [
+    "{filePath}/DSA_Intro_1.md",
+    "{filePath}/DSA_Intro_2.md",
+    "{filePath}/DSA_Intro_3.md"
+  ],
+  "test": [
+    "{filePath}/DSA_Intro_1.json",
+    "{filePath}/DSA_Intro_2.json",
+    "{filePath}/DSA_Intro_3.json"
+  ],
+  "bookmark": true,
+  "completed": true
+}
+```
 
-## Learn Page 1:
-- Rendering recomedations and filters api endpoint:
-    - RECOMENDATIONS: 
-        - INPUT: NULL
-        - OUTPUT: 
-            {
-                "recommendations": {
-                    {"ID": "1", "course_name": "DSA Intro"},
-                    {"ID": "2", "course_name": "Trees"},
-                    {"ID": "3", "course_name": "Linked Lists"}
-                },
-                "filters": {
-                    "level": ["Easy", "Medium", "Hard"],
-                    "topic": ["Linked_List", "Trees", "Stacks", "Queues", "Arrays", "Strings"],
-                    "status": [true, false]
-                }
-            }
+---
 
-- Rendering all courses api endpoint:
-    - INPUT:
-        {
-            "level": "Optional[str]", 
-            "Status": "Optional[bool]", 
-            "Topic": "Optional[str]"
-        }
-    - OUTPUT:
-        [
-            {"ID": "1", "course_name": "DSA Intro"},
-            {"ID": "2", "course_name": "Trees"},
-            {"ID": "3", "course_name": "Linked Lists"}
-        ]
+### 3.2. Learn Page 2
+> NOTHING
 
-- Course Api Endpoints:
-    - INPUT: COURSE_ID
-    - OUTPUT:
-        {
-            "Course": [
-                "{file_path}/DSA Intro_1.md",
-                "{file_path}/DSA Intro_2.md",
-                "{file_path}/DSA Intro_3.md"
-            ],
-            "Test": [
-                "{file_path}/DSA Intro_1.json",
-                "{file_path}/DSA Intro_2.json",
-                "{file_path}/DSA Intro_.json"
-            ]
-            "Book_mark": True,
-            "Completed": True
-        }
+### 3.3. Learn Page 2.5
 
-## Learn Page 2:
-<!-- NOTHING -->
+#### 3.3.1. Text Chat Endpoint for Learn
+- **Method:** POST
+- **URL:** `/api/learn/text-chat`
+- **Input:**
+```json
+{
+  "socraticAI": true,
+  "additionalInfo": { "courseChapterData": """...""" },
+  "user": "User message",
+  "conversationHistory": [
+    { "speaker": "user", "text": "User speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+- **Output:**
+```json
+{
+  "ai": "AI's text response",
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
 
-## Learn Page 2.5:
-- text Chat Api end points:
-    - INPUT:
-        {
-            "socratic AI": bool,
-            "Additional Info": {"""course_chapter_data"""},
-            "user": "user speech",
-            "conversation_history": [ 
-                    {"speaker": "user", "text": "user speech"},
-                    {"speaker": "ai", "text": "AI's text response"}
-            ]
-        }
+#### 3.3.2. Voice Chat Endpoint for Learn
+- **Method:** POST
+- **URL:** `/api/learn/voice-chat`
+- **Input:**
+```json
+{
+  "socraticAI": true,
+  "additionalInfo": { "courseChapterData": """...""" },
+  "audioFile": "/path/to/audio_file.mp3",
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+- **Output:**
+```json
+{
+  "user": "Transcribed user speech",
+  "ai": "AI's text response",
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
 
+---
 
-    - OUTPUT:
-        {
-            "ai": "AI's text response",
-            "conversation_history": [
-                {"speaker": "user", "text": "Transcribed user speech"},
-                {"speaker": "ai", "text": "AI's text response"}
-            ]
-        }
+### 3.4. Learn Page 3
 
-- Voice Chat Api end points:
-    """
-        - INPUT:
-            {
-                "socratic AI": bool,
-                "Additional Info": {"""course_chapter_data"""},
-                "audio_file": "audio file path",
-                "conversation_history": [ 
-                    {"speaker": "user", "text": "Transcribed user speech"},
-                    {"speaker": "ai", "text": "AI's text response"}
-                ]
-            }
+#### 3.4.1. End Course Endpoint
+- **Method:** POST
+- **URL:** `/api/learn/end-course`
+- **Input:**
+```json
+{
+  "courseId": "DSA_Intro",
+  "testResults": {
+    "{filePath}/DSA_Intro_1.json": { "score": "100/150", "timeTaken": "300" },
+    "{filePath}/DSA_Intro_2.json": { "score": "100/150", "timeTaken": "300" },
+    "{filePath}/DSA_Intro_3.json": { "score": "100/150", "timeTaken": "300" }
+  }
+}
+```
+- **Output:**
+```json
+{
+  "acknowledgement": true
+}
+```
 
+---
 
-        - OUTPUT:
-            {
-                "user": "Transcribed user speech",
-                "ai": "AI's text response",
-                "audio_file": "audio file path",
-                "conversation_history": [
-                    {"speaker": "user", "text": "Transcribed user speech"},
-                    {"speaker": "ai", "text": "AI's text response"}
-                ]
-            }
-    """
+### 3.5. Learn Page 3.5 – Mentor Help
 
-## Learn Page 3:
-- End Button of the course api endpoint:
-    - INPUT:
-        COURSE_ID: "DSA Intro"
-        "Test_results": [
-            "{file_path}/DSA Intro_1.json": {"score":"100/150", "time_taken": "300"},
-            "{file_path}/DSA Intro_2.json": {"score":"100/150", "time_taken": "300"},
-            "{file_path}/DSA Intro_3.json": {"score":"100/150", "time_taken": "300"}
-        ]
-    - OUTPUT: bool
+#### 3.5.1. Text Chat for Mentor Help
+- **Method:** POST
+- **URL:** `/api/learn/mentor-help/text-chat`
+- **Input:**
+```json
+{
+  "socraticAI": true,
+  "additionalInfo": { "codingQAData": """...""" },
+  "user": "User message",
+  "conversationHistory": [
+    { "speaker": "user", "text": "User message" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+- **Output:**
+```json
+{
+  "ai": "AI's text response",
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
 
-## Learn Page 3.5:
-- Mentor Help:
-    - text Chat Api end points:
-        """
-            - INPUT:
-                {
-                    "socratic AI": bool,
-                    "Additional Info": {"""coding question and answer data"""},
-                    "user": "user speech",
-                    "conversation_history": [ 
-                            {"speaker": "user", "text": "user speech"},
-                            {"speaker": "ai", "text": "AI's text response"}
-                    ]
-                }
+#### 3.4.2. Voice Chat for Mentor Help
+- **Method:** POST
+- **URL:** `/api/learn/mentor-help/voice-chat`
+- **Input:**
+```json
+{
+  "socraticAI": true,
+  "additionalInfo": { "mcqData": """...""" },
+  "audioFile": "/path/to/audio_file.mp3",
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+- **Output:**
+```json
+{
+  "user": "Transcribed user speech",
+  "ai": "AI's text response",
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
 
+---
 
-            - OUTPUT:
-                {
-                    "ai": "AI's text response",
-                    "conversation_history": [
-                        {"speaker": "user", "text": "Transcribed user speech"},
-                        {"speaker": "ai", "text": "AI's text response"}
-                    ]
-                }
-        """
+## 4. Practice Section
 
-    - Voice Chat Api end points:
-        """
-            - INPUT:
-                {
-                    "socratic AI": bool,
-                    "Additional Info": {"""MCQ data"""},
-                    "audio_file": "audio file path",
-                    "conversation_history": [ 
-                        {"speaker": "user", "text": "Transcribed user speech"},
-                        {"speaker": "ai", "text": "AI's text response"}
-                    ]
-                }
+### 4.1. Practice Page 1
 
-
-            - OUTPUT:
-                {
-                "user": "Transcribed user speech",
-                "ai": "AI's text response",
-
-                    "conversation_history": [
-                        {"speaker": "user", "text": "Transcribed user speech"},
-                        {"speaker": "ai", "text": "AI's text response"},
-                    ]
-                }
-        """
-
-## Practice Page 1:
-- Rendering recomedations and filters api endpoint:
-    - RECOMENDATIONS: 
-        - INPUT: NULL
-        - OUTPUT: 
-            {
-                "mcq_recommendations": [
-                        {"ID": "1", "Practice_name": "Math"},
-                        {"ID": "2", "Practice_name": "Science"},
-                        {"ID": "3", "Practice_name": "English"}
-                ],
-                "coding_recommendations": [
-                    {"ID": "1", "Practice_name": "Math"},
-                    {"ID": "2", "Practice_name": "Science"},
-                    {"ID": "3", "Practice_name": "English"}
-                ],
-                "filters": {
-                    "mcqs": {
-                        "level": ["Primary", "Secondary", "Tertiary"],
-                        "topic": ["Math", "Science", "English"],
-                        "status": ["True", "False"]
-                    },
-                    "coding_questions": {
-                        "level": ["Primary", "Secondary", "Tertiary"],
-                        "topic": ["Math", "Science", "English"],
-                        "status": ["True", "False"]
-                    }
-                }
-            }
-
-- Rendering all Practice api endpoint:
-    - INPUT:
-        {
-            "type": "str",
-            "level": "Optional[str]", 
-            "Status": "Optional[bool]", 
-            "Topic": "Optional[str]"
-        }
-    - OUTPUT:
-        [
-            {"ID": "1", "Practice_name": "Math", "status": true, "difficulty": "easy" },
-            {"ID": "2", "Practice_name": "Science", "status": true, "difficulty": "easy" },
-            {"ID": "3", "Practice_name": "English", "status": true, "difficulty": "easy" }
-        ]
-
-- Mcq api endpoint:
-    - INPUT: TEST ID
-    - OUTPUT:
-    {
-        "Test_file": "{FILE_PATH}/Programming_Fundamentals_000001.json"
+#### 4.1.1. Get Practice Recommendations & Filters
+- **Method:** GET
+- **URL:** `/api/practice/recommendations`
+- **Input:** None
+- **Output:**
+```json
+{
+  "mcqRecommendations": [
+    { "id": "1", "practiceName": "Queues" },
+    { "id": "2", "practiceName": "Trees" },
+    { "id": "3", "practiceName": "Linked Lists" }
+  ],
+  "codingRecommendations": [
+    { "id": "1", "practiceName": "Queues" },
+    { "id": "2", "practiceName": "Trees" },
+    { "id": "3", "practiceName": "Linked Lists" }
+  ],
+  "filters": {
+    "mcqs": {
+      "level": ["Easy", "Medium", "Hard"],
+      "topic": ["Queues", "Trees", "Linked Lists"],
+      "status": [true, false]
+    },
+    "codingQuestions": {
+      "level": ["Easy", "Medium", "Hard"],
+      "topic": ["Queues", "Trees", "Linked Lists"],
+      "status": [true, false]
     }
+  }
+}
+```
+
+#### 4.1.2. Get All Practice Items (with filters)
+- **Method:** GET
+- **URL:** `/api/practice/items`
+- **Input:** (Query Parameters)
+```json
+{
+  "type": "string",
+  "level": "Optional[string]",
+  "status": "Optional[boolean]",
+  "topic": "Optional[string]"
+}
+```
+- **Output:**
+```json
+[
+  { "id": "1", "practiceName": "Queues", "status": true, "difficulty": "easy" },
+  { "id": "2", "practiceName": "Trees", "status": true, "difficulty": "easy" },
+  { "id": "3", "practiceName": "Linked Lists", "status": true, "difficulty": "easy" }
+]
+```
+
+#### 4.1.3. Get MCQ Test File
+- **Method:** GET
+- **URL:** `/api/practice/mcq/{testId}`
+- **Input:** URL Parameter: `testId`
+- **Output:**
+```json
+{
+  "testFile": "{filePath}/Programming_Fundamentals_000001.json"
+}
+```
+
+---
+
+### 4.2. Practice Page 2 – Coding Problem
+
+#### 4.2.1. Get Coding Problem
+- **Method:** GET
+- **URL:** `/api/practice/coding-problem/{problemId}`
+- **Input:** URL Parameter: `problemId`
+- **Output:**
+```json
+{
+  "problemDescription": "{filePath}/Concatenation_of_Array.md",
+  "problemSolution": "{filePath}/Concatenation_of_Array_solution.py",
+  "testCases": [
+    ["1 2 1", "[1, 2, 1, 1, 2, 1]"],
+    ["1 3 2 1", "[1, 3, 2, 1, 1, 3, 2, 1]"],
+    ["5 6", "[5, 6, 5, 6]"],
+    ["9", "[9, 9]"]
+  ]
+}
+```
+
+---
+
+### 4.3. Practice Page 3 – Submit Practice
+- **Method:** POST
+- **URL:** `/api/practice/submit`
+- **Input:**
+```json
+{
+  "courseId": "23klj4",
+  "score": "10/10"
+}
+```
+- **Output:**
+```json
+{
+  "acknowledgement": true
+}
+```
+
+---
+
+### 4.4. Practice Page 3.5 – Mentor Help
+
+#### 4.4.1. Text Chat for Mentor Help
+- **Method:** POST
+- **URL:** `/api/practice/mentor-help/text-chat`
+- **Input:**
+```json
+{
+  "socraticAI": true,
+  "additionalInfo": { "codingQAData": """...""" },
+  "user": "User message",
+  "conversationHistory": [
+    { "speaker": "user", "text": "User message" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+- **Output:**
+```json
+{
+  "ai": "AI's text response",
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+
+#### 4.4.2. Voice Chat for Mentor Help
+- **Method:** POST
+- **URL:** `/api/practice/mentor-help/voice-chat`
+- **Input:**
+```json
+{
+  "socraticAI": true,
+  "additionalInfo": { "codingQAData": """...""" },
+  "audioFile": "/path/to/audio_file.mp3",
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+- **Output:**
+```json
+{
+  "user": "Transcribed user speech",
+  "ai": "AI's text response",
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+
+---
+
+### 4.5. Practice Page 4 – End Practice
+- **Method:** POST
+- **URL:** `/api/practice/end`
+- **Input:**
+```json
+{
+  "courseId": "DSA_Intro",
+  "score": "100/150"
+}
+```
+- **Output:**
+```json
+{
+  "acknowledgement": true
+}
+```
+
+---
+
+### 4.6. Practice Page 4.5 – Mentor Help (MCQs)
+#### 4.6.1. Text Chat for Mentor Help on MCQs
+- **Method:** POST
+- **URL:** `/api/practice/mentor-help/mcqs/text-chat`
+- **Input:**
+```json
+{
+  "socraticAI": true,
+  "additionalInfo": { "mcqsData": """...""" },
+  "user": "User message",
+  "conversationHistory": [
+    { "speaker": "user", "text": "User message" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+- **Output:**
+```json
+{
+  "ai": "AI's text response",
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+
+#### 4.6.2. Voice Chat for Mentor Help on MCQs
+- **Method:** POST
+- **URL:** `/api/practice/mentor-help/mcqs/voice-chat`
+- **Input:**
+```json
+{
+  "socraticAI": true,
+  "additionalInfo": { "mcqsData": """...""" },
+  "audioFile": "/path/to/audio_file.mp3",
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+- **Output:**
+```json
+{
+  "user": "Transcribed user speech",
+  "ai": "AI's text response",
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+
+---
+
+## 5. Interview Simulation Section
+
+### 5.1. Interview Simulation Page 1
+
+#### 5.1.1. Get Interview Filters
+- **Method:** GET
+- **URL:** `/api/interview/filters`
+- **Input:** None
+- **Output:**
+```json
+{
+  "interviewType": ["HR", "TR"],
+  "level": ["Easy", "Medium", "Hard"],
+  "topic": ["Linked_List", "Trees", "Stacks", "Queues", "Arrays", "Strings"]
+}
+```
+
+#### 5.1.2. Start Interview (Upload Resume and Data)
+- **Method:** POST
+- **URL:** `/api/interview/start`
+- **Input:**
+```json
+{
+  "resumeFile": "/path/to/resume.pdf",
+  "InterviewType": "str", 
+  "Level": "str", 
+  "JobDescriptions": "str", 
+  "Topics": ["str", "str"],
+  "OthersData": "Optional[string]" 
+}
+```
+- **Output:**
+```json
+{
+  "acknowledgement": true
+}
+```
+
+#### 5.1.3. View Previous Interview Results
+- **Method:** GET
+- **URL:** `/api/interview/results`
+- **Input:** None
+- **Output:**
+```json
+[
+  {
+    "date": "dd-mm-yyyy",
+    "result": "good",
+    "review": "Detailed review text"
+  },
+  {
+    "date": "dd-mm-yyyy",
+    "result": "good",
+    "review": "Detailed review text"
+  },
+  {
+    "date": "dd-mm-yyyy",
+    "result": "good",
+    "review": "Detailed review text"
+  }
+]
+```
+
+### 5.2. Interview Simulation Page 2
+
+#### 5.2.1. Voice Chat for Interview
+- **Method:** POST
+- **URL:** `/api/interview/voice-chat`
+- **Input:**
+```json
+{
+  "audioFile": "/path/to/audio_file.mp3",
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+- **Output:**
+```json
+{
+  "responseAudio": "/path/to/response_audio.mp3",
+  "user": "Transcribed user speech",
+  "ai": "AI's text response",
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+
+#### 5.2.2. End Interview
+- **Method:** POST
+- **URL:** `/api/interview/end`
+- **Input:**
+```json
+{
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+- **Output:**
+```json
+{
+  "result": "good",
+  "review": "Detailed feedback"
+}
+```
+
+---
+
+## 6. Chat Page
+
+### 6.1. Text Chat Endpoint
+- **Method:** POST
+- **URL:** `/api/chat/text`
+- **Input:**
+```json
+{
+  "socraticAI": true,
+  "user": "User text",
+  "conversationHistory": [
+    { "speaker": "user", "text": "User speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+- **Output:**
+```json
+{
+  "ai": "AI's text response",
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+
+### 6.2. Voice Chat Endpoint
+- **Method:** POST
+- **URL:** `/api/chat/voice`
+- **Input:**
+```json
+{
+  "socraticAI": true,
+  "audioFile": "/path/to/audio_file.mp3",
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+- **Output:**
+```json
+{
+  "user": "Transcribed user speech",
+  "ai": "AI's text response",
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+
+---
+
+## 7. Resume Optimization Page
+
+### 7.1. Analyze Job Match
+- **Method:** POST
+- **URL:** `/api/resume/analysis`
+- **Input:**
+```json
+{
+  "jobDescription": """Detailed job description text..."""
+}
+```
+- **Output:**
+```json
+{
+  "match": "Good",
+  "skillGapAnalysis": """Analysis details...""",
+  "salaryInsights": """Insights details...""",
+  "linkedinPeople": [
+    {"name": "person_1", "url": "URL OF THE PERSON"},
+    {"name": "person_2", "url": "URL OF THE PERSON"},
+    {"name": "person_3", "url": "URL OF THE PERSON"}
+  ]
+}
+```
+
+### 7.2. Generate Cover Letter
+- **Method:** POST
+- **URL:** `/api/resume/generate-cover-letter`
+- **Input:**
+```json
+{
+  "jobDescription": """Detailed job description text..."""
+}
+```
+- **Output:**
+```json
+{
+  "coverLetter": "File Path to cover letter.txt"
+}
+```
+
+### 7.3. Generate Talore Resume
+- **Method:** POST
+- **URL:** `/api/resume/generate-talore`
+- **Input:**
+```json
+{
+  "jobDescription": """Detailed job description text..."""
+}
+```
+- **Output:**
+```json
+{
+  "pdfFile": "/path/to/generated_resume.pdf"
+}
+```
+
+### 7.4. Chat for Cover Letter
+- **Method:** POST
+- **URL:** `/api/resume/cover-letter-chat`
+- **Input:**
+```json
+{
+  "jobDescription": """Detailed job description text...""",
+  "coverLetter": "Initial File Path to cover letter.txt",
+  "userMessage": "Optional message from user"
+}
+```
+- **Output:**
+```json
+{
+  "coverLetter": "Updated File Path to cover letter.txt"
+}
+```
+
+### 7.5. Chat for Talore Resume
+- **Method:** POST
+- **URL:** `/api/resume/talore-chat`
+- **Input:**
+```json
+{
+  "jobDescription": """Detailed job description text...""",
+  "pdfFile": "/path/to/resume.pdf",
+  "userMessage": "Optional message from user"
+}
+```
+- **Output:**
+```json
+{
+  "pdfFile": "/path/to/updated_resume.pdf"
+}
+```
+
+### 7.6. View Previous Cover Letter Results
+- **Method:** GET
+- **URL:** `/api/resume/previous-cover-letters`
+- **Input:** None
+- **Output:**
+```json
+[
+  {
+    "date": "dd-mm-yyyy",
+    "result": "cover letter.txt"
+  },
+  {
+    "date": "dd-mm-yyyy",
+    "result": "cover letter.txt"
+  },
+  {
+    "date": "dd-mm-yyyy",
+    "result": "cover letter.txt"
+  }
+]
+```
+
+---
+
+## 8. Job Tracker
+
+### 8.1. Job Tracker page 1
+
+#### 8.1.1. Render Job Tracker Page
+- **Method:** GET
+- **URL:** `/api/jobs`
+- **Input:** None
+- **Output:**
+```json
+[
+  {
+    "id": "job_id_1",
+    "title": "Job Title 1",
+    "status": "In Progress",
+    "deadlineDate": "dd-mm-yyyy",
+    "description": """Job description..."""
+  },
+  {
+    "id": "job_id_2",
+    "title": "Job Title 2",
+    "status": "Completed",
+    "deadlineDate": "dd-mm-yyyy",
+    "description": """Job description..."""
+  }
+]
+```
+
+#### 8.1.2. Edit a Job Event
+- **Method:** PUT
+- **URL:** `/api/jobs`
+- **Input:**
+```json
+[
+  {
+    "id": "job_id_1",
+    "title": "Job Title 1",
+    "status": "Updated Status",
+    "deadlineDate": "dd-mm-yyyy",
+    "description": "Updated description..."
+  }
+]
+```
+- **Output:**
+```json
+{
+  "acknowledgement": true
+}
+```
+
+#### 8.1.3. Delete a Job Event
+- **Method:** DELETE
+- **URL:** `/api/jobs`
+- **Input:**
+```json
+{
+  "id": "job_id_1"
+}
+```
+- **Output:**
+```json
+{
+  "acknowledgement": true
+}
+```
+
+### 8.2. Job Tracker page 1.5
+
+#### 8.2.1. Text Chat Mentor Help
+- **Method:** POST
+- **URL:** `/api/jobs/mentor-help/text-chat`
+- **Input:**
+```json
+{
+  "additionalInfo": { "nearTasks": """...""" },
+  "user": "User message",
+  "conversationHistory": [
+    { "speaker": "user", "text": "User message" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+- **Output:**
+```json
+{
+  "ai": "AI's text response",
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+
+#### 8.2.2. Voice Chat Mentor Help
+- **Method:** POST
+- **URL:** `/api/jobs/mentor-help/voice-chat`
+- **Input:**
+```json
+{
+  "additionalInfo": { "nearTasks": """...""" },
+  "audioFile": "/path/to/audio_file.mp3",
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+- **Output:**
+```json
+{
+  "user": "Transcribed user speech",
+  "ai": "AI's text response",
+  "conversationHistory": [
+    { "speaker": "user", "text": "Transcribed user speech" },
+    { "speaker": "ai", "text": "AI's text response" }
+  ]
+}
+```
+
+---
+
+## 9. Saved Pages
+
+### 9.1. Get Saved Page Filters
+- **Method:** GET
+- **URL:** `/api/saved/filters`
+- **Input:** None
+- **Output:**
+```json
+{
+  "type": ["Course", "MCQ", "Coding"]
+}
+```
+
+### 9.2. Get Saved Course IDs
+- **Method:** GET
+- **URL:** `/api/saved/courses`
+- **Input:** (Query Parameter)
+```json
+{
+  "type": "Course"
+}
+```
+- **Output:**
+```json
+[
+  "id_1",
+  "id_2",
+  "id_3"
+]
+```
+
+---
 
 
+## 10. Settings
 
-## Practice Page 2:
-- Coding_problem api endpoint:
-    - INPUT: Coding_problem_ID
-    - OUTPUT:
-        {
-            "Problem_Description": "{FILE_PATH}/Concatenation_of_Array.md",
-            "Problem_Solution": "{FILE_PATH}/Concatenation_of_Array_solution.py",
-            "Test_Cases": [
-                ["1 2 1", "[1, 2, 1, 1, 2, 1]"],
-                ["1 3 2 1", "[1, 3, 2, 1, 1, 3, 2, 1]"],
-                ["5 6", "[5, 6, 5, 6]"],
-                ["9", "[9, 9]"]
-            ]
-        },
+### 10.1. Change Password
+- **Method:** PUT
+- **URL:** `/api/settings/change-password`
+- **Input:**
+```json
+{
+  "OldPassword": "Old_password_here",
+  "newPassword": "new_password_here"
+}
+```
+- **Output:**
+```json
+{
+  "acknowledgement": true
+}
+```
 
-## Practice Page 3:
-- submit button api endpoint:
-    - INPUT:
-        COURSE_ID: "23klj4"
-        {
-            "score": "10/10"
-        }
-    - OUTPUT: Acknowldegment (bool)
+### 10.2. Change Username
+- **Method:** PUT
+- **URL:** `/api/settings/change-username`
+- **Input:**
+```json
+{
+  "OldUsername": "Old_username_here",
+  "newUsername": "new_username_here"
+}
+```
+- **Output:**
+```json
+{
+  "acknowledgement": true
+}
+```
 
-## Practice Page 3.5:
-- Mentor Help:
-    - text Chat Api end points:
-        - INPUT:
-            {
-                "socratic AI": bool,
-                "Additional Info": {""coding question and answer data""},
-                "user": "user speech",
-                "conversation_history": [ 
-                    {"speaker": "user", "text": "user speech"},
-                    {"speaker": "ai", "text": "AI's text response"},
-                ]
-            }
+### 10.3. Reset Progress
+- **Method:** POST
+- **URL:** `/api/settings/reset-progress`
+- **Input:**
+```json
+{
+  "Password": "password_here",
+}
+```
+- **Output:**
+```json
+{
+  "acknowledgement": true
+}
+```
 
-
-        - OUTPUT:
-            {
-                "ai": "AI's text response",
-
-                "conversation_history": [
-                    {"speaker": "user", "text": "Transcribed user speech"},
-                    {"speaker": "ai", "text": "AI's text response"},
-                ]
-            }
-
-    - Voice Chat Api end points:
-        - INPUT:
-            {
-                "socratic AI": bool,
-                "Additional Info": {""coding question and answer data""},
-                "audio_file": "audio file path",
-                "conversation_history": [ 
-                    {"speaker": "user", "text": "Transcribed user speech"},
-                    {"speaker": "ai", "text": "AI's text response"},
-                ]
-            }
-
-        - OUTPUT:
-            {
-                "user": "Transcribed user speech",
-                "ai": "AI's text response",
-
-                "conversation_history": [
-                    {"speaker": "user", "text": "Transcribed user speech"},
-                    {"speaker": "ai", "text": "AI's text response"},
-                ]
-            }
-
-## Practice Page 4:
-- end button api endpoint:
-    - INPUT:
-        COURSE_ID: "DSA Intro"
-        {
-            "score": "100/150"
-        }
-
-    - OUTPUT: Acknowledgement(bool)
-
-## Practice Page 4.5:
-- Mentor Help:
-    - text Chat Api end points:
-        - INPUT:
-            {
-                "socratic AI": bool,
-                "Additional Info": {"""MCQs data"""},
-                "user": "user speech",
-                "conversation_history": [ 
-                    {"speaker": "user", "text": "user speech"},
-                    {"speaker": "ai", "text": "AI's text response"},
-                ]
-            }
-
-        - OUTPUT:
-            {
-                "ai": "AI's text response",
-
-                "conversation_history": [
-                    {"speaker": "user", "text": "Transcribed user speech"},
-                    {"speaker": "ai", "text": "AI's text response"},
-                ]
-            }
-
-    - Voice Chat Api end points:
-        """
-            - INPUT:
-                {
-                "socratic AI": bool,
-                "Additional Info": {"""MCQs data"""},
-                "audio_file": "audio file path",
-                "conversation_history": [ 
-                        {"speaker": "user", "text": "Transcribed user speech"},
-                        {"speaker": "ai", "text": "AI's text response"},
-                    ]
-                }
-
-
-            - OUTPUT:
-                {
-                "user": "Transcribed user speech",
-                "ai": "AI's text response",
-
-                    "conversation_history": [
-                        {"speaker": "user", "text": "Transcribed user speech"},
-                        {"speaker": "ai", "text": "AI's text response"},
-                    ]
-                }
-        """
-
-## Interview Simulation Page 1:
-- Rendering filters api endpoint:
-    - INPUT: NULL
-    - OUTPUT: 
-        {
-            "interview_type": ["HR", "TR"],
-            "level": ["Easy", "Medium", "Hard"],
-            "topic": ["Linked_List", "Trees", "Stacks", "Queues", "Arrays", "Strings"],
-        }
-
-
-- lets start interview button:
-    - INPUT: "file path pdf of resume", {"""other data entered"""}
-    - OUTPUT: acknowledgement
-
-- View Previous Results:
-    - INPUT: NULL
-    - OUTPUT:
-        {
-            {"date": {
-                "result": "good",
-                "Review": "str"
-                }
-            },
-            {"date": {
-                "result": "good",
-                "Review": "str"
-                }
-            },
-            {"date": {
-                "result": "good",
-                "Review": "str"
-                }
-            },
-        }
-
-## Interview Simulation Page 2:
-- Voice Chat Api end points:
-    - INPUT:
-        {
-            "audio_file": "audio file path",
-            "conversation_history": [ 
-                {"speaker": "user", "text": "Transcribed user speech"},
-                {"speaker": "ai", "text": "AI's text response"},
-            ]
-        }
-
-
-    - OUTPUT:
-        {
-            "response_audio": "audio file path",
-            
-            "user": "Transcribed user speech",
-            "ai": "AI's text response",
-
-            "conversation_history": [
-                {"speaker": "user", "text": "Transcribed user speech"},
-                {"speaker": "ai", "text": "AI's text response"},
-            ]
-        }
-
-- End Interview end points:
-    - INPUT:             
-        {
-            "conversation_history": [
-                {"speaker": "user", "text": "Transcribed user speech"},
-                {"speaker": "ai", "text": "AI's text response"},
-            ]
-        }
-
-    - OUTPUT: 
-        {
-            "result": "good",
-            "Review": "str"
-        }
-
-## Chat Page:
-- text Chat Api end points:
-    - INPUT:
-        {
-            "socratic AI": bool,
-            "user": "user text",
-            "conversation_history": [ 
-                {"speaker": "user", "text": "user speech"},
-                {"speaker": "ai", "text": "AI's text response"},
-            ]
-        }
-
-    - OUTPUT:
-        {
-            "ai": "AI's text response",
-
-            "conversation_history": [
-                {"speaker": "user", "text": "Transcribed user speech"},
-                {"speaker": "ai", "text": "AI's text response"},
-            ]
-        }
-
-- Voice Chat Api end points:
-    - INPUT:
-        {
-            "socratic AI": bool,
-            "audio_file": "audio file path",
-            "conversation_history": [ 
-                {"speaker": "user", "text": "Transcribed user speech"},
-                {"speaker": "ai", "text": "AI's text response"},
-            ]
-        }
-
-
-    - OUTPUT:
-        {
-            "user": "Transcribed user speech",
-            "ai": "AI's text response",
-
-            "conversation_history": [
-                {"speaker": "user", "text": "Transcribed user speech"},
-                {"speaker": "ai", "text": "AI's text response"},
-            ]
-        }
-
-
-## Resume Optimization Page:
-- Analyze the Job Match api end point:
-    - INPUT: """Job_Description"""
-    - OUTPUT:
-        {
-            "Match": "Good"
-            "Skill_Gap_Analysis": "str"
-            "Salary_Insights": "str"
-            "Linkedin people": ["person_1","person_2","person_3"]
-        }
-
-- genrate Cover letter End points
-    - INPUT: """Job_Description"""
-    - OUTPUT:
-        {
-            "Cover Letter": "str"
-        }
-
-- Generate Talore reusme End points
-    - INPUT: """Job_Description"""
-    - OUTPUT:
-        {
-            "pdf file": "pdf file path"
-        }
-
-- genrate Cover letter chat End points
-    - INPUT: "Job_Description", "Cover letter", "User Message"(optional)
-    - OUTPUT:
-        {
-            "Cover Letter": "str"
-        }
-
-- Generate Talore reusme chat End points
-    - INPUT: "Job_Description", pdf file, "User Message" (optional)
-    - OUTPUT:
-        {
-            pdf file
-        }
-
-- View Previous Cover letter Results:
-    - INPUT: NULL
-    - OUTPUT:
-    {
-        {"date": {
-            "result": """CV letter"""
-            }
-        },
-        {"date": {
-            "result": """CV letter"""
-            }
-        },
-        {"date": {
-            "result": """CV letter"""
-            }
-        }
-    }
-
-## Job Tracker Page 1:
-- Render the page:
-    - INPUT: Null
-    - OUTPUT:
-        [
-            {
-                "ID" : "str",
-                "Title" : "str",
-                "status" : "str",
-                "deadline_date" : "dd-mm-yyyy",
-                "description" : "str"
-            },
-            {
-                "ID" : "str",
-                "Title" : "str",
-                "status" : "str",
-                "deadline_date" : "dd-mm-yyyy",
-                "description" : "str"
-            }
-        ]
-
-- Edit the event end points:
-    - INPUT:
-        [
-            {
-                "id" : "str",
-                "Title" : "str",
-                "status" : "str",
-                "deadline_date" : "dd-mm-yyyy",
-                "description" : "str"
-            }
-        ]
-
-    - OUTPUT:
-        acknowledgement
-
-- Delete Button:
-    - INPUT:
-        {
-            "id" : "str",
-        }
-
-    - OUTPUT:
-        acknowledgement
-
-## Job Tracker Page 1.5:
-- Mentor Help:
-    - text Chat Api end points:
-        - INPUT:
-            {
-                "Additional Info": {near tasks},
-                "user": "user speech",
-                "conversation_history": [ 
-                    {"speaker": "user", "text": "user speech"},
-                    {"speaker": "ai", "text": "AI's text response"},
-                ]
-            }
-
-        - OUTPUT:
-            {
-                "ai": "AI's text response",
-
-                "conversation_history": [
-                    {"speaker": "user", "text": "Transcribed user speech"},
-                    {"speaker": "ai", "text": "AI's text response"},
-                ]
-            }
-
-    - Voice Chat Api end points:
-        - INPUT:
-            {
-                "Additional Info": {near tasks},
-                "audio_file": "audio file path",
-                "conversation_history": [ 
-                    {"speaker": "user", "text": "Transcribed user speech"},
-                    {"speaker": "ai", "text": "AI's text response"},
-                ]
-            }
-
-        - OUTPUT:
-            {
-                "user": "Transcribed user speech",
-                "ai": "AI's text response",
-
-                "conversation_history": [
-                    {"speaker": "user", "text": "Transcribed user speech"},
-                    {"speaker": "ai", "text": "AI's text response"},
-                ]
-            }
-
-## Saved Pages:
-- filters api endpoint:
-    - INPUT: NULL
-    - OUTPUT:
-        {
-            "Type": ["Course", "MCQ", "Coding"],
-        }
-
-- Saved course:
-    - INPUT: "TYPE"
-    - OUTPUT: ["id_1," "id_2", "id_3"]
-
-## Settings Page:
-- Change password API Endpoint:
-    - INPUT: "Changed password"
-    - OUTPUT: acknowledgement
-
-- Change username API Endpoint:
-    - INPUT: "Changed username"
-    - OUTPUT: acknowledgement
-
-- reset Progress API Endpoint:
-    - INPUT: NULL
-    - OUTPUT: acknowledgement
-
-
+---
