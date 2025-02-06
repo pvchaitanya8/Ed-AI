@@ -5,6 +5,9 @@
    ```bash
    uvicorn API_Endpoint.main:app --reload
    ```
+   ```bash
+   http://127.0.0.1:8000/docs
+   ```
 
 # Getting Started
 
