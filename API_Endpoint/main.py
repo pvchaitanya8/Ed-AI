@@ -117,7 +117,7 @@ async def get_all_courses(
 
 
 @learn_router.get("/course/{courseId}")
-async def get_course_content(courseId: str = Path(...)):
+async def get_course_content(courseId: str = Path()):
     return {
         "course": [
             r"API_Endpoint\Temp_Static_data\Learn Page\DSA_Intro_1.md",
@@ -279,14 +279,14 @@ async def get_practice_items(
 
 
 @practice_router.get("/mcq/{testId}")
-async def get_mcq_test(testId: str = Path(...)):
+async def get_mcq_test(testId: str = Path()):
     return {
         "testFile": r"API_Endpoint\Temp_Static_data\Practice Page\MCQ\Programming_Fundamentals_000001.json"
     }
 
 
 @practice_router.get("/coding-problem/{problemId}")
-async def get_coding_problem(problemId: str = Path(...)):
+async def get_coding_problem(problemId: str = Path()):
     return {
         "problemDescription": r"API_Endpoint\Temp_Static_data\Practice Page\CodingProblem\Concatenation_of_Array.md",
         "problemSolution": r"API_Endpoint\Temp_Static_data\Practice Page\CodingProblem\Concatenation_of_Array_solution.py",
