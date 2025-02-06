@@ -1,3 +1,10 @@
+# TODO: make ids unique
+# TODO: make file paths unique and correct
+# TODO: data: MentorHelpTextChatLearnRequest
+
+# TODO: make triple quotes consistent
+# TODO: change all dates to dd-mm-yyyy format
+
 from fastapi import FastAPI, APIRouter, Body, Query, Path
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
@@ -15,12 +22,11 @@ async def get_streak_data():
     return {
         "streak": 5,
         "streakData": [
-            {"date": "dd-mm-yyyy", "status": True},
-            {"date": "dd-mm-yyyy", "status": False},
-            {"date": "dd-mm-yyyy", "status": True},
-            {"date": "dd-mm-yyyy", "status": True},
-            {"date": "dd-mm-yyyy", "status": False},
-            {"date": "dd-mm-yyyy", "status": True},
+            {"date": "1-03-2024", "status": False},
+            {"date": "2-03-2024", "status": True},
+            {"date": "3-03-2024", "status": True},
+            {"date": "4-03-2024", "status": False},
+            {"date": "5-03-2024", "status": True}
         ],
     }
 
@@ -60,7 +66,16 @@ class VoiceChatLandingRequest(BaseModel):
 async def landing_voice_chat(data: VoiceChatLandingRequest):
     return {
         "responseAudio": "/path/to/response_audio.mp3",
-        "conversationHistory": data.conversationHistory
+        "conversationHistory": [
+            {
+                "speaker": "user",
+                "text": "Transcribed user speech"
+            },
+            {
+                "speaker": "ai",
+                "text": "AI's text response"
+            }
+        ]
     }
 
 # ======================================================
@@ -90,7 +105,6 @@ async def get_all_courses(
     status: Optional[bool] = Query(None),
     topic: Optional[str] = Query(None)
 ):
-    # This is a placeholder. You might use the query parameters to filter results.
     return [
         {"id": "1", "courseName": "DSA Intro"},
         {"id": "2", "courseName": "Trees"},
@@ -124,7 +138,16 @@ class TextChatLearnRequest(BaseModel):
 async def learn_text_chat(data: TextChatLearnRequest):
     return {
         "ai": "AI's text response",
-        "conversationHistory": data.conversationHistory
+        "conversationHistory": [
+            {
+            "speaker": "user",
+            "text": "Transcribed user speech"
+            },
+            {
+            "speaker": "ai",
+            "text": "AI's text response"
+            }
+        ]
     }
 
 class VoiceChatLearnRequest(BaseModel):
@@ -138,7 +161,16 @@ async def learn_voice_chat(data: VoiceChatLearnRequest):
     return {
         "user": "Transcribed user speech",
         "ai": "AI's text response",
-        "conversationHistory": data.conversationHistory
+        "conversationHistory": [
+            {
+            "speaker": "user",
+            "text": "Transcribed user speech"
+            },
+            {
+            "speaker": "ai",
+            "text": "AI's text response"
+            }
+        ]
     }
 
 class EndCourseRequest(BaseModel):
@@ -159,7 +191,16 @@ class MentorHelpTextChatLearnRequest(BaseModel):
 async def learn_mentor_text_chat(data: MentorHelpTextChatLearnRequest):
     return {
         "ai": "AI's text response",
-        "conversationHistory": data.conversationHistory
+        "conversationHistory": [
+            {
+            "speaker": "user",
+            "text": "Transcribed user speech"
+            },
+            {
+            "speaker": "ai",
+            "text": "AI's text response"
+            }
+        ]
     }
 
 class MentorHelpVoiceChatLearnRequest(BaseModel):
@@ -173,7 +214,16 @@ async def learn_mentor_voice_chat(data: MentorHelpVoiceChatLearnRequest):
     return {
         "user": "Transcribed user speech",
         "ai": "AI's text response",
-        "conversationHistory": data.conversationHistory
+        "conversationHistory": [
+            {
+            "speaker": "user",
+            "text": "Transcribed user speech"
+            },
+            {
+            "speaker": "ai",
+            "text": "AI's text response"
+            }
+        ]
     }
 
 # ======================================================
@@ -259,7 +309,16 @@ class MentorHelpTextChatPracticeRequest(BaseModel):
 async def practice_mentor_text_chat(data: MentorHelpTextChatPracticeRequest):
     return {
         "ai": "AI's text response",
-        "conversationHistory": data.conversationHistory
+        "conversationHistory": [
+            {
+            "speaker": "user",
+            "text": "Transcribed user speech"
+            },
+            {
+            "speaker": "ai",
+            "text": "AI's text response"
+            }
+        ]
     }
 
 class MentorHelpVoiceChatPracticeRequest(BaseModel):
@@ -273,7 +332,16 @@ async def practice_mentor_voice_chat(data: MentorHelpVoiceChatPracticeRequest):
     return {
         "user": "Transcribed user speech",
         "ai": "AI's text response",
-        "conversationHistory": data.conversationHistory
+        "conversationHistory": [
+            {
+            "speaker": "user",
+            "text": "Transcribed user speech"
+            },
+            {
+            "speaker": "ai",
+            "text": "AI's text response"
+            }
+        ]
     }
 
 class EndPracticeRequest(BaseModel):
@@ -294,7 +362,16 @@ class MentorHelpMCQTextChatRequest(BaseModel):
 async def practice_mentor_mcq_text_chat(data: MentorHelpMCQTextChatRequest):
     return {
         "ai": "AI's text response",
-        "conversationHistory": data.conversationHistory
+        "conversationHistory": [
+            {
+            "speaker": "user",
+            "text": "Transcribed user speech"
+            },
+            {
+            "speaker": "ai",
+            "text": "AI's text response"
+            }
+        ]
     }
 
 class MentorHelpMCQVoiceChatRequest(BaseModel):
@@ -308,7 +385,16 @@ async def practice_mentor_mcq_voice_chat(data: MentorHelpMCQVoiceChatRequest):
     return {
         "user": "Transcribed user speech",
         "ai": "AI's text response",
-        "conversationHistory": data.conversationHistory
+        "conversationHistory": [
+            {
+            "speaker": "user",
+            "text": "Transcribed user speech"
+            },
+            {
+            "speaker": "ai",
+            "text": "AI's text response"
+            }
+        ]
     }
 
 # ======================================================
@@ -341,19 +427,19 @@ async def start_interview(data: StartInterviewRequest):
 async def get_interview_results():
     return [
         {
-            "date": "dd-mm-yyyy",
+            "date": "1-03-2024",
             "result": "good",
-            "review": "Detailed review text"
+            "review": "The product performed well and met expectations.  I was particularly impressed with its durability and ease of use.  Highly recommend."
         },
         {
-            "date": "dd-mm-yyyy",
-            "result": "good",
-            "review": "Detailed review text"
+            "date": "2-03-2024",
+            "result": "average",
+            "review": "The product is okay. It functions as described, but there are some minor issues. The build quality could be better, and the instructions were a bit unclear.  Overall, a decent value for the price."
         },
         {
-            "date": "dd-mm-yyyy",
-            "result": "good",
-            "review": "Detailed review text"
+            "date": "4-03-2024",
+            "result": "bad",
+            "review": "I am very disappointed with this product. It malfunctioned within a few days of use. The customer service was unhelpful.  I would not recommend this product to anyone."
         }
     ]
 
@@ -367,7 +453,16 @@ async def interview_voice_chat(data: VoiceChatInterviewRequest):
         "responseAudio": "/path/to/response_audio.mp3",
         "user": "Transcribed user speech",
         "ai": "AI's text response",
-        "conversationHistory": data.conversationHistory
+        "conversationHistory": [
+            {
+                "speaker": "user",
+                "text": "Transcribed user speech"
+            },
+            {
+                "speaker": "ai",
+                "text": "AI's text response"
+            }
+        ]
     }
 
 class EndInterviewRequest(BaseModel):
@@ -395,7 +490,16 @@ class TextChatRequest(BaseModel):
 async def chat_text(data: TextChatRequest):
     return {
         "ai": "AI's text response",
-        "conversationHistory": data.conversationHistory
+        "conversationHistory": [
+            {
+                "speaker": "user",
+                "text": "Transcribed user speech"
+            },
+            {
+                "speaker": "ai",
+                "text": "AI's text response"
+            }
+        ]
     }
 
 class VoiceChatRequest(BaseModel):
@@ -406,9 +510,18 @@ class VoiceChatRequest(BaseModel):
 @chat_router.post("/voice")
 async def chat_voice(data: VoiceChatRequest):
     return {
-        "user": "Transcribed user speech",
+        "user": "Transcribed user speech audio path file.mp3",
         "ai": "AI's text response",
-        "conversationHistory": data.conversationHistory
+        "conversationHistory": [
+            {
+                "speaker": "user",
+                "text": "Transcribed user speech"
+            },
+            {
+                "speaker": "ai",
+                "text": "AI's text response"
+            }
+        ]
     }
 
 # ======================================================
@@ -424,12 +537,12 @@ class ResumeAnalysisRequest(BaseModel):
 async def analyze_job_match(data: ResumeAnalysisRequest):
     return {
         "match": "Good",
-        "skillGapAnalysis": "Analysis details...",
-        "salaryInsights": "Insights details...",
+        "skillGapAnalysis": """Analysis details...""",
+        "salaryInsights": """Insights details...""",
         "linkedinPeople": [
-            {"name": "person_1", "url": "URL OF THE PERSON"},
-            {"name": "person_2", "url": "URL OF THE PERSON"},
-            {"name": "person_3", "url": "URL OF THE PERSON"}
+            {"name": "Katoro", "url": "https://www.linkedin.com/in/chaitanya-venkata-a5a908212/"},
+            {"name": "person_2", "url": None},
+            {"name": "person_3", "url": None}
         ]
     }
 
@@ -470,9 +583,9 @@ async def talore_chat(data: TaloreChatRequest):
 @resume_router.get("/previous-cover-letters")
 async def get_previous_cover_letters():
     return [
-        {"date": "dd-mm-yyyy", "result": "cover letter.txt"},
-        {"date": "dd-mm-yyyy", "result": "cover letter.txt"},
-        {"date": "dd-mm-yyyy", "result": "cover letter.txt"}
+        {"date": "1-03-2024", "result": "cover_letter_john_doe.txt"},
+        {"date": "2-03-2024", "result": "cover_letter_john_doe.txt"},
+        {"date": "3-03-2024", "result": "cover_letter_john_doe.txt"}
     ]
 
 # ======================================================
@@ -486,17 +599,38 @@ async def render_job_tracker_page():
     return [
         {
             "id": "job_id_1",
-            "title": "Job Title 1",
+            "title": "Software Engineer",
             "status": "In Progress",
-            "deadlineDate": "dd-mm-yyyy",
-            "description": "Job description..."
+            "deadlineDate": "1-03-2024",
+            "description": """Develop and maintain web applications using React and Node.js."""
         },
         {
             "id": "job_id_2",
-            "title": "Job Title 2",
+            "title": "Data Scientist",
             "status": "Completed",
-            "deadlineDate": "dd-mm-yyyy",
-            "description": "Job description..."
+            "deadlineDate": "2-03-2024",
+            "description": """Analyze large datasets to identify trends and insights."""
+        },
+        {
+            "id": "job_id_3",
+            "title": "Project Manager",
+            "status": "Pending",
+            "deadlineDate": "3-03-2024",
+            "description": """Oversee the planning and execution of software development projects."""
+        },
+        {
+            "id": "job_id_4",
+            "title": "UX Designer",
+            "status": "In Progress",
+            "deadlineDate": "4-03-2024",
+            "description": """Design user interfaces for web and mobile applications."""
+        },
+        {
+            "id": "job_id_5",
+            "title": "QA Engineer",
+            "status": "Completed",
+            "deadlineDate": "5-03-2024",
+            "description": """Test software applications to ensure quality and identify bugs."""
         }
     ]
 
@@ -527,7 +661,16 @@ class JobsMentorTextChatRequest(BaseModel):
 async def jobs_mentor_text_chat(data: JobsMentorTextChatRequest):
     return {
         "ai": "AI's text response",
-        "conversationHistory": data.conversationHistory
+        "conversationHistory": [
+            {
+            "speaker": "user",
+            "text": "Transcribed user speech"
+            },
+            {
+            "speaker": "ai",
+            "text": "AI's text response"
+            }
+        ]
     }
 
 class JobsMentorVoiceChatRequest(BaseModel):
@@ -540,7 +683,16 @@ async def jobs_mentor_voice_chat(data: JobsMentorVoiceChatRequest):
     return {
         "user": "Transcribed user speech",
         "ai": "AI's text response",
-        "conversationHistory": data.conversationHistory
+        "conversationHistory": [
+            {
+            "speaker": "user",
+            "text": "Transcribed user speech"
+            },
+            {
+            "speaker": "ai",
+            "text": "AI's text response"
+            }
+        ]
     }
 
 # ======================================================
