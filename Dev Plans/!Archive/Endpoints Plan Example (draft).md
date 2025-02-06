@@ -133,56 +133,56 @@
 <!-- NOTHING -->
 
 ## Learn Page 2.5:
-    - text Chat Api end points:
-        """
-            INPUT:
-                {
-                "socratic AI": bool,
-                "Additional Info": {Course data},
-                "user": "user speech",
-                "conversation_history": [ 
-                        {"speaker": "user", "text": "user speech"},
-                        {"speaker": "ai", "text": "AI's text response"},
-                    ]
-                }
+- text Chat Api end points:
+    """
+        INPUT:
+            {
+            "socratic AI": bool,
+            "Additional Info": {Course data},
+            "user": "user speech",
+            "conversation_history": [ 
+                    {"speaker": "user", "text": "user speech"},
+                    {"speaker": "ai", "text": "AI's text response"},
+                ]
+            }
 
 
-            OUTPUT:
-                {
-                "ai": "AI's text response",
+        OUTPUT:
+            {
+            "ai": "AI's text response",
 
-                    "conversation_history": [
-                        {"speaker": "user", "text": "Transcribed user speech"},
-                        {"speaker": "ai", "text": "AI's text response"},
-                    ]
-                }
-        """
+                "conversation_history": [
+                    {"speaker": "user", "text": "Transcribed user speech"},
+                    {"speaker": "ai", "text": "AI's text response"},
+                ]
+            }
+    """
 
-    - Voice Chat Api end points:
-        """
-            INPUT:
-                {
-                "socratic AI": bool,
-                "Additional Info": {Course data},
-                "audio_file": "base64 encoded audio data",
-                "conversation_history": [ 
-                        {"speaker": "user", "text": "Transcribed user speech"},
-                        {"speaker": "ai", "text": "AI's text response"},
-                    ]
-                }
+- Voice Chat Api end points:
+    """
+        INPUT:
+            {
+            "socratic AI": bool,
+            "Additional Info": {Course data},
+            "audio_file": "base64 encoded audio data",
+            "conversation_history": [ 
+                    {"speaker": "user", "text": "Transcribed user speech"},
+                    {"speaker": "ai", "text": "AI's text response"},
+                ]
+            }
 
 
-            OUTPUT:
-                {
-                "user": "Transcribed user speech",
-                "ai": "AI's text response",
+        OUTPUT:
+            {
+            "user": "Transcribed user speech",
+            "ai": "AI's text response",
 
-                    "conversation_history": [
-                        {"speaker": "user", "text": "Transcribed user speech"},
-                        {"speaker": "ai", "text": "AI's text response"},
-                    ]
-                }
-        """
+                "conversation_history": [
+                    {"speaker": "user", "text": "Transcribed user speech"},
+                    {"speaker": "ai", "text": "AI's text response"},
+                ]
+            }
+    """
 
 ## Learn Page 3:
 - End Button of the course api endpoint:
@@ -319,7 +319,7 @@
         },
 
 ## Practice Page 3:
-- end button api endpoint:
+- submit button api endpoint:
     INPUT: NULL
     OUTPUT:
         COURSE_ID: "23klj4"
@@ -453,8 +453,8 @@
         }
 
 
-- Upload resume:
-    INPUT: pdf of resume
+- lets start interview button:
+    INPUT: pdf of resume, other data
     OUPUT: acknowledgement
 
 - View Previous Results:
@@ -507,7 +507,12 @@
     """
 
 - End Interview end points:
-    INPUT: NULL
+    INPUT:             
+        "conversation_history": [ 
+                        {"speaker": "user", "text": "Transcribed user speech"},
+                        {"speaker": "ai", "text": "AI's text response"},
+                    ]
+                }
     OUTPUT: 
         {
             "result": "good",
@@ -520,7 +525,7 @@
         INPUT:
             {
             "socratic AI": bool,
-            "user": "user speech",
+            "user": "user text",
             "conversation_history": [ 
                     {"speaker": "user", "text": "user speech"},
                     {"speaker": "ai", "text": "AI's text response"},
@@ -573,6 +578,7 @@
             "Match": "Good"
             "Skill_Gap_Analysis": "str"
             "Salary_Insights": "str"
+            "Linkedin people": ["person_1","person_2","person_3"]
         }
 
 - genrate Cover letter End points
@@ -590,14 +596,14 @@
         }
 
 - genrate Cover letter chat End points
-    INPUT: "Job_Description", "Cover letter", "User Message"
+    INPUT: "Job_Description", "Cover letter", "User Message"[optional]
     OUTPUT:
         {
             "Cover Letter": "str"
         }
 
 - Generate Talore reusme chat End points
-    INPUT: "Job_Description", pdf file, "User Message"
+    INPUT: "Job_Description", pdf file, "User Message" [optional]
     OUTPUT:
         {
             pdf file
@@ -645,7 +651,7 @@
 - Edit the event end points:
     INPUT:
     [
-    {
+        {
         "id" : "str",
         "Title" : "str",
         "status" : "str",
@@ -722,7 +728,7 @@
     INPUT: NULL
     OUPUT: 
       {
-          "Type": ["Course", "MCQ", "Coding"],
+            "Type": ["Course", "MCQ", "Coding"],
       }
 
 - Saved course:
