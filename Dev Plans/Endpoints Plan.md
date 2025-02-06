@@ -836,7 +836,7 @@
 
 ## 8. Job Tracker
 
-### 8.1. Job Tracker page 1
+### 8.1. Job Tracker Page 1
 
 #### 8.1.1. Render Job Tracker Page
 - **Method:** GET
@@ -900,7 +900,7 @@
 }
 ```
 
-### 8.2. Job Tracker page 1.5
+### 8.2. Job Tracker Page 1.5
 
 #### 8.2.1. Text Chat Mentor Help
 - **Method:** POST
